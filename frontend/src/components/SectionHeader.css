@@ -1,0 +1,18 @@
+.section-header {
+    display: flex;
+    width: calc(100% - 60px);
+    height: 60px;
+    padding: 18px 30px;
+    gap: 10px;
+
+    border-bottom: 2px solid #F2A21E;
+    background: #FFF;
+}
+
+.section-header h3 {
+    color: #37228B;
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+}

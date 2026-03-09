@@ -35,6 +35,7 @@ app.get('/destaques', (req, res) => {
             titulo: "Uma Dobra no Tempo",
             avaliacao: 4.5
         },
+        
     ];
     res.json(destaques);
 });
