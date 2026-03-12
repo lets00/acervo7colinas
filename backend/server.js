@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); // Utilizar o from import
 const cors = require('cors');
 
 const app = express();
@@ -28,6 +28,11 @@ app.get('/destaques', (req, res) => {
         {
             img: "/capas/memorias-postumas-de-bras-cubas.jpg",
             titulo: "Memorias Póstumas de Brás Cubas",
+            avaliacao: 4.5
+        },
+        {
+            img: "/capas/uma-dobra-no-tempo.jpg",
+            titulo: "Uma Dobra no Tempo",
             avaliacao: 4.5
         },
         {
