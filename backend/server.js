@@ -129,7 +129,7 @@ app.get('/livros/:id', (req, res) => {
     }
 
     res.json(livro);
-})
+});
 
 //Rota exemplares do livro
 app.get('/livros/:id/exemplares', (req, res) => {
@@ -160,6 +160,35 @@ app.get('/livros/:id/exemplares', (req, res) => {
         return res.status(404).json({ mensagem: "Exemplares não encontrados para este livro"});
     }
     res.json(exemplares);
+});
+
+//Rota avaliações e comentários do livro
+app.get('/livros/:id/avaliacoes', (req, res) => {
+    const { id } = req.params;
+
+    const avaliacoesPorLivro = {
+        1: [
+            {
+                usuario: "Omar Sundaram",
+                avaliacao: 4,
+                comentario: "Muito bom para quem quer aprender boas práticas.",
+                tempo: "9 horas atrás"
+            },
+            {
+                usuario: "Anna Gomes",
+                avaliacao: 5,
+                comentario: "Livro excelente para desenvolvedores.",
+                tempo: "1 dia atrás"   
+            }
+        ]
+    };
+    const avaliacoes = avaliacoesPorLivro[id];
+
+    if (!avaliacoes) {
+        return res.status(404).json({ mensagem: "Avaliações não encontardas para este livro" });
+    }
+
+    res.json(avaliacoes);
 });
 
 const PORT = 3000;
