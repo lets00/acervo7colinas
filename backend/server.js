@@ -131,6 +131,37 @@ app.get('/livros/:id', (req, res) => {
     res.json(livro);
 })
 
+//Rota exemplares do livro
+app.get('/livros/:id/exemplares', (req, res) => {
+    const { id } = req.params;
+
+    const exemplaresPorLivro = {
+        1: [
+            {
+                id: 1008,
+                secao: "Informática",
+                disponivel: false
+            },
+            {
+                id: 1007,
+                secao: "Informática",
+                disponivel: true
+            },
+            {
+                id: 1006,
+                secao: "Informática",
+                disponivel: true
+            }
+        ]
+    };
+    const exemplares = exemplaresPorLivro[id];
+
+    if (!exemplares) {
+        return res.status(404).json({ mensagem: "Exemplares não encontrados para este livro"});
+    }
+    res.json(exemplares);
+});
+
 const PORT = 3000;
 
 app.listen(PORT, () => {
