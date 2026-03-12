@@ -102,6 +102,35 @@ app.get('/agendas', (req, res) => {
     res.json(agendas);
 });
 
+// Rota detalhes do livro
+app.get('/livros/:id', (req, res) => {
+    const { id } = req.params;
+
+    const livros = {
+        1: {
+            id: 1,
+            img: "/capas/o-codificador-limpo.jpg",
+            titulo: "O Codificador Limpo",
+            autor:"Robert C. Martin",
+            avaliacao: 4.5,
+            editora: "Alta Books",
+            paginas: 216,
+            ano: 2020,
+            isbn: "9788550819341",
+            idioma: "Português",
+            generos: ["Tecnologia", "Programação", "Software"],
+            descricao: "Então você quer ser um profissional do desenvolvimento de softwares. Quer erguer a cabeça e declarar para o mundo: “Eu sou um profissional!”. Quer que as pessoas olhem para você com respeito e o tratem com consideração. Você quer isso tudo. Certo? O termo “Profissionalismo” é, sem dúvida, um distintivo de honra e orgulho, mas também é um marcador de incumbência e responsabilidade, que inclui trabalhar bem e honestamente. Verdadeiros profissionais praticam e trabalham firme para manter suas habilidades afiadas e prontas. Não é o bastante simplesmente fazer suas tarefas diárias e chamar isso de prática. Realizar seu trabalho diário é performance, e não prática. Prática é quando você especificamente exercita as habilidades fora do seu ambiente de trabalho..."
+        }
+    };
+    const livro = livros[id];
+
+    if (!livro) {
+        return res.status(404).json({ mensagem: "Livro não encontrado" });
+    }
+
+    res.json(livro);
+})
+
 const PORT = 3000;
 
 app.listen(PORT, () => {
