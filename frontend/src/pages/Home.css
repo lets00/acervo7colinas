@@ -1,6 +1,77 @@
+.imagem-biblioteca {
+    width: 1390px;
+    height: 379px;
+    align-items: center;
+}
+
 .books-container {
     display: inline-flex;
     padding: 40px 0;
     align-items: center;
     gap: 23px;
+}
+
+.agenda-banner {
+    width: 1335px;
+    height: 74px;
+    background: #00A83F;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+
+}
+
+.agenda-table td,
+.agenda-table th {
+    border-bottom: 1px solid var(--azul, #37228B);
+
+    color: var(--preto, #0D0D0D);
+    font-feature-settings: 'liga' off, 'clig' off;
+
+    font-family: var(--fontFamily, Roboto);
+    font-size: var(--typography-body2, 14px);
+    font-style: normal;
+    font-weight: var(--fontWeightRegular, 400);
+    line-height: 143%;
+    letter-spacing: 0.17px;
+}
+
+
+
+.agenda-texto {
+    width: 943px;
+    height: 65px;
+    color: #FFF;
+    text-align: center;
+
+    font-family: "Inter", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 26px;
+}
+
+
+
+.agenda-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: px;
+    margin-top: 40px;
+
+}
+
+.agenda-table {
+    width: 877px;
+}
+
+.agenda-table table {
+    width: 100%;
+}
+
+.agenda-image img {
+    width: 420px;
+    height: 389px;
+    aspect-ratio: 122/113;
 }
