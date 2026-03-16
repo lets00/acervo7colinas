@@ -1,17 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Home from './pages/Home'
+import React from 'react';
+import './App.css';
+import CadastroLivros from './Componentes/CadastroLivros.jsx';
+import { createTheme, ThemeProvider, Container } from '@mui/material'; 
+
+const theme = createTheme();
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <Home />
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md" sx={{ marginTop: '2rem' }}> 
+        <CadastroLivros />
+      </Container>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
