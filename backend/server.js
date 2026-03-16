@@ -11,26 +11,31 @@ app.use(express.static('public'));
 app.get('/destaques', (req, res) => {
     const destaques = [
         {
+            id: 1,
             img: "/capas/1984.jpg",
             titulo: "1984",
             avaliacao: 4.5
         },
         {
+            id: 2,
             img: "/capas/a-hora-da-estrela.jpg",
             titulo: "A hora da estrela",
             avaliacao: 4.5
         },
         {
+            id: 3,
             img: "/capas/harry-potter-e-a-pedra-filosofal.jpg",
             titulo: "Harry Potter e a Pedra Filosofal",
             avaliacao: 4.5
         },
         {
+            id: 4,
             img: "/capas/memorias-postumas-de-bras-cubas.jpg",
             titulo: "Memorias Póstumas de Brás Cubas",
             avaliacao: 4.5
         },
         {
+            id: 5,
             img: "/capas/uma-dobra-no-tempo.jpg",
             titulo: "Uma Dobra no Tempo",
             avaliacao: 4.5
@@ -43,27 +48,32 @@ app.get('/destaques', (req, res) => {
 //Rota Novidades
 app.get('/novidades', (req, res) => {
     const novidades = [
-        {
+        {   
+            id: 6,
             img: "/capas/a-culpa-e-das-estrelas.jpg",
             titulo: "A Culpa é das Estrelas",
             avaliacao: 4.5
         },
         {
+            id: 7,
             img: "/capas/alice-no-pais-das-maravilhas.jpg",
             titulo: "Alice no País das Maravilhas",
             avaliacao: 4.5
         },
         {
+            id: 8,
             img: "/capas/o-hobbit.jpg",
             titulo: "O Hobbit",
             avaliacao: 4.5
         },
         {
+            id: 9,
             img: "/capas/o-homem-invisivel.jpg",
             titulo: "O Homem Invisível",
             avaliacao: 4.5
         },
         {
+            id: 10,
             img: "/capas/os-miseraveis.jpg",
             titulo: "Os Miseráveis",
             avaliacao: 4.5
