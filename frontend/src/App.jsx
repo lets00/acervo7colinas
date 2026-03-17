@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import InformacaoLivro from "./pages/informacaoLivro";
+import React from 'react';
+import './App.css';
+import CadastroLivros from './components/CadastroLivros.jsx';
+import { createTheme, ThemeProvider, Container } from '@mui/material'; 
+
+const theme = createTheme();
 
 function App() {
   return (
-    <BrowserRouter>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/livro/:id" element={<InformacaoLivro />} />
-      </Routes>
-
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md" sx={{ marginTop: '2rem' }}> 
+        <CadastroLivros />
+      </Container>
+    </ThemeProvider>
   );
 }
 
