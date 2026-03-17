@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import "./Home.css";
 import BookCard from "../components/BookCard";
 import SectionHeader from "../components/SectionHeader";
-import debateImg from "../assets/image_52.png";
+import debateImg from "../assets/imagem_debate.png";
 import bibliotecaImg from "../assets/imagem_biblioteca.png";
-
+// Importações para a tabela
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,7 +13,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-
+// Importações para o carrossel
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
