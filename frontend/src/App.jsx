@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import CadastroLivros from './Componentes/CadastroLivros.jsx';
+import CadastroLivros from './components/CadastroLivros.jsx';
 import { createTheme, ThemeProvider, Container } from '@mui/material'; 
 
 const theme = createTheme();
