@@ -10,10 +10,12 @@ export default function Header() {
   const [pesquisar, setPesquisar] = useState('');
 
   return(
-    <Box sx={{ width: '100%' }} >
-      <Box style={{ display: 'flex', alignItems: 'center', gap: '40px', borderColor: '#312783'}}>
+    <Box sx={{ width: '1000%', maxWidth: "1300px" }} >
+      <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        px: '20px', py: '10px', maxWidth: '1200px', margin: '0 auto',
+        gap: '10px', borderColor: '#312783'}}>
 
-        <img src={logo} alt="Logo" style={{width:"120px", height:"30px"}}/>
+        <img src={logo} alt="Logo" style={{width:"200px", height:"40px"}}/>
 
         
         <Typography  style={{ color: '#312783', marginTop: '8px' }}>
@@ -55,7 +57,7 @@ export default function Header() {
         />
 
         <Stack spacing={2} sx={{ alignItems: 'center', marginTop: '5px' }}>
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={4}>
             <Chip label="Criar Conta" size='small'
             sx={ {backgroundColor:'#CCD3F8', color:'#242424'}}/>
             <Chip icon={<img src={Perfil} alt="Perfil" style={{width:20, height:20 }}/>} label="Login"
