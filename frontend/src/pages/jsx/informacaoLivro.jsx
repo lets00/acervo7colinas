@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import "./informacaoLivros.css";
-import SectionHeader from "../components/SectionHeader";
-import BookCard from "../components/BookCard";
+import "../css/informacaoLivros.css";
+import SectionHeader from "../../components/SectionHeader";
+import BookCard from "../../components/BookCard";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";

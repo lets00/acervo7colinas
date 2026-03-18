@@ -1,8 +1,9 @@
-.page-home {
+.page-informacao-livro {
     width: 100%;
-    max-width: 1390px;
-    padding: 40px 60px;
+    max-width: 1512px;
     margin: 0 auto;
+    padding: 40px 60px;
+    box-sizing: border-box;
 }
 
 .exemplares-section {
@@ -39,8 +40,9 @@
 .carousel-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 23px;
-    width: 100%;
+
 }
 
 .books-container {

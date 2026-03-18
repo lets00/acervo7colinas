@@ -1,8 +1,9 @@
-.page-informacao-livro {
+.page-home {
     width: 100%;
-    max-width: 1390px;
-    padding: 40px 60px;
+    max-width: 1512px;
     margin: 0 auto;
+    padding: 40px 60px;
+    box-sizing: border-box;
 }
 
 /* imagem da biblioteca */
@@ -25,24 +26,22 @@
 .carousel-container {
     display: flex;
     align-items: center;
-    gap: 23px;
+    gap: 2px;
     width: 100%;
 }
+
 
 .books-container {
     display: flex;
     flex: 1;
     padding: 40px 0;
     align-items: center;
-    gap: 23px;
+    gap: 50px;
     overflow-x: hidden;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
 }
 
-.books-container > * {
-    flex: 0 0 200px;
-}
 
 /* banner agenda */
 
@@ -74,11 +73,8 @@
 
 .agenda-section {
     display: flex;
-    gap: 28px; /* espaço entre tabela e imagem */
-
-    padding-left: 90px;
-    padding-right: 90px;
-
+    gap: 28px;
+    justify-content: center;
 }
 
 .agenda-table {

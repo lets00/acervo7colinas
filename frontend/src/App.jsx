@@ -1,16 +1,29 @@
-import React from 'react';
-import './App.css';
-import CadastroLivros from './components/CadastroLivros.jsx';
-import { createTheme, ThemeProvider, Container } from '@mui/material'; 
+import React from "react";
+import "./App.css";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createTheme, ThemeProvider, Container } from "@mui/material";
+
+import Home from "./pages/jsx/Home.jsx";
+import InformacaoLivro from "./pages/jsx/informacaoLivro.jsx";
+import CadastroLivros from "./components/CadastroLivros.jsx";
 
 const theme = createTheme();
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="md" sx={{ marginTop: '2rem' }}> 
-        <CadastroLivros />
-      </Container>
+      <BrowserRouter>
+        <Container >
+          
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/livro/:id" element={<InformacaoLivro />} />
+            <Route path="/cadastro" element={<CadastroLivros />} />
+          </Routes>
+
+        </Container>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

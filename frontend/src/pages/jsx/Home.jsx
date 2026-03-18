@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import "./Home.css";
-import BookCard from "../components/BookCard";
-import SectionHeader from "../components/SectionHeader";
-import debateImg from "../assets/imagem_debate.png";
-import bibliotecaImg from "../assets/imagem_biblioteca.png";
+import "../css/Home.css";
+import BookCard from "../../components/BookCard";
+import logo from "../../components/Header";
+import SectionHeader from "../../components/SectionHeader";
+import debateImg from "../../assets/imagem_debate.png";
+import bibliotecaImg from "../../assets/imagem_biblioteca.png";
 // Importações para a tabela
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -55,8 +56,9 @@ function Home() {
 
     return (
         <>
+
             <div className="page-home"> 
-                    <div className="imagem-biblioteca">
+                <div className="imagem-biblioteca">
                     <img src={bibliotecaImg} alt="Biblioteca" />
                 </div>
 
