@@ -1,0 +1,61 @@
+.page-informacao-livro {
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 40px 60px;
+    box-sizing: border-box;
+}
+
+.exemplares-section {
+    display: flex;
+    gap: 28px; /* espaço entre tabela e imagem */
+    padding-bottom: 33px;
+    padding-top: 30px;
+
+}
+
+.exemplares-table {
+    width: 1388px;
+}
+
+.exemplares-table table {
+    width: 100%;
+}
+
+.exemplares-table td,
+.exemplares-table th {
+    border-bottom: 1px solid var(--azul, #37228B);
+
+    color: var(--preto, #0D0D0D);
+    font-family: Roboto;
+    font-size: 14px;
+    line-height: 143%;
+    letter-spacing: 0.17px;
+}
+.exemplares-table td,
+.exemplares-table th {
+    text-align: center;
+}
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 23px;
+
+}
+
+.books-container {
+    display: flex;
+    flex: 1;
+    padding: 40px 0;
+    align-items: center;
+    gap: 23px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+}
+
+.books-container > * {
+    flex: 0 0 200px;
+}
