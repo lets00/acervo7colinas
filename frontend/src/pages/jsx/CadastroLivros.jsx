@@ -25,7 +25,7 @@ function CadastroLivros() {
     <div>
       <Box sx={{ display: "flex",flexDirection: "column", alignItems:"center", minHeight: "100vh", bgcolor: "#fff", marginTop:"-55px"  }}>
         <Header />
-        <Box sx={{width: "1000%", maxWidth: "1250px"}}>
+        <Box sx={{width: "100%", maxWidth: "1250px", px:2}}>
           
             <Typography variant="h4" align="center" sx={{ mb: 4, fontWeight: "300", color: "#333", marginTop: "22px" }}>
               Cadastro Dos Livros!
