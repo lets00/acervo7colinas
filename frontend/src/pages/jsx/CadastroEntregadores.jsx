@@ -21,7 +21,7 @@ function CadastroEntregadores() {
                 </Typography>
 
                 <Box sx={{backgroundColor: "#CCD3F8",display: "flex", justifyContent: "flex-start", alignItems: "center", 
-                width: "auto",width: "100%", py: "10px", px: "40px", mb: 4, boxSizing: "border-box"
+                width: "auto", py: "10px", px: "40px", mb: 4, boxSizing: "border-box"
                 }} >
                     <Typography sx={{ color: "#333", fontWeight: "300", fontSize: "1.1rem" }}>
                         Dados do Usuário:

@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider, Container } from "@mui/material";
 
 import Home from "./pages/jsx/Home.jsx";
 import InformacaoLivro from "./pages/jsx/informacaoLivro.jsx";
-import CadastroLivros from "./pages/CadastroLivros.jsx";
+import CadastroLivros from "./pages/jsx/CadastroLivros.jsx";
 
 const theme = createTheme();
 

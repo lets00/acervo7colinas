@@ -1,3 +1,4 @@
+// acervo7colinas\backend\src\controllers\livroController.js
 export function buscarLivroPorId(req, res) {
     const { id } = req.params;
 
@@ -36,12 +37,12 @@ export function listarExemplares(req, res) {
             {
                 id: 1008,
                 secao: "Informática",
-                disponivel: false
+                disponivel: true
             },
             {
                 id: 1007,
                 secao: "Informática",
-                disponivel: true
+                disponivel: false
             },
             {
                 id: 1006,
@@ -74,7 +75,7 @@ export function listarRelacionados(req, res) {
             },
             {
                 id: 3,
-                img: "/capas/designingdata-intensive.jpg",
+                img: "/capas/designing-data-intensive.jpg",
                 titulo: "Designing Data-Intensive Applications",
                 avaliacao: 4.5
             },
@@ -115,13 +116,15 @@ export function listarAvaliacoes(req, res) {
 
     const avaliacoesPorLivro = {
         1: [
-            {
+            {   
+                id: 1,
                 usuario: "Omar Sundaram",
                 avaliacao: 4,
                 comentario: "Muito bom para quem quer aprender boas práticas.",
                 tempo: "9 horas atrás"
             },
             {
+                id: 2,
                 usuario: "Anna Gomes",
                 avaliacao: 5,
                 comentario: "Livro excelente para desenvolvedores.",

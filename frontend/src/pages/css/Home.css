@@ -26,7 +26,7 @@
 .carousel-container {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 23px;
     width: 100%;
 }
 
@@ -36,10 +36,11 @@
     flex: 1;
     padding: 40px 0;
     align-items: center;
-    gap: 50px;
     overflow-x: hidden;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
+
+    gap: 23px; /* 👈 controla o espaço entre os cards */
 }
 
 
