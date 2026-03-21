@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import Box from "@mui/material/Box";
 import "../css/Home.css";
 import BookCard from "../../components/BookCard";
-import logo from "../../components/Header";
 import SectionHeader from "../../components/SectionHeader";
+import Header from "../../components/Header";
 import debateImg from "../../assets/imagem_debate.png";
 import bibliotecaImg from "../../assets/imagem_biblioteca.png";
-// Importações para a tabela
+
+// Tabela
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -14,11 +16,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-// Importações para o carrossel
+// Carrossel
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useRef } from "react";
 
 
 function Home() {
@@ -55,116 +56,129 @@ function Home() {
     }, []);
 
     return (
-        <>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minHeight: "100vh",
+            bgcolor: "#fff",
+            marginTop: "-55px"
+        }}>
 
-            <div className="page-home"> 
-                <div className="imagem-biblioteca">
-                    <img src={bibliotecaImg} alt="Biblioteca" />
-                </div>
-
-                <SectionHeader title="Destaque" />
-                <div className="carousel-container">
-
-                    <IconButton onClick={() => scrollLeft(destaquesRef)}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={destaquesRef}>
-                        {destaques.map((book, index) => (
-                            <BookCard
-                                key={index}
-                                id={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
+            <Header />
+    
+            <Box sx={{ width: "100%", maxWidth: "1440px", px:2,marginLeft: "60px", marginRight: "60px" }}>
+                <div className="page-home"> 
+                    <div className="imagem-biblioteca">
+                        <img src={bibliotecaImg} alt="Biblioteca" />
                     </div>
 
-                    <IconButton onClick={() => scrollRight(destaquesRef)}>
-                        <ChevronRightIcon />
-                    </IconButton>
+                    <SectionHeader title="Destaque" />
+                    <div className="carousel-container">
 
-                </div>
+                        <IconButton onClick={() => scrollLeft(destaquesRef)}>
+                            <ChevronLeftIcon />
+                        </IconButton>
 
+                        <div className="books-container" ref={destaquesRef}>
+                            {destaques.map((book, index) => (
+                                <BookCard
+                                    key={index}
+                                    id={book.id}
+                                    imagem={`http://localhost:3000${book.img}`}
+                                    titulo={book.titulo}
+                                    avaliacao={book.avaliacao}
+                                />
+                            ))}
+                        </div>
 
-                <SectionHeader title="Novidades" />
-                <div className="carousel-container">
+                        <IconButton onClick={() => scrollRight(destaquesRef)}>
+                            <ChevronRightIcon />
+                        </IconButton>
 
-                    <IconButton onClick={() => scrollLeft(novidadesRef)}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={novidadesRef}>
-                        {novidades.map((book, index) => (
-                            <BookCard
-                                key={index}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
                     </div>
 
-                    <IconButton onClick={() => scrollRight(novidadesRef)}>
-                        <ChevronRightIcon />
-                    </IconButton>
 
-                </div>
+                    <SectionHeader title="Novidades" />
+                    <div className="carousel-container">
 
-                <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
+                        <IconButton onClick={() => scrollLeft(novidadesRef)}>
+                            <ChevronLeftIcon />
+                        </IconButton>
 
-                <div className="agenda-banner">
-                <p className="agenda-texto">
-                    Não precisa de inscrição! Basta chegar, ocupar seu lugar à mesa e compartilhar suas ideias.
-                    Nossa biblioteca é o seu espaço de fala.
-                </p>
-                </div>
+                        <div className="books-container" ref={novidadesRef}>
+                            {novidades.map((book, index) => (
+                                <BookCard
+                                    key={index}
+                                    imagem={`http://localhost:3000${book.img}`}
+                                    titulo={book.titulo}
+                                    avaliacao={book.avaliacao}
+                                />
+                            ))}
+                        </div>
+
+                        <IconButton onClick={() => scrollRight(novidadesRef)}>
+                            <ChevronRightIcon />
+                        </IconButton>
+
+                    </div>
+
+                    <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
+
+                    <div className="agenda-banner">
+                    <p className="agenda-texto">
+                        Não precisa de inscrição! Basta chegar, ocupar seu lugar à mesa e compartilhar suas ideias.
+                        Nossa biblioteca é o seu espaço de fala.
+                    </p>
+                    </div>
 
 
-                <div className="agenda-section">
+                    <div className="agenda-section">
 
-                    <div className="agenda-table">
-                        <TableContainer>
-                            <Table className="agenda-table" size="medium">
+                        <div className="agenda-table">
+                            <TableContainer>
+                                <Table className="agenda-table" size="medium">
 
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell>Hora</TableCell>
-                                        <TableCell>Tema a ser debatido</TableCell>
-                                        <TableCell>Obra / Autor</TableCell>
-                                        <TableCell>Celebrador(a)</TableCell>
-                                        <TableCell>Local</TableCell>
-                                    </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    {agendas.map((agenda, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{agenda.data}</TableCell>
-                                            <TableCell>{agenda.hora}</TableCell>
-                                            <TableCell>{agenda.tema}</TableCell>
-                                            <TableCell>{agenda.obra}</TableCell>
-                                            <TableCell>{agenda.celebrador}</TableCell>
-                                            <TableCell>{agenda.local}</TableCell>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Data</TableCell>
+                                            <TableCell>Hora</TableCell>
+                                            <TableCell>Tema a ser debatido</TableCell>
+                                            <TableCell>Obra / Autor</TableCell>
+                                            <TableCell>Celebrador(a)</TableCell>
+                                            <TableCell>Local</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
+                                    </TableHead>
 
-                            </Table>
-                        </TableContainer>
-                    </div>
+                                    <TableBody>
+                                        {agendas.map((agenda, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{agenda.data}</TableCell>
+                                                <TableCell>{agenda.hora}</TableCell>
+                                                <TableCell>{agenda.tema}</TableCell>
+                                                <TableCell>{agenda.obra}</TableCell>
+                                                <TableCell>{agenda.celebrador}</TableCell>
+                                                <TableCell>{agenda.local}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
 
-                    <div className="agenda-image">
-                        <img src={debateImg} alt="Debate" />
+                                </Table>
+                            </TableContainer>
+                        </div>
+
+                        <div className="agenda-image">
+                            <img src={debateImg} alt="Debate" />
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+                
 
-        </>
+            </Box>
+        </Box>
     );
 }
 
