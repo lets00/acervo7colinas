@@ -1,20 +1,17 @@
-.page-home {
-    width: 100%;
-    max-width: 1512px;
-    margin: 0 auto;
-    padding: 40px 60px;
-    box-sizing: border-box;
-}
 
-/* imagem da biblioteca */
+
 
 .imagem-biblioteca {
+
+    margin-top: 25px;
+    margin-bottom: 20px;
     width: 100%;
     height: 379px;
     overflow: hidden;
 }
 
 .imagem-biblioteca img {
+
     width: 100%;
     height: 100%;
     object-fit: cover;
