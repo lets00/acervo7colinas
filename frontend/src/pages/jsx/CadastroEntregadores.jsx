@@ -1,11 +1,13 @@
 
 import React from "react";
 import Header from "../../components/Header";
-import { Box, Typography, Grid, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel } from "@mui/material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+
 function CadastroEntregadores() {
+    const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
     const [cidade, setCidade] = React.useState('Garanhuns');
 
     const handleCidadeChange = (event) => {
@@ -18,12 +20,7 @@ function CadastroEntregadores() {
 
     return (
         <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            minHeight: "100vh",
-            bgcolor: "#fff",
-            marginTop: "-55px"
+            display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", marginTop: "-55px"
         }}>
             <Header />
             <Box sx={{ width: "100%", maxWidth: "1250px", px:2 }}>
@@ -46,12 +43,7 @@ function CadastroEntregadores() {
 
                 <form onSubmit={Submit} >
                     <Box sx={{ width: '950px', mb: 2 ,  mx: "auto"}}>
-                        <TextField
-                            required
-                            fullWidth
-                            label="Nome Completo"
-                            variant="outlined"
-                            size="small"
+                        <TextField required  fullWidth label="Nome Completo" variant="outlined"  size="small"
                         />
                     </Box>
                     <Grid container spacing={2} justifyContent="center">
@@ -74,13 +66,7 @@ function CadastroEntregadores() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Sexo"
-                                        size="small"
-                                        sx={{  width:"460px"}}
-                                    />
+                                    <TextField required fullWidth label="Sexo" size="small" sx={{  width:"460px"}} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -103,12 +89,7 @@ function CadastroEntregadores() {
                         </Grid>
                         
                         <TextField
-                            required
-                            fullWidth
-                            label="Email"
-                            variant="outlined"
-                            size="small"
-                            sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
+                            required fullWidth label="Email" variant="outlined" size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
                         />
                        
                         <TextField
@@ -120,13 +101,7 @@ function CadastroEntregadores() {
                             placeholder="Telefone"
                             helperText="Propostas serão enviadas para este número via WhatsApp"
                             sx={{
-                                maxWidth: '950px',
-                                mb: 2,
-                                mx: 'auto',
-                                '& .MuiFormHelperText-root': {
-                                    marginLeft: 0,
-                                    color: '#666'
-                                }
+                                maxWidth: '950px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
                             }}
                             InputProps={{
                                 startAdornment: (
@@ -150,11 +125,7 @@ function CadastroEntregadores() {
                                             }}>
                                                 + 55
                                             </Typography>
-                                            <Box sx={{
-                                                borderLeft: '1px solid #ccc',
-                                                height: '20px',
-                                                ml: 1
-                                            }} />
+                                            <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
                                         </Box>
                                     </InputAdornment>
                                 ),
@@ -233,26 +204,73 @@ function CadastroEntregadores() {
                         </Grid>
 
                     </Grid>
-                    <Box sx={{backgroundColor: "#CCD3F8",display: "flex", alignItems: "center",  mt: 5,
-                        width: "auto",width: "100%", py: "10px", px: "40px", mb: 4, boxSizing: "border-box", width:"1200px"
+                    <Box sx={{backgroundColor: "#CCD3F8",display: "flex", alignItems: "center",mb:4,  mt: 4,
+                        width: "auto",width: "100%", py: "10px", px: "40px", boxSizing: "border-box", width:"1200px"
                         }} >
                         <Typography sx={{ color: "#333", fontWeight: "300", fontSize: "1.1rem" }}>
                             Informações de entrega
                         </Typography>
                     </Box>
-                    <Grid container spacing={2} justifyContent="center">
-                        
-                        <TextField fullWidth label="Tipo de Entrega" size="small" sx={{width:"950px"}} />
-                               
-                        <TextField fullWidth label="Disponibilidade" size="small"sx={{width:"950px"}} />
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                                <Box sx={{ border: "1px solid #ccc",borderRadius: "12px", padding: "12px", 
+                                    mt: 1, width: "fit-content", minWidth: "200px", }}>
+                                <Typography variant="h6" sx={{ mb: 2, color: "#666", fontWeight: "300", textAlign: "center" }}>
+                                    Tipo de entrega:
+                                </Typography>
+
+                                <Box sx={{ display: "flex", gap: 4, justifyContent: "center" }}>
+                                    <FormControlLabel control={<Checkbox />} label="Moto" sx={{ color: "#000" }}/>
+                                    <FormControlLabel control={<Checkbox />} label="Carro" sx={{ color: "#000" }} />
+                                    <FormControlLabel control={<Checkbox />} label="Bicicleta" sx={{ color: "#000" }} />
+                                </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Box sx={{backgroundColor: "#CCD3F8",display: "flex", alignItems: "center",  mt: 5,
-                        width: "auto",width: "100%", py: "10px", px: "40px", mb: 4, boxSizing: "border-box", width:"1200px"
-                        }} >
-                        <Typography sx={{ color: "#333", fontWeight: "300", fontSize: "1.1rem" }}>
-                            Foto de Perfil
-                        </Typography>
-                    </Box>
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                            <Box
+                                sx={{ border: "1px solid #ccc",borderRadius: "12px", padding: "12px",
+                                    mt: 5, width: "fit-content", minWidth: "200px", }}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{mb: 2, color: "#666", fontWeight: "300", textAlign: "center"}}>
+                                    Disponibilidade:
+                                </Typography>
+
+                                <Box sx={{ display: "flex", gap: 4, justifyContent: "center" }}>
+                                    <FormControlLabel control={<Checkbox />} label="Manhã" sx={{color:"#000"}} />
+                                    <FormControlLabel control={<Checkbox />} label="Tarde" sx={{color:"#000"}} />
+                                    <FormControlLabel control={<Checkbox />} label="Noite" sx={{color:"#000"}} />
+                                </Box>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    <Grid container justifyContent="center" sx={{mt:3}}>
+                        <Box sx={{backgroundColor: "#CCD3F8",display: "flex", alignItems: "center",  mt: 3,
+                            width: "auto",width: "100%", py: "10px", px: "40px", mb: 4, boxSizing: "border-box", width:"600px"
+                            }} >
+                            <Typography sx={{ color: "#333", fontWeight: "300", fontSize: "1.1rem" }}>
+                                Foto de Perfil
+                            </Typography>
+                        </Box>
+                        <Box sx={{backgroundColor: "#CCD3F8",display: "flex", alignItems: "center",  mt: 3,
+                            width: "auto",width: "100%", py: "10px", px: "40px", mb: 4, boxSizing: "border-box", width:"570px"
+                            }} >
+                            <Typography sx={{ color: "#333", fontWeight: "300", fontSize: "1.1rem" }}>
+                                Foto da CNH
+                            </Typography>
+                        </Box>
+                    </Grid>  
+                    <Grid container justifyContent="center">
+                        <Grid item>
+                                <Box sx={{ border: "1px solid #ccc",borderRadius: "12px", padding: "12px", 
+                                    mt: 1, minWidth: "800px", minHeight:"300px" }}>
+
+                            </Box>
+                        </Grid>
+                    </Grid>
+
                 </form>
             </Box>
         </Box>
