@@ -29,18 +29,14 @@
 
 
 .books-container {
-    display: flex;
-    flex: 1;
-    padding: 40px 0;
-    align-items: center;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-
-    gap: 23px; /* 👈 controla o espaço entre os cards */
+    display: flex !important;
+    gap: 23px !important;
+    background: rgb(255, 255, 255);
+    padding-right: 60px!important;
 }
-
-
+.books-container > * {
+    flex-shrink: 0;
+}
 /* banner agenda */
 
 .agenda-banner {

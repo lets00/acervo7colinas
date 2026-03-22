@@ -1,6 +1,6 @@
 .book-card {
-    width: 240px;
-    height: 420px;
+    width: 200px;
+    height: 360px;
 
     background: #ffffff;
     border-radius: 10px;
@@ -16,8 +16,8 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .book-image {
-    width: 204px;
-    height: 324px;
+    width: 170px;
+    height: 270px;
 
     margin-top: 15px;
     margin-right: 18px;
