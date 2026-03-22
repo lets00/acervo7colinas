@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
-import SectionHeader from "../../components/SectionHeader";
-import BookCard from "../../components/BookCard";
-import Comentario from "../../components/comentario";
-import Header from "../../components/Header";
+import SectionHeader from "../../components/jsx/SectionHeader";
+import BookCard from "../../components/jsx/BookCard";
+import Comentario from "../../components/jsx/comentario";
+import Header from "../../components/jsx/Header";
 
 import iconInfo from "../../assets/info.png";
 import iconCalendario from "../../assets/calendario.png";
@@ -20,7 +20,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import Box from "@mui/material/Box";
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -37,23 +37,36 @@ function InformacaoLivro() {
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
+    const [expandido, setExpandido] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:3000/livros/${id}`)
-            .then(res => res.json())
-            .then(data => setLivro(data));
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Livro não encontrado");
+                }
+                return res.json();
+            })
+            .then(data => setLivro(data))
+            .catch(() => {
+                console.log("Livro não encontrado na API");
+                setLivro(null);
+            });
 
         fetch(`http://localhost:3000/livros/${id}/exemplares`)
             .then(res => res.json())
-            .then(data => setExemplares(data));
+            .then(data => setExemplares(data))
+            .catch(() => setExemplares([]));
 
         fetch(`http://localhost:3000/livros/${id}/avaliacoes`)
             .then(res => res.json())
-            .then(data => setAvaliacoes(data));
+            .then(data => setAvaliacoes(data))
+            .catch(() => setAvaliacoes([]));
 
         fetch(`http://localhost:3000/livros/${id}/relacionados`)
             .then(res => res.json())
-            .then(data => setRelacionados(data));
+            .then(data => setRelacionados(data))
+            .catch(() => setRelacionados([]));
 
     }, [id]);
 
@@ -76,16 +89,16 @@ function InformacaoLivro() {
             bgcolor: "#fff",
             marginTop: "-55px"
         }}>
-        
+
             <Header />
-            <Box sx={{ width: "100%", maxWidth: "1250px", px:2 , marginLeft: "60px", marginRight: "60px"}}>
+            <Box sx={{ width: "100%", maxWidth: "1250px", px: 2, marginLeft: "60px", marginRight: "60px" }}>
 
                 {/* 🔥 TOPO DO LIVRO */}
                 <div className="livro-info-topo">
 
                     <div className="livro-capa-container">
                         <img
-                            src={`http://localhost:3000${livro.img}`}
+                            src={livro.img ? `http://localhost:3000${livro.img}` : ""}
                             alt={livro.titulo}
                             className="livro-capa"
                         />
@@ -103,7 +116,7 @@ function InformacaoLivro() {
                         <h3>{livro.autor}</h3>
 
                         <div className="livro-avaliacao">
-                            <Rating value={livro.avaliacao} precision={0.5} readOnly />
+                            <Rating value={livro.avaliacao || 0} precision={0.5} readOnly />
                             <span>{livro.avaliacao}</span>
                         </div>
                         <div className="livro-meta">
@@ -137,12 +150,34 @@ function InformacaoLivro() {
 
                         <div className="livro-generos">
                             <p>Gêneros:</p>
-                            {livro.generos.map((g, index) => (
+                            {livro.generos?.map((g, index) => (
                                 <span key={index}>{g}</span>
                             ))}
                         </div>
 
-                        <p className="livro-descricao">{livro.descricao}</p>
+                        <div className="descricao-container">
+                            <p className={expandido ? "livro-descricao aberta" : "livro-descricao"}>
+                                {livro.descricao}
+                            </p>
+
+                            <div className="ver-mais-container">
+                                <Button
+                                    onClick={() => setExpandido(!expandido)}
+                                    endIcon={
+                                        <ExpandMoreIcon
+                                            style={{
+                                                transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
+                                                transition: "0.3s"
+                                            }}
+                                        />
+                                    }
+                                >
+                                    {expandido ? "Ver menos" : "Ver mais"}
+                                </Button>
+                            </div>
+                        </div>
+
+
                     </div>
 
                 </div>
@@ -205,17 +240,17 @@ function InformacaoLivro() {
 
                 <SectionHeader title="Avaliações e comentários" />
 
-                    <div className="avaliacoes">
-                        {avaliacoes.map((av) => (
-                            <Comentario
-                                key={av.id}
-                                usuario={av.usuario}
-                                comentario={av.comentario}
-                                nota={av.avaliacao}
-                                tempo={av.tempo}
-                            />
-                        ))}
-                    </div>
+                <div className="avaliacoes">
+                    {avaliacoes.map((av) => (
+                        <Comentario
+                            key={av.id}
+                            usuario={av.usuario}
+                            comentario={av.comentario}
+                            nota={av.avaliacao}
+                            tempo={av.tempo}
+                        />
+                    ))}
+                </div>
 
             </Box>
         </Box>

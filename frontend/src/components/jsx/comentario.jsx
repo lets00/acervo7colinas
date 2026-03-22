@@ -1,5 +1,5 @@
 import { Avatar, Rating } from "@mui/material";
-import "./comentario.css";
+import "../css/comentario.css";
 
 function Comentario({ usuario, comentario, nota, tempo }) {
     return (
@@ -14,12 +14,12 @@ function Comentario({ usuario, comentario, nota, tempo }) {
                 <div className="comentario-conteudo">
 
                     <div className="comentario-top">
-                        <Rating value={nota} readOnly size="small" />
-
-                        <span className="comentario-usuario">
-                            {usuario} • {tempo}
-                        </span>
+                        <Rating value={nota} readOnly />
                     </div>
+
+                    <span className="comentario-usuario">
+                        {usuario} • {tempo}
+                    </span>
 
                     <p className="comentario-texto">
                         {comentario}

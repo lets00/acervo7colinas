@@ -1,5 +1,4 @@
 /* acervo7colinas\frontend\src\pages\css\informacaoLivros.css */
-/* container da capa + botão */
 
 
 .livro-info-topo {
@@ -34,8 +33,10 @@
 .livro-detalhes {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* 🔥 tudo à esquerda */
-    gap: 15px; /* próximo do layout da imagem */
+    align-items: flex-start;
+    /* 🔥 tudo à esquerda */
+    gap: 15px;
+    /* próximo do layout da imagem */
     max-width: 800px;
 }
 
@@ -54,7 +55,8 @@
     color: #37228B;
     font-size: 18px;
     font-weight: 400;
-    opacity: 0.64; /* 🔥 igual ao que você pediu */
+    opacity: 0.64;
+    /* 🔥 igual ao que você pediu */
     margin: 0;
 }
 
@@ -80,7 +82,8 @@
     gap: 8px;
     font-size: 13px;
 }
-meta-item img {
+
+.meta-item img {
     width: 18px;
     height: 18px;
 }
@@ -88,14 +91,17 @@ meta-item img {
 /* GÊNEROS */
 .livro-generos {
     display: flex;
-    align-items: center; /* 🔥 alinha verticalmente */
+    align-items: center;
+    /* 🔥 alinha verticalmente */
     gap: 10px;
-    flex-wrap: wrap; /* quebra linha se precisar */
+    flex-wrap: wrap;
+    /* quebra linha se precisar */
 }
 
 /* texto "Gêneros:" */
 .livro-generos p {
-    margin: 0; /* 🔥 remove espaço padrão */
+    margin: 0;
+    /* 🔥 remove espaço padrão */
     font-size: 14px;
     color: #333;
 }
@@ -107,13 +113,39 @@ meta-item img {
     cursor: pointer;
     font-size: 14px;
 }
+
 /* DESCRIÇÃO */
 .livro-descricao {
     font-size: 14px;
     line-height: 22px;
-    text-align: justify; /* 🔥 importante */
+    text-align: justify;
+    /* 🔥 importante */
     color: #333;
 }
+
+.livro-descricao {
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    /* 👈 limite de linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ver-mais-container {
+    display: block;
+    text-align: right;
+}
+
+.ver-mais-container :focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #37228B;
+    border-radius: 4px;
+}
+
+.livro-descricao.aberta {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
 .avaliacao-card {
     border-bottom: 1px solid #ccc;
     padding: 15px 0;
@@ -122,7 +154,8 @@ meta-item img {
 
 .exemplares-section {
     display: flex;
-    gap: 28px; /* espaço entre tabela e imagem */
+    gap: 28px;
+    /* espaço entre tabela e imagem */
     padding-bottom: 33px;
     padding-top: 30px;
 
@@ -146,6 +179,7 @@ meta-item img {
     line-height: 143%;
     letter-spacing: 0.17px;
 }
+
 .exemplares-table td,
 .exemplares-table th {
     text-align: center;
@@ -157,6 +191,14 @@ meta-item img {
     justify-content: center;
     gap: 23px;
 
+}
+.books-container {
+    display: flex !important;
+    gap: 23px !important;
+    background: rgb(255, 255, 255);
+}
+.books-container > * {
+    flex-shrink: 0;
 }
 
 .books-container {
@@ -170,6 +212,6 @@ meta-item img {
     scroll-snap-type: x mandatory;
 }
 
-.books-container > * {
+.books-container>* {
     flex: 0 0 200px;
 }

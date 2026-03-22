@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {  Typography, TextField, Box, Toolbar, Button, Stack, Chip, InputAdornment, Divider  } from '@mui/material';
 
-import logo from '../assets/logo.png'
-import Search from '../assets/Search.png'
-import Perfil from '../assets/Perfil.png'
+import logo from "../../assets/logo.png";
+import Search from "../../assets/Search.png";
+import Perfil from "../../assets/Perfil.png";
 
 export default function Header() {
 
