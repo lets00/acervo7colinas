@@ -1,5 +1,5 @@
 import { Avatar, Rating } from "@mui/material";
-import "./comentario.css";
+import "../css/comentario.css";
 
 function Comentario({ usuario, comentario, nota, tempo }) {
     return (

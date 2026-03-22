@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
-import SectionHeader from "../../components/SectionHeader";
-import BookCard from "../../components/BookCard";
-import Comentario from "../../components/comentario";
-import Header from "../../components/Header";
+import SectionHeader from "../../components/jsx/SectionHeader";
+import BookCard from "../../components/jsx/BookCard";
+import Comentario from "../../components/jsx/comentario";
+import Header from "../../components/jsx/Header";
 
 import iconInfo from "../../assets/info.png";
 import iconCalendario from "../../assets/calendario.png";
