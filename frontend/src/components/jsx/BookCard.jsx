@@ -1,4 +1,4 @@
-import "./BookCard.css";
+import "../css/BookCard.css";
 import { Link } from "react-router-dom";
 
 

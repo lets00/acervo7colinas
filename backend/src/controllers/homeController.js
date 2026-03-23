@@ -1,5 +1,11 @@
 export function listarDestaques(req, res) {
     const destaques = [
+        {   
+            id: 1,
+            img: "/capas/o-codificador-limpo.jpg",
+            titulo: "O Codificador Limpo",
+            avaliacao: 4.0
+        },
         {
             img: "/capas/1984.jpg",
             titulo: "1984",

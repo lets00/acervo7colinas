@@ -1,8 +1,16 @@
 import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
-import SectionHeader from "../../components/SectionHeader";
-import BookCard from "../../components/BookCard";
+import SectionHeader from "../../components/jsx/SectionHeader";
+import BookCard from "../../components/jsx/BookCard";
+import Comentario from "../../components/jsx/comentario";
+import Header from "../../components/jsx/Header";
+
+import iconInfo from "../../assets/info.png";
+import iconCalendario from "../../assets/calendario.png";
+import iconIsbn from "../../assets/isbn.png";
+import iconLivroAberto from "../../assets/livro-aberto.png";
+import iconLivroFechado from "../../assets/livro-fechado.png";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,27 +18,57 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 
-// Importações para o carrossel
+import Box from "@mui/material/Box";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Button from "@mui/material/Button";
 
+// ⭐ MUI Rating
+import Rating from "@mui/material/Rating";
 
 function InformacaoLivro() {
-
     const { id } = useParams();
-    const exemplares = [
-        { id: 1, secao: "A1", disponibilidade: "Disponível" },
-        { id: 2, secao: "B3", disponibilidade: "Emprestado" },
-        { id: 3, secao: "C2", disponibilidade: "Disponível" }
-    ];
-
-    const [destaques, setDestaques] = useState([]);
-
-
     const destaquesRef = useRef(null);
+
+    const [livro, setLivro] = useState(null);
+    const [exemplares, setExemplares] = useState([]);
+    const [avaliacoes, setAvaliacoes] = useState([]);
+    const [relacionados, setRelacionados] = useState([]);
+    const [expandido, setExpandido] = useState(false);
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/livros/${id}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Livro não encontrado");
+                }
+                return res.json();
+            })
+            .then(data => setLivro(data))
+            .catch(() => {
+                console.log("Livro não encontrado na API");
+                setLivro(null);
+            });
+
+        fetch(`http://localhost:3000/livros/${id}/exemplares`)
+            .then(res => res.json())
+            .then(data => setExemplares(data))
+            .catch(() => setExemplares([]));
+
+        fetch(`http://localhost:3000/livros/${id}/avaliacoes`)
+            .then(res => res.json())
+            .then(data => setAvaliacoes(data))
+            .catch(() => setAvaliacoes([]));
+
+        fetch(`http://localhost:3000/livros/${id}/relacionados`)
+            .then(res => res.json())
+            .then(data => setRelacionados(data))
+            .catch(() => setRelacionados([]));
+
+    }, [id]);
 
     const scrollLeft = (ref) => {
         ref.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -40,56 +78,142 @@ function InformacaoLivro() {
         ref.current.scrollBy({ left: 300, behavior: "smooth" });
     };
 
-    useEffect(() => {
-
-        fetch("http://localhost:3000/destaques")
-            .then(res => res.json())
-            .then(data => setDestaques(data));
-
-
-    }, []);
-
+    if (!livro) return <p>Carregando...</p>;
 
     return (
-        <>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minHeight: "100vh",
+            bgcolor: "#fff",
+            marginTop: "-55px"
+        }}>
 
-            <div className="page-informacao-livro">
-                <h1>Informações do Livro</h1>
-                <p>ID do livro: {id}</p>
+            <Header />
+            <Box sx={{ width: "100%", maxWidth: "1250px", px: 2, marginLeft: "60px", marginRight: "60px" }}>
 
+                {/* 🔥 TOPO DO LIVRO */}
+                <div className="livro-info-topo">
+
+                    <div className="livro-capa-container">
+                        <img
+                            src={livro.img ? `http://localhost:3000${livro.img}` : ""}
+                            alt={livro.titulo}
+                            className="livro-capa"
+                        />
+
+                        <Button
+                            variant="contained"
+                            className="btn-prateleira"
+                        >
+                            ADICIONAR À PRATELEIRA
+                        </Button>
+                    </div>
+
+                    <div className="livro-detalhes">
+                        <h1>{livro.titulo}</h1>
+                        <h3>{livro.autor}</h3>
+
+                        <div className="livro-avaliacao">
+                            <Rating value={livro.avaliacao || 0} precision={0.5} readOnly />
+                            <span>{livro.avaliacao}</span>
+                        </div>
+                        <div className="livro-meta">
+
+                            <div className="meta-item">
+                                <img src={iconLivroFechado} alt="editora" />
+                                <span>{livro.editora}</span>
+                            </div>
+
+                            <div className="meta-item">
+                                <img src={iconLivroAberto} alt="paginas" />
+                                <span>{livro.paginas} páginas</span>
+                            </div>
+
+                            <div className="meta-item">
+                                <img src={iconCalendario} alt="ano" />
+                                <span>{livro.ano}</span>
+                            </div>
+
+                            <div className="meta-item">
+                                <img src={iconIsbn} alt="isbn" />
+                                <span>ISBN: {livro.isbn}</span>
+                            </div>
+
+                            <div className="meta-item">
+                                <img src={iconInfo} alt="idioma" />
+                                <span>{livro.idioma}</span>
+                            </div>
+
+                        </div>
+
+                        <div className="livro-generos">
+                            <p>Gêneros:</p>
+                            {livro.generos?.map((g, index) => (
+                                <span key={index}>{g}</span>
+                            ))}
+                        </div>
+
+                        <div className="descricao-container">
+                            <p className={expandido ? "livro-descricao aberta" : "livro-descricao"}>
+                                {livro.descricao}
+                            </p>
+
+                            <div className="ver-mais-container">
+                                <Button
+                                    onClick={() => setExpandido(!expandido)}
+                                    endIcon={
+                                        <ExpandMoreIcon
+                                            style={{
+                                                transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
+                                                transition: "0.3s"
+                                            }}
+                                        />
+                                    }
+                                >
+                                    {expandido ? "Ver menos" : "Ver mais"}
+                                </Button>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                {/* 📚 EXEMPLARES */}
                 <SectionHeader title="Exemplares" />
 
                 <div className="exemplares-section">
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>ID</TableCell>
+                                    <TableCell>SEÇÃO</TableCell>
+                                    <TableCell>DISPONIBILIDADE</TableCell>
+                                </TableRow>
+                            </TableHead>
 
-                    <div className="exemplares-table">
-                        <TableContainer>
-                            <Table className="exemplares-table" size="medium">
-
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>SEÇÃO</TableCell>
-                                        <TableCell>DISPONIBILIDADE</TableCell>
+                            <TableBody>
+                                {exemplares.map((exemplar) => (
+                                    <TableRow key={exemplar.id}>
+                                        <TableCell>{exemplar.id}</TableCell>
+                                        <TableCell>{exemplar.secao}</TableCell>
+                                        <TableCell>
+                                            {exemplar.disponivel ? "Disponível" : "Indisponível"}
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    {exemplares.map((exemplar, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{exemplar.id}</TableCell>
-                                            <TableCell>{exemplar.secao}</TableCell>
-                                            <TableCell>{exemplar.disponibilidade}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-
-                            </Table>
-                        </TableContainer>
-
-                    </div>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </div>
+
+                {/* 📖 RELACIONADOS */}
                 <SectionHeader title="Os leitores também gostaram" />
-                
+
                 <div className="carousel-container">
 
                     <IconButton onClick={() => scrollLeft(destaquesRef)}>
@@ -97,9 +221,9 @@ function InformacaoLivro() {
                     </IconButton>
 
                     <div className="books-container" ref={destaquesRef}>
-                        {destaques.map((book, index) => (
+                        {relacionados.map((book) => (
                             <BookCard
-                                key={index}
+                                key={book.id}
                                 id={book.id}
                                 imagem={`http://localhost:3000${book.img}`}
                                 titulo={book.titulo}
@@ -113,13 +237,24 @@ function InformacaoLivro() {
                     </IconButton>
 
                 </div>
+
                 <SectionHeader title="Avaliações e comentários" />
 
+                <div className="avaliacoes">
+                    {avaliacoes.map((av) => (
+                        <Comentario
+                            key={av.id}
+                            usuario={av.usuario}
+                            comentario={av.comentario}
+                            nota={av.avaliacao}
+                            tempo={av.tempo}
+                        />
+                    ))}
+                </div>
 
-            </div>
-        </>
+            </Box>
+        </Box>
     );
 }
-
 
 export default InformacaoLivro;

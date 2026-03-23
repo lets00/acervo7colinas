@@ -1,14 +1,161 @@
-.page-informacao-livro {
-    width: 100%;
-    max-width: 1512px;
-    margin: 0 auto;
-    padding: 40px 60px;
-    box-sizing: border-box;
+/* acervo7colinas\frontend\src\pages\css\informacaoLivros.css */
+
+
+.livro-info-topo {
+    display: flex;
+    margin-top: 30px;
+    margin-bottom: 40px;
+    margin-left: 30px;
+    margin-right: 30px;
+    align-items: flex-start;
 }
+
+/* CAPA (mantido igual) */
+.livro-capa {
+    width: 263px;
+    height: 417px;
+    border-radius: 10px;
+    gap: 49px;
+}
+
+/* BOTÃO (mantido igual) */
+.btn-prateleira {
+    width: 263px;
+    height: 48px;
+    background-color: #2D72B8 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+    text-transform: none !important;
+}
+
+/* DETALHES */
+.livro-detalhes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* 🔥 tudo à esquerda */
+    gap: 15px;
+    /* próximo do layout da imagem */
+    max-width: 800px;
+}
+
+/* TÍTULO */
+.livro-detalhes h1 {
+    color: #37228B;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 32px;
+    margin: 0;
+    text-align: left;
+}
+
+/* AUTOR */
+.livro-detalhes h3 {
+    color: #37228B;
+    font-size: 18px;
+    font-weight: 400;
+    opacity: 0.64;
+    /* 🔥 igual ao que você pediu */
+    margin: 0;
+}
+
+/* AVALIAÇÃO */
+.livro-avaliacao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* META */
+.livro-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+}
+
+/* ITEM */
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.meta-item img {
+    width: 18px;
+    height: 18px;
+}
+
+/* GÊNEROS */
+.livro-generos {
+    display: flex;
+    align-items: center;
+    /* 🔥 alinha verticalmente */
+    gap: 10px;
+    flex-wrap: wrap;
+    /* quebra linha se precisar */
+}
+
+/* texto "Gêneros:" */
+.livro-generos p {
+    margin: 0;
+    /* 🔥 remove espaço padrão */
+    font-size: 14px;
+    color: #333;
+}
+
+/* cada gênero */
+.livro-generos span {
+    color: #37228B;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* DESCRIÇÃO */
+.livro-descricao {
+    font-size: 14px;
+    line-height: 22px;
+    text-align: justify;
+    /* 🔥 importante */
+    color: #333;
+}
+
+.livro-descricao {
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    /* 👈 limite de linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.ver-mais-container {
+    display: block;
+    text-align: right;
+}
+
+.ver-mais-container :focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #37228B;
+    border-radius: 4px;
+}
+
+.livro-descricao.aberta {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.avaliacao-card {
+    border-bottom: 1px solid #ccc;
+    padding: 15px 0;
+}
+
 
 .exemplares-section {
     display: flex;
-    gap: 28px; /* espaço entre tabela e imagem */
+    gap: 28px;
+    /* espaço entre tabela e imagem */
     padding-bottom: 33px;
     padding-top: 30px;
 
@@ -32,6 +179,7 @@
     line-height: 143%;
     letter-spacing: 0.17px;
 }
+
 .exemplares-table td,
 .exemplares-table th {
     text-align: center;
@@ -43,6 +191,14 @@
     justify-content: center;
     gap: 23px;
 
+}
+.books-container {
+    display: flex !important;
+    gap: 23px !important;
+    background: rgb(255, 255, 255);
+}
+.books-container > * {
+    flex-shrink: 0;
 }
 
 .books-container {
@@ -56,6 +212,6 @@
     scroll-snap-type: x mandatory;
 }
 
-.books-container > * {
+.books-container>* {
     flex: 0 0 200px;
 }

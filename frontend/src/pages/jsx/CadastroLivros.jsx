@@ -7,7 +7,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import Header from "../../components/Header";
+import Header from "../../components/jsx/Header";
 
 function CadastroLivros() {
   const [generos, setGeneros] = React.useState("");
@@ -107,13 +107,13 @@ function CadastroLivros() {
                 <Button
                   type="submit"
                   variant="contained"
-                  sx={{ backgroundColor: "#283593", px: 5, py: 1, fontWeight: "bold",minWidth: "100px" 
+                  sx={{ backgroundColor: "#283593", px: 5, py: 1, fontWeight: "bold",minWidth: "300px" 
                   }}>
                   CADASTRAR
                 </Button>
                 <Button 
                   variant="outlined" 
-                  sx={{ color: "#283593", borderColor: "#283593", px: 5,py: 1,fontWeight: "bold", minWidth: "150px"
+                  sx={{ color: "#283593", borderColor: "#283593", px: 5,py: 1,fontWeight: "bold", minWidth: "300px"
                   }}>
                   CANCELAR
                 </Button>
