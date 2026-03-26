@@ -19,6 +19,9 @@ export const funcionarioSchema = z.object({
         errorMap: () => ({
             message: 'Selecione uma disponibilidade válida!'
         })
+    }),
+    captcha: z.boolean().refine((valor) => valor === true, {
+        message: 'Confirme que você não é um robô!'
     })
 }).refine((dados) => dados.senha === dados.confirmacaoSenha, {
     message: 'As senhas não coincidem!',

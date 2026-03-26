@@ -1,4 +1,5 @@
 import { funcionarioSchema } from "../validators/funcionarioValidator.js";
+
 export function criarFuncionario(req,res) {
     const resultado = funcionarioSchema.safeParse(req.body);
 
