@@ -11,6 +11,9 @@ export const usuarioSchema = z.object({
     telefone2: z.string().optional(),
     senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres!'),
     confirmacaoSenha: z.string(),
+    captcha: z.boolean().refine((valor) => valor === true, {
+        message: 'Confirme que você não é um robô!'
+    }),
     endereco: z.object({
         rua: z.string().min(1, 'Este campo é obrigatório'),
         numero: z.string().min(1, 'Este campo é obrigatório'),
