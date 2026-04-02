@@ -5,7 +5,6 @@ import BookCard from "../../components/jsx/BookCard";
 import SectionHeader from "../../components/jsx/SectionHeader";
 import Header from "../../components/jsx/Header";
 import debateImg from "../../assets/imagem_debate.png";
-import bibliotecaImg from "../../assets/imagem_biblioteca.png";
 
 
 // Tabela
@@ -53,7 +52,7 @@ function Home() {
                     alt="slide"
                     style={{
                     width: "100%",
-                    height: "300px",
+                    height: "clamp(180px, 40vw, 300px)",
                     objectFit: "cover",
                     borderRadius: "10px"
                     }}
@@ -64,12 +63,15 @@ function Home() {
         );
     }
 
-    const scrollLeft = (ref) => {
-        ref.current?.scrollBy({ left: -300, behavior: "smooth" });
-    };
+    const scroll = (ref, direction) => {
+        if (!ref.current) return;
 
-    const scrollRight = (ref) => {
-        ref.current?.scrollBy({ left: 300, behavior: "smooth" });
+        const containerWidth = ref.current.clientWidth;
+
+        ref.current.scrollBy({
+            left: direction === "left" ? -containerWidth * 0.8 : containerWidth * 0.8,
+            behavior: "smooth"
+        });
     };
 
     useEffect(() => {
@@ -103,7 +105,7 @@ function Home() {
                 sx={{
                     width: "100%",
                     maxWidth: "1440px",
-                    px: "60px" // 🔥 substitui marginLeft/right
+                    px: { xs: "16px", md: "60px" }
                 }}
             >
                 
@@ -117,7 +119,7 @@ function Home() {
                 <SectionHeader title="Destaque" />
 
                 <div className="carousel-container">
-                    <IconButton onClick={() => scrollLeft(destaquesRef)}>
+                    <IconButton onClick={() => scroll(destaquesRef, "left")}>
                         <ChevronLeftIcon />
                     </IconButton>
 
@@ -133,7 +135,7 @@ function Home() {
                         ))}
                     </div>
 
-                    <IconButton onClick={() => scrollRight(destaquesRef)}>
+                    <IconButton onClick={() => scroll(destaquesRef, "right")}>
                         <ChevronRightIcon />
                     </IconButton>
                 </div>
@@ -142,7 +144,7 @@ function Home() {
                 <SectionHeader title="Novidades" />
 
                 <div className="carousel-container">
-                    <IconButton onClick={() => scrollLeft(novidadesRef)}>
+                    <IconButton onClick={() => scroll(novidadesRef, "left")}>
                         <ChevronLeftIcon />
                     </IconButton>
 
@@ -157,7 +159,7 @@ function Home() {
                         ))}
                     </div>
 
-                    <IconButton onClick={() => scrollRight(novidadesRef)}>
+                    <IconButton onClick={() => scroll(novidadesRef, "right")}>
                         <ChevronRightIcon />
                     </IconButton>
                 </div>
@@ -174,19 +176,19 @@ function Home() {
 
                 <div className="agenda-section">
                     <div className="agenda-table">
-                        <TableContainer>
-                            <Table size="medium">
+                        <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto' }}>
+                            <Table stickyHeader aria-label="agenda table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell>Hora</TableCell>
-                                        <TableCell>Tema</TableCell>
-                                        <TableCell>Obra / Autor</TableCell>
-                                        <TableCell>Celebrador(a)</TableCell>
-                                        <TableCell>Local</TableCell>
+                                        {/* Use sx para definir larguras mínimas, evitando que o texto esmague */}
+                                        <TableCell sx={{ minWidth: 100 }}>Data</TableCell>
+                                        <TableCell sx={{ minWidth: 80 }}>Hora</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Tema</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Obra / Autor</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Celebrador(a)</TableCell>
+                                        <TableCell sx={{ minWidth: 100 }}>Local</TableCell>
                                     </TableRow>
                                 </TableHead>
-
                                 <TableBody>
                                     {agendas.map((agenda, index) => (
                                         <TableRow key={index}>
