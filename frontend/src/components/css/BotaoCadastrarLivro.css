@@ -1,0 +1,21 @@
+.botoes {
+  margin-top: 40px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-cadastrar {
+  background-color: #283593 !important;
+  padding: 8px 40px !important;
+  font-weight: bold !important;
+  min-width: 300px !important;
+}
+
+.btn-cancelar {
+  color: #283593 !important;
+  border: 1px solid #283593 !important;
+  padding: 8px 40px !important;
+  font-weight: bold !important;
+  min-width: 300px !important;
+}
