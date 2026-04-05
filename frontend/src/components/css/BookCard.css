@@ -1,90 +1,109 @@
+/* ========================= */
+/* BOOK CARD                */
+/* ========================= */
+
 .book-card {
-    width: 200px;
-    height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: clamp(140px, 18vw, 200px);
+    height: auto;
+    padding-bottom: 10px;
 
     background: #ffffff;
     border-radius: 10px;
 
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.53);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
     cursor: pointer;
 
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.book-image {
-    width: 170px;
-    height: 270px;
 
-    margin-top: 15px;
-    margin-right: 18px;
-    margin-bottom: 6px;
-    margin-left: 18px;
+/* ========================= */
+/* IMAGE                    */
+/* ========================= */
+
+.book-image {
+    width: 90%;
+    aspect-ratio: 2 / 3;
+
+    margin-top: 12px;
 
     border-radius: 10px;
-
     object-fit: cover;
 
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+/* ========================= */
+/* TITLE                    */
+/* ========================= */
+
 .book-title {
+    max-width: calc(100% - 20px);
+    margin: 8px 10px 0 10px;
 
     color: var(--text-primary, rgba(0, 0, 0, 0.87));
     text-align: center;
     font-family: Inter;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 24px;
 
-    max-width: calc(100% - 30px);
-    /* 5px de cada lado */
-    margin: 0 15px;
-    margin-top: auto;
+    font-size: clamp(12px, 1.5vw, 15px);
+    font-weight: 500;
+    line-height: 1.4;
 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-
 }
 
+/* ========================= */
+/* RATING                   */
+/* ========================= */
 
 .book-rating {
-
     display: flex;
     align-items: center;
     justify-content: center;
 
-    gap: 3px;
+    gap: 4px;
+
+    margin-top: 6px;
+    margin-right: 12px;
+    align-self: flex-end;
 
     font-family: Roboto, sans-serif;
-
-    font-size: 13px;
-    font-weight: 400;
-
-    line-height: 166%;
-    letter-spacing: 0.4px;
+    font-size: clamp(11px, 1.3vw, 13px);
 
     color: rgba(0, 0, 0, 0.87);
-    margin-top: 4px;
-    margin-bottom: 9px;
-
-
-    align-self: flex-end;
-    margin-right: 18px;
 }
 
 .star {
     color: #FFB400;
 }
 
+/* ========================= */
+/* HOVER                    */
+/* ========================= */
+
 .book-card:hover {
-
     transform: translateY(-4px) scale(1.03);
-
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* ========================= */
+/* RESPONSIVO               */
+/* ========================= */
+
+@media (max-width: 480px) {
+    .book-card {
+        width: 45vw;
+    }
+}
+
+@media (max-width: 320px) {
+    .book-card {
+        width: 90vw;
+    }
 }

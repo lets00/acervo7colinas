@@ -1,0 +1,50 @@
+/* ========================= */
+/* CARROSSEL DE BOOKCARDS   */
+/* ========================= */
+
+/* Container geral */
+.carrossel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    padding: 10px;
+}
+
+/* Container dos livros (scroll horizontal) */
+.books-container {
+    display: flex;
+    justify-content: start;
+
+    gap: clamp(10px, 3vw, 20px);
+
+    overflow-x: auto;
+    scroll-behavior: smooth;
+
+    padding-top: 80px;
+    padding-bottom: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    /* Scroll */
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch; /* Mobile */
+}
+
+/* Esconde scrollbar (Chrome, Edge, Safari) */
+.books-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Garante alinhamento horizontal dos cards */
+.books-container > * {
+    flex: 0 0 auto;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .carrossel-container button {
+        transform: scale(0.8);
+    }
+}

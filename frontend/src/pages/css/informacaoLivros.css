@@ -10,7 +10,6 @@
     align-items: flex-start;
 }
 
-/* CAPA (mantido igual) */
 .livro-capa {
     width: 263px;
     height: 417px;
@@ -18,7 +17,6 @@
     gap: 49px;
 }
 
-/* BOTÃO (mantido igual) */
 .btn-prateleira {
     width: 263px;
     height: 48px;
@@ -29,18 +27,14 @@
     text-transform: none !important;
 }
 
-/* DETALHES */
 .livro-detalhes {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* 🔥 tudo à esquerda */
     gap: 15px;
-    /* próximo do layout da imagem */
     max-width: 800px;
 }
 
-/* TÍTULO */
 .livro-detalhes h1 {
     color: #37228B;
     font-size: 26px;
@@ -50,24 +44,20 @@
     text-align: left;
 }
 
-/* AUTOR */
 .livro-detalhes h3 {
     color: #37228B;
     font-size: 18px;
     font-weight: 400;
     opacity: 0.64;
-    /* 🔥 igual ao que você pediu */
     margin: 0;
 }
 
-/* AVALIAÇÃO */
 .livro-avaliacao {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* META */
 .livro-meta {
     display: flex;
     flex-wrap: wrap;
@@ -75,7 +65,6 @@
     align-items: center;
 }
 
-/* ITEM */
 .meta-item {
     display: flex;
     align-items: center;
@@ -88,25 +77,19 @@
     height: 18px;
 }
 
-/* GÊNEROS */
 .livro-generos {
     display: flex;
     align-items: center;
-    /* 🔥 alinha verticalmente */
     gap: 10px;
     flex-wrap: wrap;
-    /* quebra linha se precisar */
 }
 
-/* texto "Gêneros:" */
 .livro-generos p {
     margin: 0;
-    /* 🔥 remove espaço padrão */
     font-size: 14px;
     color: #333;
 }
 
-/* cada gênero */
 .livro-generos span {
     color: #37228B;
     text-decoration: underline;
@@ -114,19 +97,16 @@
     font-size: 14px;
 }
 
-/* DESCRIÇÃO */
 .livro-descricao {
     font-size: 14px;
     line-height: 22px;
     text-align: justify;
-    /* 🔥 importante */
     color: #333;
 }
 
 .livro-descricao {
     display: -webkit-box;
     -webkit-line-clamp: 9;
-    /* 👈 limite de linhas */
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -155,9 +135,8 @@
 .exemplares-section {
     display: flex;
     gap: 28px;
-    /* espaço entre tabela e imagem */
     padding-bottom: 33px;
-    padding-top: 30px;
+    padding-top: 60px;
 
 }
 
@@ -185,33 +164,3 @@
     text-align: center;
 }
 
-.carousel-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 23px;
-
-}
-.books-container {
-    display: flex !important;
-    gap: 23px !important;
-    background: rgb(255, 255, 255);
-}
-.books-container > * {
-    flex-shrink: 0;
-}
-
-.books-container {
-    display: flex;
-    flex: 1;
-    padding: 40px 0;
-    align-items: center;
-    gap: 23px;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-}
-
-.books-container>* {
-    flex: 0 0 200px;
-}

@@ -1,20 +1,48 @@
+/* ========================= */
+/* SECTION HEADER            */
+/* ========================= */
+
 .section-header {
     display: flex;
+    align-items: center;
 
-    height: 60px;
-    padding: 18px 30px;
+    min-height: 50px;
 
-    border-bottom: 2px solid #F2A21E;
+    padding: 
+        clamp(6px, 1.5vw, 6px) 
+        clamp(16px, 4vw, 30px);
+
     background: #FFF;
-
-    margin: 0 auto;
+    border-bottom: 2px solid #F2A21E;
 }
 
-
+/* Título */
 .section-header h3 {
-    color: #37228B;
+    margin: 0;
+
     font-family: "Inter", sans-serif;
-    font-size: 28px;
+    font-size: clamp(18px, 3vw, 28px);
     font-weight: 700;
-    line-height: 36px;
+    line-height: 1.2;
+
+    color: #37228B;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ========================= */
+/* RESPONSIVO                */
+/* ========================= */
+
+@media (max-width: 480px) {
+    .section-header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .section-header h3 {
+        white-space: normal;
+    }
 }

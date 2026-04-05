@@ -1,4 +1,6 @@
-
+/* ========================= */
+/* SWIPER (CARROSSEL TOPO)   */
+/* ========================= */
 
 .swiper-pagination-bullet {
     background-color: rgb(255, 255, 255) !important;
@@ -9,66 +11,61 @@
     background-color: rgb(255, 208, 0) !important;
     opacity: 1;
 }
+
 .carousel-wrapper {
     margin-top: 40px;
 }
-/* carrossel */
-
-.carousel-container {
-    display: flex;
-    align-items: center;
-    gap: 23px;
-    width: 100%;
-}
 
 
-.books-container {
-    display: flex !important;
-    gap: 23px !important;
-    background: rgb(255, 255, 255);
-    padding-right: 60px !important;
-}
-
-.books-container>* {
-    flex-shrink: 0;
-}
-
-/* banner agenda */
+/* ========================= */
+/* AGENDA - BANNER           */
+/* ========================= */
 
 .agenda-banner {
     width: 100%;
-    height: 74px;
+    min-height: 74px;
+    padding: 10px;
+
     background: #00A83F;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0;
-    margin-bottom: 31px;
-}
 
-/* texto banner */
+    margin-top: 80px; /* 40px + 40px = 80px */
+    margin-bottom: 20px;
+}
 
 .agenda-texto {
     max-width: 943px;
-    color: #FFF;
-    text-align: center;
+    padding: 0 10px;
 
-    font-family: "Inter", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 26px;
+    color: #FFF;
+
+    font-size: clamp(14px, 2.5vw, 20px);
+    line-height: 1.4;
 }
 
-/* agenda */
+
+/* ========================= */
+/* AGENDA - LAYOUT           */
+/* ========================= */
 
 .agenda-section {
     display: flex;
     gap: 28px;
-    justify-content: center;
 }
 
+
+/* ========================= */
+/* AGENDA - TABELA           */
+/* ========================= */
+
 .agenda-table {
-    width: 877px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
 }
 
 .agenda-table table {
@@ -86,7 +83,47 @@
     letter-spacing: 0.17px;
 }
 
+
+/* ========================= */
+/* AGENDA - IMAGEM           */
+/* ========================= */
+
 .agenda-image img {
-    width: 420px;
-    height: 389px;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+}
+
+
+/* ========================= */
+/* GLOBAL                    */
+/* ========================= */
+
+body {
+    overflow-x: hidden;
+}
+
+
+/* ========================= */
+/* RESPONSIVO                */
+/* ========================= */
+
+@media (max-width: 900px) {
+    .agenda-section {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 1024px) {
+    .agenda-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .agenda-image {
+        order: -1;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 }

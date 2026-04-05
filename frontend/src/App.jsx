@@ -8,6 +8,7 @@ import Home from "./pages/jsx/Home.jsx";
 import InformacaoLivro from "./pages/jsx/informacaoLivro.jsx";
 import CadastroEntregadores from "./pages/jsx/CadastroEntregadores.jsx";
 import CadastroLivros from "./pages/jsx/CadastroLivros.jsx";
+import Dashboard from "./pages/jsx/dashboard.jsx";
 
 const theme = createTheme();
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="/livro/:id" element={<InformacaoLivro />} />
             <Route path="/cadastro" element={<CadastroLivros />} />
             <Route path="/entregadores" element={<CadastroEntregadores />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
 
         </Container>
