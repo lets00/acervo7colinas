@@ -7,8 +7,6 @@
 
     border-bottom: 2px solid #F2A21E;
     background: #FFF;
-
-    margin: 0 auto;
 }
 
 .section-header h3 {
@@ -28,12 +26,10 @@
 @media (max-width: 480px) {
     .section-header {
         justify-content: center;
-        /* centraliza no mobile */
         text-align: center;
     }
 
     .section-header h3 {
         white-space: normal;
-        /* permite quebrar linha no celular */
     }
 }
