@@ -1,10 +1,17 @@
+/* ========================= */
+/* CARD DE COMENTÁRIO       */
+/* ========================= */
+
 /* CARD */
 .comentario-card {
-    border-bottom: 1px solid #E6E6E6;
     padding: 24px 0;
+    border-bottom: 1px solid #E6E6E6;
 }
 
-/* HEADER */
+/* ========================= */
+/* HEADER                   */
+/* ========================= */
+
 .comentario-header {
     display: flex;
     align-items: flex-start;
@@ -13,14 +20,18 @@
 
 /* AVATAR */
 .comentario-avatar {
-    background-color: #D9D9D9 !important;
-    color: #FFF;
     width: 48px !important;
     height: 48px !important;
     font-size: 18px;
+
+    color: #FFF;
+    background-color: #D9D9D9 !important;
 }
 
-/* CONTEÚDO */
+/* ========================= */
+/* CONTEÚDO                 */
+/* ========================= */
+
 .comentario-conteudo {
     flex: 1;
     text-align: left; /* 👈 mantém só aqui */
@@ -42,15 +53,17 @@
 .comentario-usuario {
     display: block;
     margin-top: 4px;
+
     font-size: 14px;
     color: #777;
 }
 
 /* TEXTO */
 .comentario-texto {
-    margin-top: 8px;
-    font-size: 15px;
-    color: #333;
-    line-height: 1.6;
     max-width: 600px;
+    margin-top: 8px;
+
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
 }

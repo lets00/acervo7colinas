@@ -1,4 +1,6 @@
-
+/* ========================= */
+/* SWIPER (CARROSSEL TOPO)   */
+/* ========================= */
 
 .swiper-pagination-bullet {
     background-color: rgb(255, 255, 255) !important;
@@ -9,11 +11,15 @@
     background-color: rgb(255, 208, 0) !important;
     opacity: 1;
 }
+
 .carousel-wrapper {
     margin-top: 40px;
 }
 
 
+/* ========================= */
+/* AGENDA - BANNER           */
+/* ========================= */
 
 .agenda-banner {
     width: 100%;
@@ -25,20 +31,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    margin-top: 80px; /* 40px + 40px = 80px */
     margin-bottom: 20px;
-    margin-top: 80px ;  /* 40px +40px = 80px */
 }
 
 .agenda-texto {
     max-width: 943px;
+    padding: 0 10px;
+
     color: #FFF;
 
     font-size: clamp(14px, 2.5vw, 20px);
     line-height: 1.4;
-
-    padding: 0 10px;
 }
-/* agenda */
+
+
+/* ========================= */
+/* AGENDA - LAYOUT           */
+/* ========================= */
 
 .agenda-section {
     display: flex;
@@ -46,12 +57,15 @@
 }
 
 
+/* ========================= */
+/* AGENDA - TABELA           */
+/* ========================= */
 
 .agenda-table {
     width: 100%;
-    max-width: 100%; 
-    overflow-x: auto; 
-    display: block; 
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
 }
 
 .agenda-table table {
@@ -69,6 +83,11 @@
     letter-spacing: 0.17px;
 }
 
+
+/* ========================= */
+/* AGENDA - IMAGEM           */
+/* ========================= */
+
 .agenda-image img {
     width: 100%;
     max-width: 420px;
@@ -76,10 +95,18 @@
 }
 
 
+/* ========================= */
+/* GLOBAL                    */
+/* ========================= */
+
 body {
     overflow-x: hidden;
 }
 
+
+/* ========================= */
+/* RESPONSIVO                */
+/* ========================= */
 
 @media (max-width: 900px) {
     .agenda-section {
@@ -87,14 +114,14 @@ body {
     }
 }
 
-@media (max-width: 1024px) { 
+@media (max-width: 1024px) {
     .agenda-section {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .agenda-image {
-        order: -1; 
+        order: -1;
         width: 100%;
         display: flex;
         justify-content: center;

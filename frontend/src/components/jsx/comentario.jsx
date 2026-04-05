@@ -5,7 +5,7 @@ function Comentario({ usuario, comentario, nota, tempo }) {
     return (
         <div className="comentario-card">
 
-            <div className="comentario-header" style={{ marginTop: "40px" }}>
+            <div className="comentario-header" >
 
                 <Avatar className="comentario-avatar">
                     {usuario?.[0]}

@@ -212,8 +212,9 @@ function InformacaoLivro() {
                 <SectionHeader title="Os leitores também gostaram" />
                 <BookCarousel books={relacionados} />
 
-
-                <SectionHeader title="Avaliações e comentários" />
+                <div style={{ height: "70px" }}>
+                    <SectionHeader title="Avaliações e comentários" />
+                </div>
 
                 <div className="avaliacoes">
                     {avaliacoes.map((av) => (

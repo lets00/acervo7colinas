@@ -1,36 +1,50 @@
+/* ========================= */
+/* BOOK CARD                */
+/* ========================= */
+
 .book-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     width: clamp(140px, 18vw, 200px);
     height: auto;
+    padding-bottom: 10px;
 
     background: #ffffff;
     border-radius: 10px;
 
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.53);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
     cursor: pointer;
 
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    padding-bottom: 10px;
 }
+
+/* ========================= */
+/* IMAGE                    */
+/* ========================= */
 
 .book-image {
     width: 90%;
-    aspect-ratio: 2 / 3; /* mantém proporção de livro */
+    aspect-ratio: 2 / 3;
 
     margin-top: 12px;
 
     border-radius: 10px;
-
     object-fit: cover;
 
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+/* ========================= */
+/* TITLE                    */
+/* ========================= */
+
 .book-title {
+    max-width: calc(100% - 20px);
+    margin: 8px 10px 0 10px;
+
     color: var(--text-primary, rgba(0, 0, 0, 0.87));
     text-align: center;
     font-family: Inter;
@@ -39,13 +53,14 @@
     font-weight: 500;
     line-height: 1.4;
 
-    max-width: calc(100% - 20px);
-    margin: 8px 10px 0 10px;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* ========================= */
+/* RATING                   */
+/* ========================= */
 
 .book-rating {
     display: flex;
@@ -54,32 +69,41 @@
 
     gap: 4px;
 
+    margin-top: 6px;
+    margin-right: 12px;
+    align-self: flex-end;
+
     font-family: Roboto, sans-serif;
     font-size: clamp(11px, 1.3vw, 13px);
 
     color: rgba(0, 0, 0, 0.87);
-
-    margin-top: 6px;
-    align-self: flex-end;
-    margin-right: 12px;
 }
 
 .star {
     color: #FFB400;
 }
 
+/* ========================= */
+/* HOVER                    */
+/* ========================= */
+
 .book-card:hover {
     transform: translateY(-4px) scale(1.03);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.35);
 }
+
+/* ========================= */
+/* RESPONSIVO               */
+/* ========================= */
+
 @media (max-width: 480px) {
     .book-card {
-        width: 45vw; /* 2 cards por linha */
+        width: 45vw;
     }
 }
 
 @media (max-width: 320px) {
     .book-card {
-        width: 90vw; /* 1 card por linha */
+        width: 90vw;
     }
 }
