@@ -65,7 +65,7 @@ export default function Header() {
           </Stack>
         </Stack>
       </Box>
-       <Divider sx={{ borderColor: '#937DC2', borderBottomWidth: 1.5, mt: 2 }} />
+        <Divider sx={{ borderColor: '#937DC2', borderBottomWidth: 1.5, mt: 2 }} />
     </Box>
 )
 }
