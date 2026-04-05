@@ -1,0 +1,43 @@
+/* ========================= */
+/* CARROSSEL DE BOOKCARDS   */
+/* ========================= */
+
+
+.carrossel-container {
+    display: flex;
+    align-items: center;    
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.books-container {
+    display: flex;           
+    gap: clamp(10px, 3vw, 20px);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+
+    padding-bottom: 40px;
+    padding-top: 80px;
+    padding-left: 10px ;
+    padding-right: 10px;
+
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    
+    justify-content: start; 
+}
+
+.books-container::-webkit-scrollbar {
+    display: none;
+}
+
+.books-container>* {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+    .carrossel-container button {
+        transform: scale(0.8);
+    }
+}
