@@ -11,9 +11,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import BookCard from "../../components/jsx/BookCard";
+import BookCarousel from "../../components/jsx/BookCarrossel";
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
@@ -58,7 +56,6 @@ export default function Dashboard() {
     const [destaques, setDestaques] = useState([]);
     
     
-    const destaquesRef = useRef(null);
 
 
     const scroll = (ref, direction) => {
@@ -110,7 +107,7 @@ export default function Dashboard() {
                 }}
             >
                 {/* SAUDAÇÃO */}
-                <h1 className="dashboard-greeting">Olá, nome do usuário</h1>
+                <h1 className="dashboard-greeting">Olá, Jamille Galdino</h1>
 
                 {/* CARDS DE ESTATÍSTICAS */}
                 <div className="stats-grid">
@@ -128,19 +125,13 @@ export default function Dashboard() {
 
                 {/* PROGRESSO DE LEITURA */}
                 {/* SectionHeader adaptado com botão + ao lado */}
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <SectionHeader title="Progresso de leitura" />
-                    <IconButton
-                        aria-label="Adicionar progresso"
-                        sx={{
-                            color: "#F5A623",
-                            mb: "4px",
-                            "&:hover": { bgcolor: "rgba(245,166,35,0.1)" },
-                        }}
-                    >
-                        <AddCircleIcon sx={{ fontSize: 32 }} />
+                <div className="section-header progress-custom">
+                    <h3>Progresso de leitura</h3>
+
+                    <IconButton className="add-button">
+                        <AddCircleIcon />
                     </IconButton>
-                </Box>
+                </div>
 
                 <div className="progress-list">
                     {progressData.map((item) => {
@@ -153,7 +144,7 @@ export default function Dashboard() {
                                         <span className="progress-card-percent">{percent}%</span>
                                         <IconButton
                                             className="progress-menu-btn"
-                                            size="small"
+                                            size="medium"
                                             onClick={(e) => handleMenuOpen(e, item.id)}
                                             aria-label="opções"
                                         >
@@ -193,32 +184,18 @@ export default function Dashboard() {
                     })}
                 </div>
 
+
+                {/* DESTAQUES */}                
+
                 <SectionHeader title="Destaque" />
+                <BookCarousel books={destaques} />
 
-                <div className="carousel-container">
-                    <IconButton onClick={() => scroll(destaquesRef, "left")}>
-                        <ChevronLeftIcon />
-                    </IconButton>
 
-                    <div className="books-container" ref={destaquesRef}>
-                        {destaques.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                id={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scroll(destaquesRef, "right")}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                </div>
 
                 {/* VISÃO GERAL */}
-                <SectionHeader title="Visão geral" />
+                <div style={{ marginBottom: "80px" }}>   
+                    <SectionHeader title="Visão geral" />
+                </div>
 
                 <div className="charts-grid">
                     {/* Gráfico 1 — Livros lidos por mês (barras horizontais) */}

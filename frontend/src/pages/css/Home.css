@@ -12,31 +12,9 @@
 .carousel-wrapper {
     margin-top: 40px;
 }
-/* carrossel */
-
-.carousel-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-}
 
 
-.books-container {
-    display: flex !important;
-    gap: clamp(10px, 2vw, 23px) !important;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 10px;
-    -webkit-overflow-scrolling: touch; /* Suaviza scroll no iOS */
-}
 
-/* cada card encaixa certinho */
-.books-container > * {
-    flex: 0 0 auto; /* melhor que só flex-shrink */
-}
-
-/* banner agenda */
 .agenda-banner {
     width: 100%;
     min-height: 74px;
@@ -47,8 +25,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-
-    margin: 20px 0 31px 0;
+    margin-bottom: 20px;
+    margin-top: 80px ;  /* 40px +40px = 80px */
 }
 
 .agenda-texto {
@@ -71,9 +49,9 @@
 
 .agenda-table {
     width: 100%;
-    max-width: 100%; /* Mudado de 877px para 100% */
+    max-width: 100%; 
     overflow-x: auto; 
-    display: block; /* Garante que o scroll lateral funcione no container */
+    display: block; 
 }
 
 .agenda-table table {
@@ -101,26 +79,22 @@
 body {
     overflow-x: hidden;
 }
-/* deixa menor no mobile, mas NÃO esconde */
-@media (max-width: 768px) {
-    .carousel-container button {
-        transform: scale(0.8);
-    }
-}
+
+
 @media (max-width: 900px) {
     .agenda-section {
         flex-direction: column;
     }
 }
 
-@media (max-width: 1024px) { /* Aumentei de 900 para 1024 */
+@media (max-width: 1024px) { 
     .agenda-section {
         flex-direction: column;
         align-items: center;
     }
     
     .agenda-image {
-        order: -1; /* Coloca a imagem acima da tabela no mobile */
+        order: -1; 
         width: 100%;
         display: flex;
         justify-content: center;

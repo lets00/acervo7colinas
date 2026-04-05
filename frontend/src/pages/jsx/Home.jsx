@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import "../css/Home.css";
-import BookCard from "../../components/jsx/BookCard";
+import BookCarrossel from "../../components/jsx/BookCarrossel";
 import SectionHeader from "../../components/jsx/SectionHeader";
 import Header from "../../components/jsx/Header";
 import debateImg from "../../assets/imagem_debate.png";
@@ -14,11 +14,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-
-// Carrossel
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
@@ -40,7 +35,7 @@ function Home() {
             modules={[Pagination, Autoplay]}
             spaceBetween={10}
             slidesPerView={1}
-            pagination={{ clickable: true }} // 👈 ESSA LINHA FAZ AS BOLINHAS
+            pagination={{ clickable: true }} 
             autoplay={{ delay: 5000 }}
             speed={1500}
             loop={true}
@@ -62,17 +57,6 @@ function Home() {
             </Swiper>
         );
     }
-
-    const scroll = (ref, direction) => {
-        if (!ref.current) return;
-
-        const containerWidth = ref.current.clientWidth;
-
-        ref.current.scrollBy({
-            left: direction === "left" ? -containerWidth * 0.8 : containerWidth * 0.8,
-            behavior: "smooth"
-        });
-    };
 
     useEffect(() => {
         fetch("http://localhost:3000/destaques")
@@ -112,58 +96,14 @@ function Home() {
                 <div className="carousel-wrapper">
                     <Carousel imagens={imagens} />
                 </div>
-
-                
-
-                {/* DESTAQUES */}
+                {/* DESTAQUES */}                
                 <SectionHeader title="Destaque" />
-
-                <div className="carousel-container">
-                    <IconButton onClick={() => scroll(destaquesRef, "left")}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={destaquesRef}>
-                        {destaques.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                id={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scroll(destaquesRef, "right")}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                </div>
+                <BookCarrossel books={destaques} />
 
                 {/* NOVIDADES */}
                 <SectionHeader title="Novidades" />
-
-                <div className="carousel-container">
-                    <IconButton onClick={() => scroll(novidadesRef, "left")}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={novidadesRef}>
-                        {novidades.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scroll(novidadesRef, "right")}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                </div>
-
+                <BookCarrossel books={novidades} ref={novidadesRef} />
+                
                 {/* AGENDA */}
                 <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
 
