@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
 import SectionHeader from "../../components/jsx/SectionHeader";
-import BookCard from "../../components/jsx/BookCard";
+import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
 
@@ -21,9 +21,6 @@ import TableRow from "@mui/material/TableRow";
 
 import Box from "@mui/material/Box";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Button from "@mui/material/Button";
 
 // ⭐ MUI Rating
@@ -211,34 +208,13 @@ function InformacaoLivro() {
                     </TableContainer>
                 </div>
 
-                {/* 📖 RELACIONADOS */}
+                {/* relacionados */}                
                 <SectionHeader title="Os leitores também gostaram" />
+                <BookCarousel books={relacionados} />
 
-                <div className="carousel-container">
-
-                    <IconButton onClick={() => scrollLeft(destaquesRef)}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={destaquesRef}>
-                        {relacionados.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                id={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scrollRight(destaquesRef)}>
-                        <ChevronRightIcon />
-                    </IconButton>
-
+                <div style={{ height: "70px" }}>
+                    <SectionHeader title="Avaliações e comentários" />
                 </div>
-
-                <SectionHeader title="Avaliações e comentários" />
 
                 <div className="avaliacoes">
                     {avaliacoes.map((av) => (

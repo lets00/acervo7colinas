@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import "../css/Home.css";
-import BookCard from "../../components/jsx/BookCard";
+import BookCarrossel from "../../components/jsx/BookCarrossel";
 import SectionHeader from "../../components/jsx/SectionHeader";
 import Header from "../../components/jsx/Header";
 import debateImg from "../../assets/imagem_debate.png";
-import bibliotecaImg from "../../assets/imagem_biblioteca.png";
 
 
 // Tabela
@@ -15,11 +14,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-
-// Carrossel
-import IconButton from "@mui/material/IconButton";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
@@ -41,7 +35,7 @@ function Home() {
             modules={[Pagination, Autoplay]}
             spaceBetween={10}
             slidesPerView={1}
-            pagination={{ clickable: true }} // 👈 ESSA LINHA FAZ AS BOLINHAS
+            pagination={{ clickable: true }} 
             autoplay={{ delay: 5000 }}
             speed={1500}
             loop={true}
@@ -53,7 +47,7 @@ function Home() {
                     alt="slide"
                     style={{
                     width: "100%",
-                    height: "300px",
+                    height: "clamp(180px, 40vw, 300px)",
                     objectFit: "cover",
                     borderRadius: "10px"
                     }}
@@ -63,14 +57,6 @@ function Home() {
             </Swiper>
         );
     }
-
-    const scrollLeft = (ref) => {
-        ref.current?.scrollBy({ left: -300, behavior: "smooth" });
-    };
-
-    const scrollRight = (ref) => {
-        ref.current?.scrollBy({ left: 300, behavior: "smooth" });
-    };
 
     useEffect(() => {
         fetch("http://localhost:3000/destaques")
@@ -103,65 +89,21 @@ function Home() {
                 sx={{
                     width: "100%",
                     maxWidth: "1440px",
-                    px: "60px" // 🔥 substitui marginLeft/right
+                    px: { xs: "16px", md: "60px" }
                 }}
             >
                 
                 <div className="carousel-wrapper">
                     <Carousel imagens={imagens} />
                 </div>
-
-                
-
-                {/* DESTAQUES */}
+                {/* DESTAQUES */}                
                 <SectionHeader title="Destaque" />
-
-                <div className="carousel-container">
-                    <IconButton onClick={() => scrollLeft(destaquesRef)}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={destaquesRef}>
-                        {destaques.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                id={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scrollRight(destaquesRef)}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                </div>
+                <BookCarrossel books={destaques} />
 
                 {/* NOVIDADES */}
                 <SectionHeader title="Novidades" />
-
-                <div className="carousel-container">
-                    <IconButton onClick={() => scrollLeft(novidadesRef)}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-
-                    <div className="books-container" ref={novidadesRef}>
-                        {novidades.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                imagem={`http://localhost:3000${book.img}`}
-                                titulo={book.titulo}
-                                avaliacao={book.avaliacao}
-                            />
-                        ))}
-                    </div>
-
-                    <IconButton onClick={() => scrollRight(novidadesRef)}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                </div>
-
+                <BookCarrossel books={novidades} ref={novidadesRef} />
+                
                 {/* AGENDA */}
                 <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
 
@@ -174,19 +116,19 @@ function Home() {
 
                 <div className="agenda-section">
                     <div className="agenda-table">
-                        <TableContainer>
-                            <Table size="medium">
+                        <TableContainer component={Box} sx={{ width: '100%', overflowX: 'auto' }}>
+                            <Table stickyHeader aria-label="agenda table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Data</TableCell>
-                                        <TableCell>Hora</TableCell>
-                                        <TableCell>Tema</TableCell>
-                                        <TableCell>Obra / Autor</TableCell>
-                                        <TableCell>Celebrador(a)</TableCell>
-                                        <TableCell>Local</TableCell>
+                                        {/* Use sx para definir larguras mínimas, evitando que o texto esmague */}
+                                        <TableCell sx={{ minWidth: 100 }}>Data</TableCell>
+                                        <TableCell sx={{ minWidth: 80 }}>Hora</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Tema</TableCell>
+                                        <TableCell sx={{ minWidth: 150 }}>Obra / Autor</TableCell>
+                                        <TableCell sx={{ minWidth: 120 }}>Celebrador(a)</TableCell>
+                                        <TableCell sx={{ minWidth: 100 }}>Local</TableCell>
                                     </TableRow>
                                 </TableHead>
-
                                 <TableBody>
                                     {agendas.map((agenda, index) => (
                                         <TableRow key={index}>

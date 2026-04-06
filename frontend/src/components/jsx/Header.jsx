@@ -42,7 +42,6 @@ export default function Header() {
             ),
           }}
         />
-
         <Stack spacing={2}  className='header-stack'> 
           <Stack direction="row" spacing={4} className='header-stack-row'>
             <Chip label="Criar Conta" size='small' className='header-chip-criar'/> 
@@ -50,8 +49,8 @@ export default function Header() {
             label="Login" size='small' className='header-chip-login'/> 
           </Stack> 
         </Stack> 
-          </Box> 
-            <Divider className='header-divider'/>
-            </Box>
+        </Box> 
+          <Divider className='header-divider'/>
+        </Box>
 )
 }

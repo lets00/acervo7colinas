@@ -15,6 +15,9 @@ import EsqueciSenha from "./pages/jsx/EsqueciSenha.jsx";
 import EnviadoEmail from "./pages/jsx/EnviadoEmail.jsx";
 import GerarSenha from "./pages/jsx/GerarSenha.jsx";
 
+import Dashboard from "./pages/jsx/dashboard.jsx";
+
+
 const theme = createTheme();
 
 function App() {
@@ -35,6 +38,8 @@ function App() {
             <Route path="/esqueci-senha" element={<EsqueciSenha />} />
             <Route path="/enviado-email" element={<EnviadoEmail />} />
             <Route path="/gerar-senha" element={<GerarSenha />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+
           </Routes>
 
         </Container>

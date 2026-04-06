@@ -1,0 +1,256 @@
+import { useEffect, useState, useRef } from "react";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import LinearProgress from "@mui/material/LinearProgress";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+// MUI X Charts
+import { BarChart } from "@mui/x-charts/BarChart";
+import { LineChart } from "@mui/x-charts/LineChart";
+import { PieChart } from "@mui/x-charts/PieChart";
+import BookCarousel from "../../components/jsx/BookCarrossel";
+
+import Header from "../../components/jsx/Header";
+import SectionHeader from "../../components/jsx/SectionHeader";
+import "../css/Dashboard.css";
+
+/* ─── dados mockados ─── */
+
+const statsData = [
+    { label: "Quero ler", value: 12 },
+    { label: "Lendo", value: 3 },
+    { label: "Emprestado", value: 2 },
+    { label: "Total de lidos", value: 47 },
+    { label: "Favoritos", value: 8 },
+];
+
+const progressData = [
+    { id: 1, titulo: "1984 – George Orwell", paginasLidas: 60, totalPaginas: 200 },
+    { id: 2, titulo: "Cem Anos de Solidão – García Márquez", paginasLidas: 130, totalPaginas: 417 },
+];
+
+// Gráfico 1 — livros por mês (horizontal bar)
+const meses = ["Jan","Feb","Mar","Apr","May","Jun","July","Aug","Sep","Oct","Nov","Dec"];
+const livrosPorMes = [3, 5, 2, 8, 6, 12, 9, 14, 11, 7, 18, 22];
+
+// Gráfico 2 — páginas por dia
+const dias = Array.from({ length: 10 }, (_, i) => `${i + 1}`);
+const paginasPorDia = [10, 20, 30, 42, 55, 60, 70, 80, 90, 95];
+
+// Gráfico 3 — gêneros (pizza)
+const generos = [
+    { id: 0, value: 45, label: "Ficção", color: "#c770f0" },
+    { id: 1, value: 30, label: "Romance", color: "#4fc3f7" },
+    { id: 2, value: 25, label: "Mistério", color: "#00e676" },
+    { id: 3, value: 10, label: "Terror", color: "#7c4dff" },
+];
+
+/* ─── componente ─── */
+
+export default function Dashboard() {
+    // menu kebab por card de progresso
+    const [anchorEls, setAnchorEls] = useState({});   
+    const [destaques, setDestaques] = useState([]);
+    
+    
+
+
+    const scroll = (ref, direction) => {
+        if (!ref.current) return;
+
+        const containerWidth = ref.current.clientWidth;
+
+        ref.current.scrollBy({
+            left: direction === "left" ? -containerWidth * 0.8 : containerWidth * 0.8,
+            behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+        fetch("http://localhost:3000/destaques")
+            .then(res => res.json())
+            .then(setDestaques);
+
+    }, []);
+
+
+    const handleMenuOpen = (event, id) => {
+        setAnchorEls((prev) => ({ ...prev, [id]: event.currentTarget }));
+    };
+
+    const handleMenuClose = (id) => {
+        setAnchorEls((prev) => ({ ...prev, [id]: null }));
+    };
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                minHeight: "100vh",
+                bgcolor: "#fff",
+                mt: "-55px",
+            }}
+        >
+            <Header />
+
+            <Box
+                sx={{
+                    width: "100%",
+                    maxWidth: "1440px",
+                    px: { xs: "16px", sm: "28px", md: "60px" },
+                    pb: "48px",
+                }}
+            >
+                {/* SAUDAÇÃO */}
+                <h1 className="dashboard-greeting">Olá, Jamille Galdino</h1>
+
+                {/* CARDS DE ESTATÍSTICAS */}
+                <div className="stats-grid">
+                    {statsData.map((stat) => (
+                        <div className="stat-card" key={stat.label}>
+                            <span className="stat-card-label">{stat.label}</span>
+
+                            <div className="stat-card-center">
+                                <span className="stat-card-value">{stat.value}</span>
+                                <span className="stat-card-sub">livros</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* PROGRESSO DE LEITURA */}
+                {/* SectionHeader adaptado com botão + ao lado */}
+                <div className="section-header progress-custom">
+                    <h3>Progresso de leitura</h3>
+
+                    <IconButton className="add-button">
+                        <AddCircleIcon />
+                    </IconButton>
+                </div>
+
+                <div className="progress-list">
+                    {progressData.map((item) => {
+                        const percent = Math.round((item.paginasLidas / item.totalPaginas) * 100);
+                        return (
+                            <div className="progress-card" key={item.id}>
+                                <div className="progress-card-header">
+                                    <span className="progress-card-title">{item.titulo}</span>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                        <span className="progress-card-percent">{percent}%</span>
+                                        <IconButton
+                                            className="progress-menu-btn"
+                                            size="medium"
+                                            onClick={(e) => handleMenuOpen(e, item.id)}
+                                            aria-label="opções"
+                                        >
+                                            <MoreVertIcon fontSize="small" />
+                                        </IconButton>
+                                        <Menu
+                                            anchorEl={anchorEls[item.id]}
+                                            open={Boolean(anchorEls[item.id])}
+                                            onClose={() => handleMenuClose(item.id)}
+                                            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                            transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                        >
+                                            <MenuItem onClick={() => handleMenuClose(item.id)}>Editar</MenuItem>
+                                            <MenuItem onClick={() => handleMenuClose(item.id)}>Excluir</MenuItem>
+                                        </Menu>
+                                    </Box>
+                                </div>
+
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={percent}
+                                    sx={{
+                                        height: 8,
+                                        borderRadius: 4,
+                                        bgcolor: "rgba(255,255,255,0.2)",
+                                        "& .MuiLinearProgress-bar": {
+                                            bgcolor: "#00A83F",
+                                            borderRadius: 4,
+                                        },
+                                    }}
+                                />
+                                <span className="progress-card-pages">
+                                    {item.paginasLidas} de {item.totalPaginas}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+
+
+                {/* DESTAQUES */}                
+
+                <SectionHeader title="Destaque" />
+                <BookCarousel books={destaques} />
+
+
+
+                {/* VISÃO GERAL */}
+                <div style={{ marginBottom: "80px" }}>   
+                    <SectionHeader title="Visão geral" />
+                </div>
+
+                <div className="charts-grid">
+                    {/* Gráfico 1 — Livros lidos por mês (barras horizontais) */}
+                    <div className="chart-card">
+                        <p className="chart-card-title">Nº de livros lidos por mês</p>
+                        <BarChart
+                            layout="horizontal"
+                            height={280}
+                            yAxis={[{ scaleType: "band", data: meses, tickLabelStyle: { fontSize: 11 } }]}
+                            xAxis={[{ label: "Quantidade de livros", labelStyle: { fontSize: 11 } }]}
+                            series={[{ data: livrosPorMes, label: "livros", color: "#00A83F" }]}
+                            margin={{ left: 42, right: 16, top: 8, bottom: 40 }}
+                            slotProps={{ legend: { labelStyle: { fontSize: 11 } } }}
+                        />
+                    </div>
+
+                    {/* Gráfico 2 — Páginas lidas por dia (linha) */}
+                    <div className="chart-card">
+                        <p className="chart-card-title">Nº de páginas lidas por dia</p>
+                        <LineChart
+                            height={280}
+                            xAxis={[{ scaleType: "point", data: dias }]}
+                            series={[{ data: paginasPorDia, label: "Páginas", color: "#c770f0", area: false }]}
+                            margin={{ left: 40, right: 16, top: 8, bottom: 28 }}
+                            slotProps={{ legend: { labelStyle: { fontSize: 11 } } }}
+                        />
+                    </div>
+
+                    {/* Gráfico 3 — Gêneros mais lidos (pizza) */}
+                    <div className="chart-card">
+                        <p className="chart-card-title">Gêneros mais lidos por mim</p>
+                        <PieChart
+                            height={280}
+                            series={[
+                                {
+                                    data: generos,
+                                    innerRadius: 0,
+                                    outerRadius: 90,
+                                    paddingAngle: 2,
+                                    cornerRadius: 3,
+                                    cx: 100,
+                                },
+                            ]}
+                            margin={{ left: 0, right: 120, top: 8, bottom: 8 }}
+                            slotProps={{
+                                legend: {
+                                    direction: "column",
+                                    position: { vertical: "middle", horizontal: "right" },
+                                    labelStyle: { fontSize: 11 },
+                                },
+                            }}
+                        />
+                    </div>
+                </div>
+            </Box>
+        </Box>
+    );
+}
