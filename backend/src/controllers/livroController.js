@@ -1,4 +1,6 @@
 // acervo7colinas\backend\src\controllers\livroController.js
+import { livroSchema } from '../validators/livroValidator.js';
+
 export function buscarLivroPorId(req, res) {
     const { id } = req.params;
 
@@ -140,4 +142,45 @@ export function listarAvaliacoes(req, res) {
     }
 
     res.json(avaliacoes);
+}
+
+// cadastro de livros
+
+export function criarLivro(req, res) {
+    const resultado = livroSchema.safeParse(req.body);
+
+    if (!resultado.success) {
+        return res.status(400).json({
+            mensagem: 'Erro na validação dos dados!',
+            erros: resultado.error.issues
+        });
+    }
+
+    const {
+        titulo,
+        autor,
+        isbn,
+        editora,
+        ano,
+        descricao,
+        quantidadeExemplares,
+        genero
+    } = resultado.data;
+
+    const novoLivro = {
+        id: Date.now(),
+        titulo,
+        autor,
+        isbn,
+        editora,
+        ano,
+        descricao,
+        quantidadeExemplares,
+        genero,
+    };
+
+    return res.status(201).json({
+        mensagem: 'Livro cadastrado com sucesso!',
+        livro: novoLivro
+    });
 }
