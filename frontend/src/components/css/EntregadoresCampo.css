@@ -1,0 +1,97 @@
+
+.boxTituloPerfil {
+  background-color: #CCD3F8;
+  display: flex;
+  align-items: center;
+  margin-top: 37px;
+  width: 600px;
+  padding: 10px 40px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.boxTituloCNH {
+  background-color: #CCD3F8;
+  display: flex;
+  align-items: center;
+  margin-top: 37px;
+  width: 570px;
+  padding: 10px 40px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.textoTituloPerfil {
+  color: #333;
+  font-weight: 300;
+  font-size: 1.1rem;
+  margin-left: 120px;
+}
+
+.textoTituloCNH {
+  color: #333;
+  font-weight: 300;
+  font-size: 1.1rem;
+  margin-left: -8px;
+}
+
+
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: -32px;
+  min-width: 400px;
+  min-height: 100px;
+}
+
+.textoCard {
+  color: #333;
+  font-weight: 100;
+  font-size: 1.2rem;
+}
+
+.textoPerfil {
+  margin-left: 144px !important;
+  margin-top: 32px !important;
+}
+
+.textoCNH {
+  margin-left: 130px !important;
+  margin-top: 40px !important;
+}
+
+.imgPerfil {
+  display: flex;
+  justify-content: flex-start;
+  width: 150px;
+  height: 200px;
+  margin-top: -16px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.imgCNH {
+  display: flex;
+  justify-content: flex-start;
+  width: 200px;
+  height: 210px;
+  margin-top: -16px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.botaoPerfil {
+  color: #242424 !important;
+  background-color: #ccd3f8 !important;
+  margin-left: 144px !important;
+  margin-top: -114px !important ;
+}
+
+.botaoCNH {
+  color: #242424 !important;
+  background-color: #ccd3f8 !important;
+  margin-left: 144px !important;
+  margin-top: -114px !important;
+}

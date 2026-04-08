@@ -1,0 +1,98 @@
+faixa {
+  background-color: #CCD3F8;
+  display: flex;
+  align-items: center;
+  padding: 10px 40px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+.text{
+  color: #333;
+  font-weight: 300;
+  font-size: 1.1rem;
+}
+.textoTituloPerfil {
+  font-weight: 300;
+  font-size: 1.1rem;
+  margin-left: 120px;
+}
+
+.textoTituloRG {
+  font-weight: 300;
+  font-size: 1.1rem;
+  margin-left: -8px;
+}
+
+
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: -32px;
+  min-width: 400px;
+  min-height: 100px;
+}
+
+.textoCard {
+  color: #333;
+  font-weight: 100;
+  font-size: 1.2rem;
+}
+
+.textoPerfil {
+  margin-left: 144px !important;
+  margin-top: 32px !important;
+}
+
+.textoRG {
+  margin-left: 130px !important;
+  margin-top: 40px !important;
+}
+
+.imgPerfil {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: -16px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.imgRG {
+  display: block; 
+  border-radius: 8px;
+  margin-top: -20px;
+}
+
+.botaoPerfil {
+  margin-left: 144px !important;
+  margin-top: -114px !important ;
+}
+
+
+
+.texto-titulo-residencia {
+  color: #333;
+  font-weight: 300;
+  font-size: 1.1rem;
+}
+
+
+
+.img-comprovante {
+  width: 150px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.botao-selecionar {
+  color: #242424 !important;
+  background-color: #ccd3f8 !important;
+  font-weight: bold !important;
+}
+
+.texto-informativo {
+  font-size: 0.75rem;
+  text-align: center;
+}

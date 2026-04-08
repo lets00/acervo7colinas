@@ -1,0 +1,75 @@
+.header-container {
+  width: 1000%;
+  max-width: 1300px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 10px;
+  border-color: #312783;
+}
+
+.header-logo {
+  width: 200px;
+  height: 40px;
+}
+
+.header-text {
+  color: #312783;
+  margin-top: 8px;
+}
+
+.header-input {
+  width: 361px;
+}
+
+.header-input .MuiOutlinedInput-root {
+  border-radius: 10px;
+  height: 27px;
+}
+
+.header-input .MuiInputLabel-root {
+  font-size: 12px;
+  margin-top: -2px;
+  color: #878787;
+  border-color: #312783;
+}
+
+.header-search-icon {
+  width: 20px;
+  height: 18px;
+}
+.header-stack {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.header-stack-row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px; 
+}
+
+.header-chip-criar {
+  background-color: #CCD3F8 !important;
+  color: #242424 !important;
+  font-size: 0.8125rem;
+}
+
+.header-chip-login {
+  background-color: #312783 !important;
+  color: #ffffff !important;
+  font-size: 0.8125rem;
+}
+
+.header-divider {
+  border-color: #937DC2 !important;
+  border-bottom-width: 1.5px !important;
+  margin-top: 16px;
+}

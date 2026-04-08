@@ -1,0 +1,42 @@
+
+.foto-barra {
+  background-color: #CCD3F8;
+  display: flex;
+  align-items: center;
+  width: 1200px;
+  padding: 10px 40px;
+  margin-bottom: 32px;
+}
+
+.foto-texto {
+  color: #333;
+  font-weight: 300;
+  font-size: 1.1rem;
+  margin-left: 520px;
+}
+
+.foto-box {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 400px;
+  min-height: 100px;
+  margin-top: -32px;
+}
+
+.foto-img {
+  width: 150px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: -41px;
+}
+
+
+
+.botao-foto {
+  background-color: #ccd3f8 !important;
+  color: #242424 !important;
+  margin-left: 45px !important;
+  margin-top: -115px !important;
+}

@@ -5,11 +5,11 @@ import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabe
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import BotaoCadastrar  from '../../components/jsx/BotaoCadastrar.jsx';
-import "../css/Entregadores.css";
-import CampoEntregador from "../../components/jsx/CampoEntregador.jsx";     
+import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
+import "../css/Usuario.css";
+import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
 
-function CadastroEntregadores() {
+function CadastroUsuarios() {
     const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
     
     const [cidade, setCidade] = React.useState('Garanhuns');
@@ -23,7 +23,7 @@ function CadastroEntregadores() {
 
     function Submit(e) {
         e.preventDefault();
-        console.log("Cadastrou o entregador");
+        console.log("Cadastrou o usuário!");
     }
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -37,23 +37,23 @@ function CadastroEntregadores() {
     return (
         <Box className="container" >
             <Header />
-            <Box className="content" >
+            <Box className="content" sx={{mt:0.5}} >
                 <Typography
                     variant="h4"
                     align="center"
-                    className="titulo" sx={{mt: 3}} >
-                    Cadastro Dos Entregadores! 
+                    className="titulo" sx={{mt:3}} >
+                    Cadastro Dos Usuários!
                 </Typography>
 
-                <Box className="faixa"   sx={{mt: 3}} >
-                    <Typography className="textoFaixa" >
+                <Box className="faixa"  sx={{mt:4}} >
+                    <Typography className="faixa-text" >
                         Cadastro Dos Dados:
                     </Typography>
                 </Box>
 
-                <form onSubmit={Submit}  >
-                    <Box className="inputGrande" >
-                        <TextField required  fullWidth label="Nome Completo" variant="outlined"  size="small" sx={{mt:2}}
+                <form onSubmit={Submit} >
+                    <Box className="iput-grande" >
+                        <TextField required  fullWidth label="Nome Completo" variant="outlined" sx={{ maxWidth: '950px', mx: 'auto', mb: 2, mt: 2 }} size="small"
                         />
                     </Box>
                     <Grid container spacing={2} justifyContent="center">
@@ -62,11 +62,11 @@ function CadastroEntregadores() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="CPF" size="small" sx={{width:"460px"}} />
+                                <TextField required fullWidth label="CPF" size="small" sx={{width:"460px"}} />
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="RG" size="small"sx={{width:"460px"}} />
+                                <TextField required fullWidth label="RG" size="small"sx={{width:"460px"}} />
                                 </Grid>
 
                             </Grid>
@@ -101,47 +101,65 @@ function CadastroEntregadores() {
                         <TextField
                             required fullWidth label="Email" variant="outlined" size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
                         />
-                        <TextField
-                            required
-                            fullWidth
-                            label="Numero"
-                            variant="outlined"
-                            size="small"
-                            placeholder="Telefone"
-                            helperText = "Propostas serão enviadas para este número via WhatsApp"
-                            sx={{
-                                maxWidth: '950px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <Box sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1
-                                        }}>
-                                            <img
-                                                src="https://flagcdn.com/w20/br.png"
-                                                alt="Brasil"
-                                                style={{
-                                                    width: 20,
-                                                    borderRadius: '2px'
-                                                }}
-                                            />
-                                            <Typography sx={{
-                                                color: 'text.primary',
-                                                fontSize: '0.9rem'
-                                            }}>
-                                                + 55
-                                            </Typography>
-                                            <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
-                                        </Box>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
+                       <Grid item xs={12} md={12}>
+                            <Grid container spacing={4} justifyContent="center">
+                                <Grid item xs={4}>
+                                    <TextField
+                                        required fullWidth label="Numero" variant="outlined" size="small" placeholder="Telefone"
+                                        sx={{
+                                            width: '460px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
+                                        }}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <img
+                                                            src="https://flagcdn.com/w20/br.png"
+                                                            alt="Brasil"
+                                                            style={{ width: 20, borderRadius: '2px' }} />
+                                                        <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>
+                                                            + 55
+                                                        </Typography>
+                                                        <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        required
+                                        fullWidth
+                                        label="Numero"
+                                        variant="outlined"
+                                        size="small"
+                                        placeholder="Telefone"
+                                        sx={{
+                                            width: '460px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
+                                        }}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <img
+                                                            src="https://flagcdn.com/w20/br.png"
+                                                            alt="Brasil"
+                                                            style={{ width: 20, borderRadius: '2px' }} />
+                                                        <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>
+                                                            + 55
+                                                        </Typography>
+                                                        <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
+                                                    </Box>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
                         <Grid container spacing={4}>
-                            <FormControl sx={{ mt: -1, width: '460px'}} variant="outlined">
+                            <FormControl sx={{ mt: -1, width: '460px', mb:2}} variant="outlined">
                                 <InputLabel>Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
@@ -162,7 +180,7 @@ function CadastroEntregadores() {
                                     label="Senha" sx={{height:"50px"}}
                                 />
                             </FormControl>     
-                            <FormControl sx={{ mt: -1, width: '460px'}} variant="outlined">
+                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined">
                                 <InputLabel>Confirmar Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
@@ -186,8 +204,8 @@ function CadastroEntregadores() {
                         </Grid>      
                     </Grid>
 
-                    <Box className="faixa"  sx={{mt: 6}} >
-                        <Typography className="textoFaixa" >
+                    <Box className="faixa"  sx={{mt:4}} >
+                        <Typography className="faixa-text" >
                             Endereço
                         </Typography>
                     </Box>
@@ -196,11 +214,11 @@ function CadastroEntregadores() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="Rua" size="small" sx={{width:"794px", mt: 2}} />
+                                    <TextField required fullWidth label="Rua" size="small" sx={{width:"794px", mt:2}} />
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="Numero" size="small"sx={{width:"120px", mt: 2}} />
+                                    <TextField required fullWidth label="Numero" size="small"sx={{width:"120px", mt:2}} />
                                 </Grid>
 
                             </Grid>
@@ -209,11 +227,11 @@ function CadastroEntregadores() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="CEP" size="small" sx={{width:"460px", mt:1 }} />
+                                    <TextField requiredfullWidth label="CEP" size="small" sx={{width:"460px", mt:1 }} />
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="Bairro" size="small"sx={{width:"460px", mt:1}} />
+                                    <TextField required fullWidth label="Bairro" size="small"sx={{width:"460px", mt:1}} />
                                 </Grid>
 
                             </Grid>
@@ -221,7 +239,7 @@ function CadastroEntregadores() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={6}>
-                                    <FormControl fullWidth size="small" sx={{ width: "460px", mt: 1 }}>
+                                    <FormControl required fullWidth size="small" sx={{ width: "460px", mt: 1 }}>
                                         <InputLabel id="select-cidade-label">Cidade</InputLabel>
                                         <Select
                                             labelId="select-cidade-label"
@@ -236,17 +254,17 @@ function CadastroEntregadores() {
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField fullWidth label="Complemento" size="small"sx={{width:"460px", mt:1}} />
+                                <TextField required fullWidth label="Complemento" size="small"sx={{width:"460px", mt:1}} />
                                 </Grid>
 
                             </Grid>
                         </Grid>
 
                     </Grid>
-                    <CampoEntregador />
+                    <CampoUsuario />
                     
-                    <Grid container justifyContent="center" sx={{mt: 6}}>
-                        <Box className="boxCaptcha" >
+                    <Grid container justifyContent="center" sx={{mt:5}}>
+                        <Box className="checkbox-box">
                                 <FormControlLabel control={<Checkbox />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
                         </Box>
                     </Grid>
@@ -257,4 +275,4 @@ function CadastroEntregadores() {
     )
 }
 
-export default CadastroEntregadores;
+export default CadastroUsuarios;
