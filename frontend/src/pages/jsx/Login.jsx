@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import "../css/Login.css";
 import Header from "../../components/jsx/HeaderLogin";
-
+import StackBooks from '../../assets/StackBooks.png';    
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -21,7 +21,6 @@ function Login() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-
       <Box
         sx={{
           width: '100vw',
@@ -29,6 +28,7 @@ function Login() {
           bgcolor: 'background.default', mt:-9, ml:-11 }} className="container" 
       >
         <Header />
+         <Box component="img"  src={StackBooks} alt="StackBooks" /*className="img-preview"*/ />
       </Box>
 
     </ThemeProvider>
