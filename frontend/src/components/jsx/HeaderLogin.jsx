@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import {  Typography, TextField, Box, Toolbar, Button, Stack, Chip, InputAdornment, Divider  } from '@mui/material';
 
 import logo from "../../assets/logo.png";
-import Search from "../../assets/Search.png";
+import SearchPreto from '../../assets/SearchPreto.png';
 import Perfil from "../../assets/Perfil.png";
-import '../css/Header.css';
+import '../css/HeaderLogin.css';
 
 export default function Header() {
 
@@ -34,7 +34,7 @@ export default function Header() {
             endAdornment: (
               <InputAdornment position="end">
                 <img 
-                  src={Search} 
+                  src={SearchPreto} 
                   alt="Lupa" 
                   className='header-search-icon'
                 />
@@ -42,15 +42,14 @@ export default function Header() {
             ),
           }}
         />
+
         <Stack spacing={2}  className='header-stack'> 
           <Stack direction="row" spacing={4} className='header-stack-row'>
             <Chip label="Criar Conta" size='small' className='header-chip-criar'/> 
-            <Chip icon={<img src={Perfil} alt="Perfil" style={{width:20, height:20 }}/>} 
-            label="Login" size='small' className='header-chip-login'/> 
           </Stack> 
         </Stack> 
-        </Box> 
-          <Divider className='header-divider'/>
-        </Box>
+          </Box> 
+            <Divider className='header-divider'/>
+            </Box>
 )
 }
