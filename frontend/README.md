@@ -1,8 +1,3 @@
-# para rodar o backend
-    node server.js
-# para rodar o frontend
-    npm run dev 
-
 
 
 # React + Vite
