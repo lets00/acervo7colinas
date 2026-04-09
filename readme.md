@@ -1,4 +1,4 @@
-# 📚 Acervo Sete Colinas
+#  Acervo Sete Colinas
 
 Sistema web desenvolvido para gerenciamento de livros, permitindo cadastro, visualização e acompanhamento de informações.
 
@@ -41,7 +41,7 @@ O projeto foi desenvolvido utilizando **JavaScript**, com separação entre **ba
 
 ---
 
-## ⚙️ Scripts
+##  Scripts
 
 ### Backend
 
@@ -57,7 +57,7 @@ npm run dev
 
 ---
 
-## 📦 Instalação
+##  Instalação
 
 ### 1. Clonar o repositório
 
@@ -101,5 +101,5 @@ Rotas disponíveis para acesso no navegador (temporário para referência):
 /emprestimos           → Meus empréstimos
 ```
 
-📌 **Observação:**
+ **Observação:**
 Essas rotas são utilizadas para navegação no frontend e podem sofrer alterações durante o desenvolvimento.
