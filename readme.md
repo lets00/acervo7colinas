@@ -1,8 +1,6 @@
 #  Acervo Sete Colinas
 
-Sistema web desenvolvido para gerenciamento de livros, permitindo cadastro, visualização e acompanhamento de informações.
-
-O projeto foi desenvolvido utilizando **JavaScript**, com separação entre **backend** e **frontend**.
+Sistema web desenvolvido para gerenciamento de livros.
 
 ---
 
