@@ -1,0 +1,310 @@
+/* ===========================
+   MEUS EMPRÉSTIMOS — CSS
+   =========================== */
+
+.emprestimos-page {
+    padding: 32px 0 48px;
+}
+
+/* ── Título + botão Novo Pedido ── */
+.emprestimos-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.emprestimos-titulo {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    color: #37228B;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+}
+
+/* ── Cards de estatísticas ── */
+.emprestimos-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    align-items: start;
+}
+.emprestimos-stats-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-emprestimo-card {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fff;
+    transition: box-shadow 0.2s ease;
+    min-height: 100px;
+}
+
+.stat-emprestimo-card:hover {
+    box-shadow: 0 4px 14px rgba(55, 34, 139, 0.1);
+}
+
+.stat-emprestimo-label {
+    font-size: 13px;
+    color: #555;
+    font-family: 'Roboto', sans-serif;
+}
+
+.stat-emprestimo-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-emprestimo-count {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0D0D0D;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1;
+}
+
+/* ── Barra de filtros ── */
+.emprestimos-filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-search-wrapper {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* ── Tabela ── */
+.emprestimos-table-wrapper {
+    border: 1px solid #d0d0e8;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* cabeçalho */
+.emprestimos-table-wrapper .MuiTableHead-root .MuiTableCell-root {
+    background-color: #ebebf5 !important;
+    color: #0D0D0D !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    font-family: 'Roboto', sans-serif !important;
+    border-right: 1px solid #d0d0e8;
+    padding: 14px 16px !important;
+    white-space: nowrap;
+}
+
+.emprestimos-table-wrapper .MuiTableHead-root .MuiTableCell-root:last-child {
+    border-right: none;
+}
+
+/* linhas do body */
+.emprestimos-table-wrapper .MuiTableBody-root .MuiTableRow-root {
+    background-color: #f0f0fa;
+}
+
+.emprestimos-table-wrapper .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background-color: #e8e8f5;
+}
+
+.emprestimos-table-wrapper .MuiTableBody-root .MuiTableCell-root {
+    font-size: 13px !important;
+    font-family: 'Roboto', sans-serif !important;
+    color: #0D0D0D !important;
+    border-bottom: 1px solid #d0d0e8 !important;
+    border-right: 1px solid #d0d0e8;
+    padding: 12px 16px !important;
+    vertical-align: middle;
+}
+
+.emprestimos-table-wrapper .MuiTableBody-root .MuiTableCell-root:last-child {
+    border-right: none;
+}
+
+.emprestimos-table-wrapper .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-root {
+    border-bottom: none !important;
+}
+
+/* footer da tabela (TableFooter com TablePagination) */
+.emprestimos-table-wrapper .MuiTableFooter-root {
+    background-color: #ebebf5;
+    border-top: 1px solid #d0d0e8;
+}
+
+.emprestimos-table-wrapper .MuiTableFooter-root .MuiTableCell-root {
+    border-bottom: none !important;
+    padding: 0 !important;
+}
+
+.emprestimos-table-wrapper .MuiTablePagination-root {
+    color: #37228B !important;
+    font-family: 'Roboto', sans-serif !important;
+}
+
+.emprestimos-table-wrapper .MuiTablePagination-selectLabel,
+.emprestimos-table-wrapper .MuiTablePagination-displayedRows {
+    font-size: 13px !important;
+    color: #37228B !important;
+}
+
+.emprestimos-table-wrapper .MuiTablePagination-select {
+    color: #37228B !important;
+}
+
+.emprestimos-table-wrapper .MuiTablePagination-actions .MuiIconButton-root {
+    color: #37228B !important;
+}
+
+.emprestimos-table-wrapper .MuiTablePagination-actions .MuiIconButton-root.Mui-disabled {
+    color: #bbb !important;
+}
+
+/* célula do livro */
+.livro-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.livro-cell-thumb-placeholder {
+    width: 36px;
+    height: 48px;
+    background: #ccc;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.livro-cell-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.livro-cell-nome {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    line-height: 1.3;
+}
+
+.livro-cell-autor {
+    font-size: 11px !important;
+    color: #666 !important;
+}
+
+/* ações */
+.acoes-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* badges de status */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Roboto', sans-serif;
+    white-space: nowrap;
+}
+
+.status-badge .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-solicitado {
+    background: #1565c0;
+    color: #fff;
+}
+
+.status-solicitado .dot {
+    background: #fff;
+}
+
+.status-ativo {
+    background: #1976d2;
+    color: #fff;
+}
+
+.status-ativo .dot {
+    background: #fff;
+}
+
+.status-atrasado {
+    background: #c62828;
+    color: #fff;
+}
+
+.status-atrasado .dot {
+    background: #fff;
+}
+
+.status-cancelado {
+    background: #e65100;
+    color: #fff;
+}
+
+.status-cancelado .dot {
+    background: #fff;
+}
+
+.status-devolvido {
+    background: #757575;
+    color: #fff;
+}
+
+.status-devolvido .dot {
+    background: #fff;
+}
+
+/* ── Responsividade ── */
+@media (max-width: 1000px) {
+    .emprestimos-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .emprestimos-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .emprestimos-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-search-wrapper {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .emprestimos-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

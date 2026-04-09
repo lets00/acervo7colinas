@@ -16,6 +16,7 @@ import EnviadoEmail from "./pages/jsx/EnviadoEmail.jsx";
 import GerarSenha from "./pages/jsx/GerarSenha.jsx";
 
 import Dashboard from "./pages/jsx/dashboard.jsx";
+import MeusEmprestimos from "./pages/jsx/MeusEmprestimos.jsx";
 
 
 const theme = createTheme();
@@ -39,7 +40,7 @@ function App() {
             <Route path="/enviado-email" element={<EnviadoEmail />} />
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/dashboard" element={<Dashboard />} />
-
+            <Route path="/emprestimos" element={<MeusEmprestimos />} />
           </Routes>
 
         </Container>
