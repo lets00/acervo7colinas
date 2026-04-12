@@ -17,6 +17,7 @@
 .header-logo {
   width: 200px;
   height: 40px;
+  margin-left: 15px;
 }
 
 .header-text {
@@ -49,6 +50,7 @@
   display: flex;
   align-items: center;
   margin-top: 5px;
+  margin-left: 15px;
 }
 
 .header-stack-row {

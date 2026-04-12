@@ -14,7 +14,7 @@ import Login from "./pages/jsx/Login.jsx";
 import EsqueciSenha from "./pages/jsx/EsqueciSenha.jsx";
 import EnviadoEmail from "./pages/jsx/EnviadoEmail.jsx";
 import GerarSenha from "./pages/jsx/GerarSenha.jsx";
-
+import SenhaAlterada from "./pages/jsx/SenhaAlterada.jsx"
 import Dashboard from "./pages/jsx/dashboard.jsx";
 
 
@@ -39,7 +39,7 @@ function App() {
             <Route path="/enviado-email" element={<EnviadoEmail />} />
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/dashboard" element={<Dashboard />} />
-
+            <Route path="/senha-alterada" element={<SenhaAlterada />} />
           </Routes>
 
         </Container>
