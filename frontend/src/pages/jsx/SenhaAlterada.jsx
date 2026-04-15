@@ -128,7 +128,7 @@ function Login() {
         </Box>
         <Box className="glass-Tela" sx={{ width:'100%' ,  height: '100%', height: 1000,
             width: 1400, display: 'flex',  mt: -115, ml: -11}}>
-          <Box className="Quadro">
+          <Box className="Quadro-Um">
             <Box component="img"  src={Multiply} alt="Multiply" className="img" sx={{ml:92, mt:-1}}/>
             <Box component="img"  src={CheckMark} alt="CheckMark" className="certo" />
             <Typography variant="h6" sx={{mt:4}}>

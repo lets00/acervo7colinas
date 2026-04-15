@@ -17,6 +17,8 @@ import GerarSenha from "./pages/jsx/GerarSenha.jsx";
 import SenhaAlterada from "./pages/jsx/SenhaAlterada.jsx"
 import Dashboard from "./pages/jsx/dashboard.jsx";
 import MeusEmprestimos from "./pages/jsx/MeusEmprestimos.jsx";
+import LivrosSalvos from "./pages/jsx/LivrosSalvos.jsx";
+import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
 
 
 const theme = createTheme();
@@ -41,8 +43,9 @@ function App() {
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
-
+            <Route path="/livros-salvos" element={<LivrosSalvos />} />
             <Route path="/emprestimos" element={<MeusEmprestimos />} />
+            <Route path="/acervo" element={<NossoAcervo />} />
 
           </Routes>
 

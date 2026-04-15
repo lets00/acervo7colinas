@@ -23,7 +23,7 @@ function EsqueciSenha() {
                     className="titulo" sx={{mt: 1, ml:-5}} >
                     Esqueci minha senha
                 </Typography>
-                <Box className="faixa"   sx={{mt: 6}} >
+                <Box className="faixa-senha"   sx={{mt: 6}} >
                     <Typography className="textoFaixa" sx={{ml:25}} >
                         Para Redefinir sua senha, por favor digite o endereço de e-mail ou CPF da sua conta.
                     </Typography>
