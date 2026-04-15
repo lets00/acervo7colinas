@@ -45,7 +45,8 @@ function CadastroUsuarios() {
                     Cadastro Dos Usuários!
                 </Typography>
 
-                <Box className="faixa"  sx={{mt:4}} >
+                <Box  sx={{mt: 4, display: 'flex', alignItems: 'center', width: '1200px',          
+                padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box',  backgroundColor: '#CCD3F8'  }} > 
                     <Typography className="faixa-text" >
                         Cadastro Dos Dados:
                     </Typography>
@@ -204,7 +205,8 @@ function CadastroUsuarios() {
                         </Grid>      
                     </Grid>
 
-                    <Box className="faixa"  sx={{mt:4}} >
+                    <Box sx={{mt: 4, display: 'flex', alignItems: 'center', width: '1200px',          
+                padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box',  backgroundColor: '#CCD3F8'  }}  >
                         <Typography className="faixa-text" >
                             Endereço
                         </Typography>

@@ -23,7 +23,7 @@ function FazerNovaSenha() {
                     className="titulo" sx={{mt: 3, ml:-5}} >
                     Esqueci minha senha
                 </Typography>
-                <Box className="faixa"   sx={{mt: 6}} >
+                <Box className="faixa-senha"   sx={{mt: 6}} >
                     <Typography className="textoFaixa" sx={{ml:25}} >
                         Enviamos um e-mail para o (E-MAIL do usuário) com as instruções para redefinir sua senha.
                         Caso não receba o e-mail em alguns minutos, verifique sua caixa de spam ou repita o processo.

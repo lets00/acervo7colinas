@@ -9,7 +9,8 @@ function CampoUsuario() {
     return (
         <>
             <Grid container justifyContent="center" >
-                <Box className="faixa" sx={{mt:5}}>
+                <Box sx={{mt: 5, display: 'flex', alignItems: 'center', width: '1200px',          
+                padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box',  backgroundColor: '#CCD3F8'  }} >
                     <Typography className="textoTituloPerfil">
                         Foto de Perfil
                     </Typography>
@@ -41,7 +42,8 @@ function CampoUsuario() {
                 </Grid>
             </Grid>
             <Grid container justifyContent="center" sx={{mt:1}}>
-                <Box className="faixa" sx={{mt:5, width: '525px !important'}}>
+                <Box sx={{mt: 5, display: 'flex', alignItems: 'center', width: '1200px',          
+                padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box',  backgroundColor: '#CCD3F8'  }} >
                     <Typography className="texto-titulo-residencia" sx={{color:"#333"}}>
                         Comprovante de Residência
                     </Typography>

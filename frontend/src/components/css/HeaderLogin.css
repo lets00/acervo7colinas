@@ -25,23 +25,22 @@
   margin-top: 8px;
 }
 
-.header-input {
+.header-input-preto {
   width: 361px;
 }
 
-.header-input .MuiOutlinedInput-root {
+.header-input-preto .MuiOutlinedInput-root {
   border-radius: 10px;
   height: 27px;
 }
 
-.header-input .MuiInputLabel-root {
+.header-input-preto .MuiInputLabel-root {
   font-size: 12px;
   margin-top: -2px;
   color: #878787;
-  border-color: #242424;
 }
 
-.header-search-icon {
+.header-search-icon-preto {
   width: 22px;
   height: 24px;
   margin-top: 4px;

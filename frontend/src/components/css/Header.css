@@ -1,5 +1,5 @@
 .header-container {
-  width: 1000%;
+  width: 100%;
   max-width: 1300px;
 }
 
@@ -37,12 +37,12 @@
   font-size: 12px;
   margin-top: -2px;
   color: #878787;
-  border-color: #312783;
+  border-color: #312783 !important;
 }
 
 .header-search-icon {
-  width: 20px;
-  height: 18px;
+  width: 18px !important;
+  height: 16px !important;
 }
 .header-stack {
   display: flex;
@@ -73,3 +73,4 @@
   border-bottom-width: 1.5px !important;
   margin-top: 16px;
 }
+

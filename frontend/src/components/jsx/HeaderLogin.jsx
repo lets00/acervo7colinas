@@ -26,7 +26,7 @@ export default function Header() {
 
         <TextField
           size="small"
-          className="header-input"
+          className="header-input-preto"
           label="Procure seu livro"
           value={pesquisar}
           onChange={(e) => setPesquisar(e.target.value)}
@@ -36,11 +36,12 @@ export default function Header() {
                 <img 
                   src={SearchPreto} 
                   alt="Lupa" 
-                  className='header-search-icon'
+                  className='header-search-icon-preto'
                 />
               </InputAdornment>
             ),
           }}
+        sx={{bordercolor: "#242424"}}
         />
 
         <Stack spacing={2}  className='header-stack'> 

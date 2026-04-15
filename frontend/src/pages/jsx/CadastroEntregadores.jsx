@@ -45,7 +45,7 @@ function CadastroEntregadores() {
                     Cadastro Dos Entregadores! 
                 </Typography>
 
-                <Box className="faixa"   sx={{mt: 3}} >
+                <Box className="faixa-entrega "   sx={{mt: 3}} >
                     <Typography className="textoFaixa" >
                         Cadastro Dos Dados:
                     </Typography>
@@ -186,7 +186,7 @@ function CadastroEntregadores() {
                         </Grid>      
                     </Grid>
 
-                    <Box className="faixa"  sx={{mt: 6}} >
+                    <Box className="faixa-entrega "  sx={{mt: 6}} >
                         <Typography className="textoFaixa" >
                             Endereço
                         </Typography>

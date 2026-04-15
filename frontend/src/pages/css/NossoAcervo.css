@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.content {
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  
+}
+
+.titulo {
+  margin-bottom: 32px;
+  font-weight: 300;
+  color: #333;
+  margin-top: 22px;
+  text-align: center;
+}
+
+.faixa {
+  background-color: #312783;
+  display: flex;
+  align-items: center;
+  width: 600px;
+  padding: 10px 40px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  height: 300px;
+}
+
+.faixaDois {
+  background-color: #312783;
+  display: flex;
+  align-items: center;
+  width: 600px;
+  padding: 10px 40px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  height: 280px;
+}
+
+.Quadro {
+  background-color: #ffff;
+  border-radius: 5px;
+  padding: 40px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 130px;
+  width: 1090px;
+
+}
+
+.headerInput {
+  width: 460px;
+}
+.headerInput .MuiOutlinedInput-root {
+  border-radius: 10px;
+  height: 27px;
+}
+
+.headerInput .MuiInputLabel-root {
+  font-size: 12px;
+  margin-top: -2px;
+  color: #fff;
+}
+.header-search {
+  width: 26px !important;
+  height: 24px !important;
+  margin-top: 4px;
+}
+
+.headerInput .MuiOutlinedInput-notchedOutline {
+  border-color: #fff !important;
+}
+
+.headerInput:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #fff !important;
+}
+
+.headerInput .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #fff !important;
+}
+
+.headerInput .MuiInputBase-input {
+  color: #fff;
+}
+
