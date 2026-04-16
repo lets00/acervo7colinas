@@ -9,7 +9,9 @@ import Books from '../../assets/Books.png';
 import OpenOrangeBook from '../../assets/OpenOrangeBook.png';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-
+import "../css/SenhaAlterada.css";
+import Multiply from "../../assets/Multiply.png";
+import CheckMark from "../../assets/CheckMark.png";
 
 const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
@@ -45,7 +47,7 @@ function Login() {
       <CssBaseline />
         <Box  
           sx={{
-           bgcolor: 'background.default',position: 'relative',overflow:'visible'}} className="container"  >
+          bgcolor: 'background.default',position: 'relative',overflow:'visible'}} className="container"  >
           <Box className="header" sx={{ml:-60}}>
             <Header />
           </Box>
@@ -99,7 +101,7 @@ function Login() {
               </Box>
               <Box className="botoes" sx={{mt:3}}> 
                 <Button  className="btn-cadastrar" sx={{color:"#ffff", width: "750px"}} >
-                     Entrar
+                    Entrar
                 </Button>
             </Box> 
                 <Grid className="linha-login">  
@@ -124,9 +126,25 @@ function Login() {
             </Box>
           </Box>
         </Box>
-
-
+        <Box className="glass-Tela" sx={{ width:'100%' ,  height: '100%', height: 1000,
+            width: 1400, display: 'flex',  mt: -115, ml: -11}}>
+          <Box className="Quadro-Um">
+            <Box component="img"  src={Multiply} alt="Multiply" className="img" sx={{ml:92, mt:-1}}/>
+            <Box component="img"  src={CheckMark} alt="CheckMark" className="certo" />
+            <Typography variant="h6" sx={{mt:4}}>
+              Atenção
+            </Typography>
+            <Typography variant="h6" sx={{mt:3}}>
+              Senha altera com sucesso
+            </Typography>
+            <Button  className="btn-cadastrar" sx={{color:"#ffff", mt:3}} >
+                OK, voltar
+            </Button>
+          </Box>
+        </Box>         
     </ThemeProvider>
+
+        
   );
 }
 
