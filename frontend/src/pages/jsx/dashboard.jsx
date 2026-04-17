@@ -12,6 +12,8 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
+import Footer from "../../components/jsx/Footer";
+
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
@@ -250,6 +252,10 @@ export default function Dashboard() {
                         />
                     </div>
                 </div>
+                <div className="footer-container">
+                    <Footer />
+                </div>
+
             </Box>
         </Box>
     );
