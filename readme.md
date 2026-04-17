@@ -18,8 +18,8 @@ Sistema web desenvolvido para gerenciamento de livros.
 
 ### Frontend
 
-* React **19.2.0**
-* React DOM **19.2.0**
+* React **18.3.1**
+* React DOM **18.3.1**
 * React Router DOM **7.13.1**
 * Vite **7.3.1**
 
