@@ -279,7 +279,9 @@
 .status-devolvido .dot {
     background: #fff;
 }
-
+.container-footer {
+    margin-top: 40px;
+}
 /* ── Responsividade ── */
 @media (max-width: 1000px) {
     .emprestimos-stats {
