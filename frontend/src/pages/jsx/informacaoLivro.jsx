@@ -5,6 +5,8 @@ import SectionHeader from "../../components/jsx/SectionHeader";
 import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
+import Footer from "../../components/jsx/Footer";
+
 
 import iconInfo from "../../assets/info.png";
 import iconCalendario from "../../assets/calendario.png";
@@ -227,6 +229,8 @@ function InformacaoLivro() {
                         />
                     ))}
                 </div>
+                <div className="container-footer"><Footer /> </div>
+                
 
             </Box>
         </Box>

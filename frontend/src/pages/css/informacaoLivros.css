@@ -163,4 +163,6 @@
 .exemplares-table th {
     text-align: center;
 }
-
+.container-footer {
+    margin-top: 40px;
+}
