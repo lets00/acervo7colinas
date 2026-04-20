@@ -1,13 +1,17 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/jsx/Header";
 import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel,Button,  OutlinedInput, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pt-br';
+import dayjs from 'dayjs';
 import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import "../css/Usuario.css";
 import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
+
+dayjs.locale('pt-br');
 
 function CadastroUsuarios() {
     const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
@@ -80,7 +84,7 @@ function CadastroUsuarios() {
                                     <TextField required fullWidth label="Sexo" size="small" sx={{  width:"460px"}} />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="pt-br">
                                         <DatePicker
                                             label="Data de Nascimento"
                                             views={['year', 'month', 'day']}
@@ -108,36 +112,7 @@ function CadastroUsuarios() {
                                     <TextField
                                         required fullWidth label="Numero" variant="outlined" size="small" placeholder="Telefone"
                                         sx={{
-                                            width: '460px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
-                                        }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <img
-                                                            src="https://flagcdn.com/w20/br.png"
-                                                            alt="Brasil"
-                                                            style={{ width: 20, borderRadius: '2px' }} />
-                                                        <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>
-                                                            + 55
-                                                        </Typography>
-                                                        <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Numero"
-                                        variant="outlined"
-                                        size="small"
-                                        placeholder="Telefone"
-                                        sx={{
-                                            width: '460px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
+                                            width: '950px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
                                         }}
                                         InputProps={{
                                             startAdornment: (

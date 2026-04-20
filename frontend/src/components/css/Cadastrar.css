@@ -7,42 +7,46 @@
 
 
 .btn-cadastrar {
-  background-color: #283593 !important;
+  background-color: #37228B !important;
   padding: 10px 40px !important;
-  font-weight: bold !important;
+  font-weight: 700 !important;
+  font-family: 'Roboto', sans-serif !important;
   min-width: 300px !important;
 }
 
 .btn-cadastrar:hover {
-  background-color: #1a237e !important;
+  background-color: #2a1870 !important;
 }
 
 
 .btn-cancelar {
-  color: #283593 !important;
-  border: 1px solid #283593 !important;
+  color: #37228B !important;
+  border: 1px solid #37228B !important;
   padding: 10px 40px !important;
-  font-weight: bold !important;
+  font-weight: 700 !important;
+  font-family: 'Roboto', sans-serif !important;
   min-width: 300px !important;
 }
 
 .btn-cancelar:hover {
-  border: 1px solid #1a237e !important;
-  background-color: rgba(40, 53, 147, 0.04) !important;
+  border: 1px solid #2a1870 !important;
+  background-color: rgba(55,34,139,0.04) !important;
 }
 
 .texto-cadastro {
-  color: #242424;
-  font-weight: 100;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.2rem;
+  font-family: 'Roboto', sans-serif;
   text-align: center;
   margin-top: 25px;
 }
 
 .texto-login {
-  color: #312783;
-  font-weight: 100;
+  color: #37228B;
+  font-weight: 400;
   font-size: 1.2rem;
+  font-family: 'Roboto', sans-serif;
   margin-left: 8px;
 }
 

@@ -22,20 +22,20 @@
 }
 
 .textoTituloPerfil {
-  color: #333;
-  font-weight: 300;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
   margin-left: 120px;
 }
 
 .textoTituloCNH {
-  color: #333;
-  font-weight: 300;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
   margin-left: -8px;
 }
-
-
 
 .card {
   border: 1px solid #ccc;
@@ -47,19 +47,22 @@
 }
 
 .textoCard {
-  color: #333;
-  font-weight: 100;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.2rem;
+  font-family: 'Roboto', sans-serif;
 }
 
 .textoPerfil {
   margin-left: 144px !important;
   margin-top: 32px !important;
+  font-family: 'Roboto', sans-serif;
 }
 
 .textoCNH {
   margin-left: 130px !important;
   margin-top: 40px !important;
+  font-family: 'Roboto', sans-serif;
 }
 
 .imgPerfil {
@@ -93,5 +96,5 @@
   color: #242424 !important;
   background-color: #ccd3f8 !important;
   margin-left: 144px !important;
-  margin-top: -114px !important;
+  margin-top: -125px !important;
 }

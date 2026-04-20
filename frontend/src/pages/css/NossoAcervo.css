@@ -15,10 +15,12 @@
 
 .titulo {
   margin-bottom: 32px;
-  font-weight: 300;
-  color: #333;
+  font-weight: 700;
+  color: #37228B;
+  font-family: 'Roboto', sans-serif;
   margin-top: 22px;
   text-align: center;
+  font-size: clamp(20px, 3vw, 28px);
 }
 
 .faixa {

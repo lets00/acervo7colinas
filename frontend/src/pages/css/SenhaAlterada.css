@@ -33,9 +33,10 @@
   width:  30px;
 }
 .btn-cadastrar {
-  background-color: #283593 !important;
+  background-color: #37228B !important;
   padding: 10px 40px !important;
-  font-weight: bold !important;
+  font-weight: 700 !important;
+  font-family: 'Roboto', sans-serif !important;
   width: 400px !important;
   height: 35px;
 }

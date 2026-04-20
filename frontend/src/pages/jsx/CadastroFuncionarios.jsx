@@ -1,32 +1,29 @@
 
 import React from "react";
 import Header from "../../components/jsx/Header";
-import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabel, Checkbox, FormControlLabel,Button,  OutlinedInput, IconButton } from "@mui/material";
+import {Box, Typography, TextField, Grid, InputAdornment, 
+    FormControl, InputLabel, Checkbox, FormControlLabel, 
+    Button, OutlinedInput, IconButton, Radio, RadioGroup, FormLabel } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../../pages/css/Funcionarios.css";
 import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import CampoFuncionario from "../../components/jsx/CampoFuncionario.jsx";
 
-function CadastroFuncionarios() {
-    const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
+function CadastroFuncionarios() {
     const [senha, setSenha] = React.useState('');
     const [confirmarSenha, setConfirmarSenha] = React.useState('');
     const [showPassword, setShowPassword] = React.useState(false);
 
+    const handleClickShowPassword = () => setShowPassword(!showPassword);
+
+    const handleMouseDownPassword = (event) => event.preventDefault();
+    const handleMouseUpPassword = (event) => event.preventDefault();
+
     function Submit(e) {
         e.preventDefault();
-        console.log("Cadastrou o funcionário");
+        console.log("Cadastrou!");
     }
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
-
-    const handleMouseUpPassword = (event) => {
-        event.preventDefault();
-    };
     return (
         <Box className="container">
             <Header />
@@ -164,41 +161,33 @@ function CadastroFuncionarios() {
                             </FormControl>  
                         </Grid>      
                     </Grid>
-
-                    <Box className="barra" sx={{mt:4}}>
-                        <Typography className="barra-texto">
-                            Acesso ao Sistema:
-                        </Typography>
-                    </Box>
-                    <Grid container justifyContent="center">
-                        <Grid item>
-                                <Box className="acesso-box">
-                                <Typography variant="h6" sx={{ mb: 2, color: "#666", fontWeight: "300", textAlign: "center" }}>
-                                    Tipo de Acesso:
-                                </Typography>
-
-                                <Box sx={{ display: "flex", gap: 4, justifyContent: "center" }}>
-                                    <FormControlLabel control={<Checkbox />} label="Administrador" sx={{ color: "#000" }}/>
-                                    <FormControlLabel control={<Checkbox />} label="Funcionários Comum" sx={{ color: "#000" }} />
-                                </Box>
-                            </Box>
-                        </Grid>
+                    <Grid sx={{ml:-60}}>
+                        <FormControl sx={{ flexDirection: 'row',alignItems: 'center', mt:3  }}>
+                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="demo-radio-buttons-group-label">Tipo de acesso:</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    defaultValue="female"
+                                    name="radio-buttons-group"
+                                >
+                                    <FormControlLabel value="female" control={<Radio />} label="Administrador" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="male" control={<Radio />} label="Funcionario comum"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                </RadioGroup>
+                        </FormControl>
                     </Grid>
-                    <Grid container justifyContent="center">
-                        <Grid item>
-                            <Box className="acesso-box" sx={{ mt: 3, width: "390px" }}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{mb: 2, color: "#666", fontWeight: "300", textAlign: "center"}}>
-                                    Disponibilidade:
-                                </Typography>
-
-                                <Box sx={{ display: "flex", gap: 4, justifyContent: "center" }}>
-                                    <FormControlLabel control={<Checkbox />} label="Ativo" sx={{color:"#000"}} />
-                                    <FormControlLabel control={<Checkbox />} label="Inativo" sx={{color:"#000"}} />
-                                </Box>
-                            </Box>
-                        </Grid>
+                    <Grid sx={{ml:-80}}>
+                        <FormControl sx={{ flexDirection: 'row',alignItems: 'center', mt:3 }}>
+                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="demo-radio-buttons-group-label">Disponibilidade:</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    defaultValue="female"
+                                    name="radio-buttons-group"
+                                >
+                                    <FormControlLabel value="female" control={<Radio />} label="Ativo" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="male" control={<Radio />} label="Inativo"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                </RadioGroup>
+                        </FormControl>
                     </Grid>
                     <CampoFuncionario/>
                     <Grid container justifyContent="center" sx={{mt:6}}>
