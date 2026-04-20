@@ -21,8 +21,10 @@
 }
 
 .header-text {
-  color: #242424;
+  color: #0D0D0D;
   margin-top: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
 }
 
 .header-input-preto {
@@ -59,9 +61,11 @@
 }
 
 .header-chip-criar {
-  background-color: #312783 !important;
+  background-color: #37228B !important;
   color: #ffff !important;
-  font-size: 0.8125rem;
+  font-size: 0.8125rem !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500 !important;
 }
 
 

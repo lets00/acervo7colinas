@@ -25,7 +25,7 @@ function EsqueciSenha() {
                 </Typography>
                 <Box className="faixa-senha"   sx={{mt: 6}} >
                     <Typography className="textoFaixa" sx={{ml:25}} >
-                        Para Redefinir sua senha, por favor digite o endereço de e-mail ou CPF da sua conta.
+                        Para Redefinir sua senha, por favor digite o endereço de e-mail da sua conta.
                     </Typography>
                 </Box>
                 <form onSubmit={Submit} >

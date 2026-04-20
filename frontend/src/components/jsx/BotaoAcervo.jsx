@@ -15,20 +15,21 @@ function BotaoCadastrar(){
                 variant="contained" 
                 sx={{
                     color: "#fff",  
-                    backgroundColor: "#283593",
-                    fontWeight: "bold", 
+                    backgroundColor: "#37228B",
+                    fontWeight: 700, 
+                    fontFamily: "'Roboto', sans-serif",
                     width: "130px",
                     '&:hover': { 
-                        backgroundColor: "#1a237e" 
+                        backgroundColor: "#2a1870" 
                     } 
                 }} 
             >
                 Buscar 
             </Button>
 
-            <Button variant="outlined" sx={{color: "#283593",border: "1px solid #283593",padding: "10px 40px",
-                fontWeight: "bold",width: "130px", "&:hover": {border: "1px solid #1a237e",
-                    backgroundColor: "rgba(40, 53, 147, 0.04)", }
+            <Button variant="outlined" sx={{color: "#37228B",border: "1px solid #37228B",padding: "10px 40px",
+                fontWeight: 700, fontFamily: "'Roboto', sans-serif", width: "130px", "&:hover": {border: "1px solid #2a1870",
+                    backgroundColor: "rgba(55,34,139,0.04)", }
                 }}>
                 CANCELAR 
             </Button> 
