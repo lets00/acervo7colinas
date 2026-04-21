@@ -27,7 +27,7 @@
   background-color: #312783;
   display: flex;
   align-items: center;
-  width: 600px;
+  width: 800px;
   padding: 10px 40px;
   margin-bottom: 16px;
   border-radius: 20px;
@@ -38,7 +38,7 @@
   background-color: #312783;
   display: flex;
   align-items: center;
-  width: 600px;
+  width: 800px;
   padding: 10px 40px;
   margin-bottom: 16px;
   border-radius: 20px;
@@ -49,7 +49,7 @@
   background-color: #ffff;
   border-radius: 5px;
   padding: 40px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); 
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -93,3 +93,13 @@
   color: #fff;
 }
 
+.linha {
+  border-bottom: 0.2px solid #898989 !important;
+  box-shadow: 0 0.2px 0.2px rgba(0, 0, 0, 0.8); 
+  padding-bottom: 4px !important;
+  margin-left: 25px;
+  margin-right: 25px; 
+  margin-top: 20px;   
+  margin-bottom: 20px; 
+  display: block;      
+}
