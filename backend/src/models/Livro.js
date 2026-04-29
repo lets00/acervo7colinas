@@ -33,6 +33,10 @@ const Livro = sequelize.define('Livro', {
     genero: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    img: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'livros'
