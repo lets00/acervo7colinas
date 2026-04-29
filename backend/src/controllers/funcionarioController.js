@@ -6,7 +6,7 @@ export async function criarFuncionario(req,res) {
 
     if(!resultado.success) {
         return res.status(400).json({
-            menssagem: 'Dados inválidos!',
+            mensagem: 'Dados inválidos!',
             erros: resultado.error.issues
         });
     }
@@ -27,12 +27,12 @@ export async function criarFuncionario(req,res) {
         });
 
         return res.status(201).json({
-            menssagem: 'Funcionário cadastrado com sucesso!',
+            mensagem: 'Funcionário cadastrado com sucesso!',
             funcionario: novoFuncionario
         });
     } catch (error) {
         return res.status(500).json({
-            menssagem: 'Erro ao cadastrar o funcionário!',
+            mensagem: 'Erro ao cadastrar o funcionário!',
             erro: error.message
         });
     }
