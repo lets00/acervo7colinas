@@ -24,7 +24,8 @@ const Funcionario = sequelize.define('Funcionario', {
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     telefone: {
         type: DataTypes.STRING,
