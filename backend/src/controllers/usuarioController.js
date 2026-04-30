@@ -1,11 +1,8 @@
+import bcrypt from 'bcrypt';
+import Usuario from '../models/Usuario.js';
 import { usuarioSchema } from "../validators/usuarioValidator.js";
 
-function converterData(data) {
-    const [dia, mes, ano] = data.split('/');
-    return `${ano}-${mes}-${dia}`;
-}
-
-export function criarUsuario(req, res) {
+export async function criarUsuario(req, res) {
     const resultado = usuarioSchema.safeParse(req.body);
 
     if (!resultado.success) {
@@ -15,24 +12,36 @@ export function criarUsuario(req, res) {
         });
     };
 
-    const dados = resultado.data;
-    const dataConvertida = converterData(dados.dataNascimento);
+    try {
+        const dados = resultado.data;
+        const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
 
-    const novoUsuario = {
-        id: 1,
-        nomeCompleto: dados.nomeCompleto,
-        cpf: dados.cpf,
-        rg: dados.rg,
-        sexo: dados.sexo,
-        dataNascimento: dataConvertida,
-        email: dados.email,
-        telefone1: dados.telefone1,
-        telefone2: dados.telefone2,
-        endereco: dados.endereco
-    };
+        const novoUsuario = await Usuario.create({
+            nomeCompleto: dados.nomeCompleto,
+            cpf: dados.cpf,
+            rg: dados.rg,
+            sexo: dados.sexo,
+            dataNascimento: dados.dataNascimento,
+            email: dados.email,
+            telefone: dados.telefone1,
+            senha:senhaCriptografada,
+            rua: dados.endereco.rua,
+            numero: dados.endereco.numero,
+            cep: dados.endereco.cep,
+            bairro: dados.endereco.bairro,
+            cidade: dados.endereco.cidade,
+            complemento: dados.endereco.complemento
+        });
+        
+        return res.status(201).json({
+            mensagem: 'Usuário cadastrado com sucesso',
+            usuario: novoUsuario
+        });
 
-    return res.status(201).json({
-        mensagem: 'Usuário cadastrado com sucesso',
-        usuario: novoUsuario
-    });
-};
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao cadastrar usuário!',
+            erro: error.message
+        });
+    }
+}

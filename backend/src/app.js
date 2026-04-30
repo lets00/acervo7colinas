@@ -16,5 +16,6 @@ app.use('/livros', livroRoutes);
 app.use('/', homeRoutes);
 app.use('/usuarios', usuarioRoutes);
 app.use('/funcionarios', funcionarioRoutes);
+app.use('/login', loginRoutes);
 
 export default app;
