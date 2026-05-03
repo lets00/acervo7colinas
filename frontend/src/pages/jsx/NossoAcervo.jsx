@@ -14,6 +14,8 @@ import BookCarrosselAcervo from "../../components/jsx/BookCarrosselAcervo.jsx";
 import BookCardAcervo from "../../components/jsx/BookCardAcervo.jsx";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Footer from "../../components/jsx/Footer";
+
 import MaxtonHall from '../../assets/MaxtonHall.jpg';
 import SociedadeVampiros from "../../assets/SociedadeVampiros.jpg";
 import UmBeijo from "../../assets/UmBeijo.jpg";
@@ -160,6 +162,9 @@ function NossoAcervo() {
                         }} />
                         </Stack>
                     </Box>
+                </Box>
+                <Box sx={{ marginTop: "40px" }}>
+                    <Footer />
                 </Box>
             </Box>
         </>
