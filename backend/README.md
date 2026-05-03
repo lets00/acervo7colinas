@@ -65,8 +65,10 @@ Password: postgres123
 GET /funcionarios
 POST /funcionarios
 
+GET /usuarios
 POST /usuarios
 
+GET /livros
 GET /livros/:id
 POST /livros
 ```

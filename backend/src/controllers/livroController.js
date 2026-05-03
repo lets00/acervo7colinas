@@ -171,3 +171,16 @@ export async function criarLivro(req, res) {
         });
     }  
 }
+
+export async function listarLivros(req, res) {
+    try {
+        const livros = await Livro.findAll();
+
+        return res.json(livros);
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: "Erro ao listar livros!",
+            erro: error.message
+        });
+    }
+}

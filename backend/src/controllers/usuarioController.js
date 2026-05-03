@@ -49,3 +49,15 @@ export async function criarUsuario(req, res) {
         });
     }
 }
+
+export async function listarUsuarios(req, res) {
+    try {
+        const usuarios = await Usuario.findAll();
+        return res.json(usuarios);
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao listar usuários',
+            erro: error.message
+        });
+    }
+}
