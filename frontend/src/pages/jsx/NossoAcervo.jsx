@@ -163,9 +163,9 @@ function NossoAcervo() {
                         </Stack>
                     </Box>
                 </Box>
-                <Box sx={{ marginTop: "40px" }}>
-                    <Footer />
-                </Box>
+                    <Box sx={{ marginTop: "40px" }}>
+                        <Footer />
+                    </Box>
             </Box>
         </>
     );
