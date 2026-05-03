@@ -1,6 +1,8 @@
 import sequelize from "./database.js";
 import Funcionario from "../models/Funcionario.js";
 import Livro from "../models/Livro.js";
+import Usuario from "../models/Usuario.js";
+import bcrypt from "bcrypt";
 
 async function seedDatabase() {
     try {
@@ -37,21 +39,6 @@ async function seedDatabase() {
         });
 
         await Funcionario.findOrCreate({
-            where: { email: "usuario@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: 'Usuário Teste',
-                cpf: '00000000003',
-                matricula: 'USR001',
-                cargo: 'Usuário',
-                setor: 'Usuários',
-                email: 'usuario@acervo7colinas.com.br',
-                telefone: '87999990003',
-                tipoAcesso: 'Usuário',
-                disponibilidade: 'Ativo'
-            }
-        });
-
-        await Funcionario.findOrCreate({
             where: { email: "entregador@acervo7colinas.com.br" },
             defaults: {
                 nomeCompleto: 'Entregador Teste',
@@ -65,6 +52,29 @@ async function seedDatabase() {
                 disponibilidade: 'Ativo'
             }
         });
+
+        const senhaUsuarioTeste = await bcrypt.hash("123456", 10);
+
+        await Usuario.findOrCreate({
+            where: { email: "usuario.teste@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Débora Gomes",
+                cpf: "00000000005",
+                rg: "0000005",
+                sexo: "Feminino",
+                dataNascimento: "2001-10-16",
+                email: "usuario.teste@acervo7colinas.com.br",
+                telefone: "87999998822",
+                senha: senhaUsuarioTeste,
+                rua: "Rua dos palmares",
+                numero: "01",
+                cep: "55290000",
+                bairro: "heliopolis",
+                cidade: "garanhuns",
+                complemento: "casa"
+            }
+        });
+
 
         await Livro.findOrCreate({
             where: { isbn: "9788550819341" },
@@ -216,7 +226,7 @@ async function seedDatabase() {
             }
         });
 
-        console.log('Banco populado com sucesso!');
+        console.log('Tabelas sincronizadas e banco populado com sucesso!');
     } catch (error) {
         console.error('Erro ao popular o banco:', error);
     }
