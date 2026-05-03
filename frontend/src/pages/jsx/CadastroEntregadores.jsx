@@ -5,9 +5,13 @@ import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabe
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pt-br';
+import dayjs from 'dayjs';
 import BotaoCadastrar  from '../../components/jsx/BotaoCadastrar.jsx';
 import "../css/Entregadores.css";
 import CampoEntregador from "../../components/jsx/CampoEntregador.jsx";     
+
+dayjs.locale('pt-br');
 
 function CadastroEntregadores() {
     const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
@@ -79,7 +83,7 @@ function CadastroEntregadores() {
                                     <TextField required fullWidth label="Sexo" size="small" sx={{  width:"460px"}} />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="pt-br">
                                         <DatePicker
                                             label="Data de Nascimento"
                                             views={['year', 'month', 'day']}

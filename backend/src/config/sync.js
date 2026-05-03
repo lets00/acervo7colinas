@@ -1,5 +1,6 @@
 import sequelize from "./database.js";
 import Funcionario from "../models/Funcionario.js";
+import Livro from "../models/Livro.js";
 
 async function syncDataBase() {
     try {

@@ -20,8 +20,10 @@
 }
 
 .header-text {
-  color: #312783;
+  color: #37228B;
   margin-top: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
 }
 
 .header-input {
@@ -58,14 +60,18 @@
 
 .header-chip-criar {
   background-color: #CCD3F8 !important;
-  color: #242424 !important;
-  font-size: 0.8125rem;
+  color: #0D0D0D !important;
+  font-size: 0.8125rem !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500 !important;
 }
 
 .header-chip-login {
-  background-color: #312783 !important;
+  background-color: #37228B !important;
   color: #ffffff !important;
-  font-size: 0.8125rem;
+  font-size: 0.8125rem !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500 !important;
 }
 
 .header-divider {

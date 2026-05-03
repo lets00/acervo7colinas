@@ -1,0 +1,16 @@
+.bookinfo {
+    display: flex;
+    justify-content: space-between !important; 
+    align-items: center;
+    width: 100%;
+    padding: 0 8px;
+}
+
+.btn-detalhes {
+    background-color: #37228B !important;
+    padding: 5px 20px !important;
+    font-weight: 400 !important;
+    font-family: 'Roboto', sans-serif !important;
+    width: 100px !important;
+    margin-top: 8px !important;
+}

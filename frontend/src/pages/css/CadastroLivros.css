@@ -16,9 +16,11 @@
 .titulo {
   text-align: center;
   margin-bottom: 32px;
-  font-weight: 300;
-  color: #333;
+  font-weight: 700;
+  color: #37228B;
+  font-family: 'Roboto', sans-serif;
   margin-top: 22px;
+  font-size: clamp(20px, 3vw, 28px);
 }
 
 .barra {
@@ -32,9 +34,10 @@
 }
 
 .barra-texto {
-  color: #333;
-  font-weight: 300;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
 }
 
 .coluna {
@@ -59,26 +62,27 @@
   border-radius: 12px;
   padding: 12px;
   margin-top: -32px;
-  min-width: 400px;
-  min-height: 300px;
+  width: 410px;
+  height: 150px;
 }
 
 .texto-imagem {
   position: absolute;
   color: #333;
   font-size: 2.4rem;
-  margin-left: 230px !important;   
-  margin-top: 60px !important;
+  margin-left: 250px !important;   
+  margin-top: 20px !important;
+  font-family: 'Roboto', sans-serif;
 }
 
 .img-preview {
   display: block;
   margin: 20px auto;
-  width: 150px;
-  height: 200px;
+  width: 200px !important;
+  height: 100px !important;
   object-fit: cover;
   border-radius: 8px;
-  margin-left: 18px;
+  margin-left: -4px !important;
 }
 
 .botao-imagem {
@@ -86,7 +90,7 @@
   bottom: 20px;
   right: 20px;
   top: -50px;
-  left: 86px;
+  left: 105px;
   color: #242424 !important;
   background-color: #ccd3f8 !important;
 }

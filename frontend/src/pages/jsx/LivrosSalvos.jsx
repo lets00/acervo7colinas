@@ -1,183 +1,264 @@
-import React, { useState }  from "react";
-import Header from "../../components/jsx/Header"; 
-import { Table, TableBody, TableCell, tableCellClasses, TableContainer, 
-  TableHead, TableRow, Paper, Button, TextField,
-  FormControl, InputLabel, Select, MenuItem, OutlinedInput, InputAdornment
-} from '@mui/material';
-import { Box, Typography } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { styled } from '@mui/material/styles';
-import Pagination from '@mui/material/Pagination';
-import IconFilterBar from "../../assets/IconFilterBar.jpg";
+import { useState, useMemo } from "react";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
+import Pagination from "@mui/material/Pagination";
 
 
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#cdd3f8',
-    fontWeight: 'bold',
-  },
-}));
-
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: '#f9f9f9',
-  },
-}));
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableFooter from "@mui/material/TableFooter";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
 
-const rows = [
-  { id: '001', titulo: 'Dom Casmurro', autor: 'Machado de Assis', genero: 'Romance', ano: 1899 },
-  { id: '002', titulo: 'Pequeno Príncipe', autor: 'Antoine de Saint-Exupéry', genero: 'Fantasia', ano: 1943 },
-  { id: '003', titulo: 'Extraordinário', autor: 'R. J. Palacio', genero: 'Romance', ano: 2017 },
-  { id: '004', titulo: 'Um Sopro de Vida', autor: 'Clarice Lispector', genero: 'Romance', ano: 1978 },
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+import Header from "../../components/jsx/Header";
+import "../css/LivrosSalvos.css";
+
+/* ─────────────────────────────────────────
+   DADOS MOCKADOS
+───────────────────────────────────────── */
+const mockLivros = [
+    { id: "001", titulo: "Dom Casmurro",                       autor: "Machado de Assis",         genero: "Romance",  ano: 1899 },
+    { id: "002", titulo: "Pequeno Príncipe",                    autor: "Antoine de Saint-Exupéry", genero: "Fantasia", ano: 1943 },
+    { id: "003", titulo: "Extraordinário",                      autor: "R. J. Palacio",            genero: "Romance",  ano: 2017 },
+    { id: "004", titulo: "Um Sopro de Vida",                    autor: "Clarice Lispector",        genero: "Romance",  ano: 1978 },
+    { id: "005", titulo: "1984",                                autor: "George Orwell",            genero: "Ficção",   ano: 1949 },
+    { id: "006", titulo: "O Hobbit",                            autor: "J.R.R. Tolkien",           genero: "Fantasia", ano: 1937 },
+    { id: "007", titulo: "A Hora da Estrela",                   autor: "Clarice Lispector",        genero: "Romance",  ano: 1977 },
+    { id: "008", titulo: "Cem Anos de Solidão",                 autor: "García Márquez",           genero: "Romance",  ano: 1967 },
+    { id: "009", titulo: "Harry Potter e a Pedra Filosofal",    autor: "J.K. Rowling",             genero: "Fantasia", ano: 1997 },
+    { id: "010", titulo: "Memórias Póstumas de Brás Cubas",     autor: "Machado de Assis",         genero: "Romance",  ano: 1881 },
+    { id: "011", titulo: "O Alquimista",                        autor: "Paulo Coelho",             genero: "Ficção",   ano: 1988 },
+    { id: "012", titulo: "A Revolução dos Bichos",              autor: "George Orwell",            genero: "Ficção",   ano: 1945 },
 ];
 
+const GENERO_OPTIONS = [
+    "Todos", "Ficção", "Ficção Científica", "Fantasia", "Aventura",
+    "Drama", "Distopia", "Infantojuvenil", "HQs e Mangás", "Romance",
+    "Terror", "Contos", "Crônicas", "Poesia", "Suspense", "Biografia",
+    "Autoajuda", "História", "Filosofia", "Religião e Espiritualidade",
+    "Negócios e Carreira", "Culinária", "Saúde e Bem-estar", "Tecnologia e Ciência",
+];
 
-function LivrosSalvos(){
-    const [generos, setGeneros] = useState('');
-    const [pesquisar, setPesquisar] = useState('');
+const selectSx = {
+    height: 40,
+    fontSize: 14,
+    borderRadius: "8px",
+    bgcolor: "#fff",
+    minWidth: 160,
+};
 
-    const handleChange = (event) => {
-    setGeneros(event.target.value);
-  };
-  const livrosFiltrados = rows.filter((row) => {
-  const filtroGenero = generos === '' || row.genero === generos;
+const actionBtnSx = {
+    borderRadius: "6px",
+    textTransform: "none",
+    fontSize: 12,
+    px: 1.5,
+    boxShadow: "none",
+};
 
-  const filtroBusca =
-    pesquisar === '' ||
-    row.titulo.toLowerCase().includes(pesquisar.toLowerCase()) ||
-    row.autor.toLowerCase().includes(pesquisar.toLowerCase());
+export default function LivrosSalvos() {
+    const [generoFiltro, setGeneroFiltro] = useState("Todos");
+    const [busca, setBusca]               = useState("");
+    const [page, setPage]                 = useState(1);
+    const [rowsPerPage]                   = useState(5);
 
-  return filtroGenero && filtroBusca;
-});
+   
+    const filtrados = useMemo(() => {
+        return mockLivros.filter((l) => {
+            const matchGenero = generoFiltro === "Todos" || l.genero === generoFiltro;
+            const matchBusca  =
+                busca === "" ||
+                l.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+                l.autor.toLowerCase().includes(busca.toLowerCase());
+            return matchGenero && matchBusca;
+        });
+    }, [generoFiltro, busca]);
+
+    const totalPages = Math.max(1, Math.ceil(filtrados.length / rowsPerPage));
+    const paginados  = filtrados.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+    const from       = filtrados.length === 0 ? 0 : (page - 1) * rowsPerPage + 1;
+    const to         = Math.min(page * rowsPerPage, filtrados.length);
+
     return (
-        <>
-            <Box className="container">
-                <Header/>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px", width: "100%" }}>
+            <Header />
 
-                <Box className="content">
-                    <Typography variant="h4" align="center" className="titulo" sx={{mt: 4}} >
-                        Livros Cadastrados!
-                    </Typography>
-                    <Box sx={{ml:125, mt:-2, backgroundColor:"#312783", display: 'flex', borderRadius:5}}>
-                        <AddCircleIcon sx={{ color: 'white', fontSize: 25, mt:0.5, ml:2 }} />
-                        <Typography variant="body2"sx={{ color: 'white', mt:0.5, ml:1}} >
+            <Box sx={{ width: "100%", maxWidth:"1800px"}}>
+                <Box className="livrossalvos-page" sx={{ width: "100%" }}>
+
+                    
+                    <div className="livrossalvos-topbar"  sx={{ width: "100%"}}>
+                        <h1 className="livrossalvos-titulo">Livros Cadastrados</h1>
+                        <Button
+                            variant="contained"
+                             sx={{ width: "100%"}}
+                            startIcon={<AddIcon />}
+                            sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
+                        >
                             Adicionar novo livro
-                        </Typography>
-                    </Box> 
-                    <Box className="faixaSalvos"  sx={{ mt: 4, height: 40,width: '100%', height: '40px', backgroundColor: '#CCD3F8', borderRadius: 1, mb: 3}} > </Box>
-                    <Box className="filtrar">
-                        <Box component="img"  src={IconFilterBar} alt="IconFilterBar" sx={{height:30, width:30, ml:-150}} />
-                        <Typography variant="h6" sx={{color:"#242424", ml:-136, mt:-5}}>
-                            Filtrar:
-                        </Typography>
-                        <FormControl required fullWidth sx={{ width: '300px', ml:-85, mt:-3} } >
-                            <InputLabel sx={{ transform: 'translate(14px, 9px) scale(1)' }}>Gênero</InputLabel>
+                        </Button>
+                    </div>
+
+                    <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width:'1200px'}} />
+
+                    
+                    <div className="livrossalvos-filters" >
+                        <span className="filter-inline-label">Filtrar:</span>
+
+                        <FormControl size="small">
                             <Select
-                                value={generos}
-                                onChange={handleChange}
-                                input={<OutlinedInput label="Gênero" />}
+                                value={generoFiltro}
+                                onChange={(e) => { setGeneroFiltro(e.target.value); setPage(1); }}
+                                sx={selectSx}
                                 displayEmpty
-                                size="small"
                             >
-                                <MenuItem value="Ficção">Ficção</MenuItem>
-                                <MenuItem value="Ficcao_Cientifica">Ficção Científica</MenuItem>
-                                <MenuItem value="Fantasia">Fantasia</MenuItem>
-                                <MenuItem value="Aventura">Aventura</MenuItem>
-                                <MenuItem value="Drama">Drama</MenuItem>
-                                <MenuItem value="Distopia">Distopia</MenuItem>
-                                <MenuItem value="Infantojuvenil">Infantojuvenil</MenuItem>
-                                <MenuItem value="HQ_Mangas">HQs e Mangás</MenuItem>
-                                <MenuItem value="Romance">Romance</MenuItem>
-                                <MenuItem value="Terror">Terror</MenuItem>
-                                <MenuItem value="Contos">Contos</MenuItem>
-                                <MenuItem value="Crônicas">Crônicas</MenuItem>
-                                <MenuItem value="Poesia">Poesia</MenuItem>
-                                <MenuItem value="Suspense">Suspense</MenuItem>
-                                <MenuItem value="Biografia">Biografia</MenuItem>
-                                <MenuItem value="Autorajuda">Autorajuda</MenuItem>
-                                <MenuItem value="Historia">História</MenuItem>
-                                <MenuItem value="Filosofia">Filosofia</MenuItem>
-                                <MenuItem value="Religiao">Religião e Espiritualidade</MenuItem>
-                                <MenuItem value="Negocios">Negócios e Carreira</MenuItem>
-                                <MenuItem value="Culinaria">Culinária</MenuItem>
-                                <MenuItem value="Saude">Saúde e Bem-estar</MenuItem>
-                                <MenuItem value="Tecnologia">Tecnologia e Ciência</MenuItem>
+                                {GENERO_OPTIONS.map((g) => (
+                                    <MenuItem key={g} value={g}>
+                                        {g === "Todos" ? "Gênero *" : g}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
-                    </Box>
-                    <Box>
-                        <Typography variant="h6" sx={{color:"#242424", ml:60, mt:-6.5}}>
-                            Buscar:
-                        </Typography>
-                        <TextField
-                            size="small"
-                            className="header-input"
-                            label="Procure seu livro"
-                            sx={{ml:108, mt:-3, width:300}}
-                            value={pesquisar}
-                            onChange={(e) => setPesquisar(e.target.value)}
-                            InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                <SearchIcon />
-                                </InputAdornment>
-                            ),
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{  width:1200, mt: 8}}>
-                        <TableContainer component={Paper}>
-                            <Table>
-                            <TableHead>
-                                <TableRow>
-                                <StyledTableCell>ID</StyledTableCell>
-                                <StyledTableCell>Título</StyledTableCell>
-                                <StyledTableCell>Autor</StyledTableCell>
-                                <StyledTableCell>Gênero</StyledTableCell>
-                                <StyledTableCell>Ano</StyledTableCell>
-                                <StyledTableCell align="center">Ações</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
 
-                            <TableBody>
-                                {livrosFiltrados.map((row) => (
-                                <StyledTableRow key={row.id}>
-                                    <TableCell>{row.id}</TableCell>
-                                    <TableCell>{row.titulo}</TableCell>
-                                    <TableCell>{row.autor}</TableCell>
-                                    <TableCell>{row.genero}</TableCell>
-                                    <TableCell>{row.ano}</TableCell>
+                        <div style={{ flex: 1 }} />
 
-                                    <TableCell align="center">
-                                    <Button variant="contained" size="small"  sx={{ mr: 1, backgroundColor:"#312783"}} >
-                                        Editar
-                                    </Button>
+                        <span className="filter-inline-label">Buscar:</span>
 
-                                    <Button variant="contained" color="error" size="small" >
-                                        Excluir
-                                    </Button>
-                                    </TableCell>
-                                </StyledTableRow>
-                                ))}
-                            </TableBody>
+                        <div className="filter-search-wrapper">
+                            <OutlinedInput
+                                value={busca}
+                                onChange={(e) => { setBusca(e.target.value); setPage(1); }}
+                                placeholder="Procure seu livro"
+                                size="small"
+                                fullWidth
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <SearchIcon sx={{ color: "#555" }} />
+                                    </InputAdornment>
+                                }
+                                sx={{ borderRadius: "8px", bgcolor: "#fff", fontSize: 14, height: 40 }}
+                            />
+                        </div>
+
+                        <Button
+                            variant="contained"
+                            startIcon={<FilterAltIcon />}
+                            onClick={() => setPage(1)}
+                            sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, height: 40, textTransform: "none", flexShrink: 0, "&:hover": { bgcolor: "#2a1870" } }}
+                        >
+                            Filtrar
+                        </Button>
+                    </div>
+
+                    <div className="livrossalvos-table-wrapper">
+                        <TableContainer  sx={{ width: "100%" }}>
+                            <Table aria-label="tabela de livros cadastrados"  sx={{ width: "100%" }}>
+
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Título</TableCell>
+                                        <TableCell>Autor</TableCell>
+                                        <TableCell>Gênero</TableCell>
+                                        <TableCell>Ano</TableCell>
+                                        <TableCell align="center">Ações</TableCell>
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    {paginados.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={6} align="center" sx={{ py: 4, color: "#888" }}>
+                                                Nenhum livro encontrado.
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : (
+                                        paginados.map((row) => (
+                                            <TableRow key={row.id}>
+                                                <TableCell><em>{row.id}</em></TableCell>
+                                                <TableCell>{row.titulo}</TableCell>
+                                                <TableCell>{row.autor}</TableCell>
+                                                <TableCell>{row.genero}</TableCell>
+                                                <TableCell><em>{row.ano}</em></TableCell>
+                                                <TableCell align="center">
+                                                    <div className="acoes-cell">
+                                                        <Tooltip title="Editar livro">
+                                                            <Button
+                                                                variant="contained"
+                                                                size="small"
+                                                                startIcon={<EditIcon />}
+                                                                sx={{ ...actionBtnSx, bgcolor: "#37228B", color: "#fff", "&:hover": { bgcolor: "#2a1870"} }}
+                                                            >
+                                                                EDITAR
+                                                            </Button>
+                                                        </Tooltip>
+                                                        <Tooltip title="Excluir livro">
+                                                            <Button
+                                                                variant="contained"
+                                                                size="small"
+                                                                startIcon={<DeleteIcon />}
+                                                                sx={{ ...actionBtnSx, bgcolor: "#c62828", color: "#fff", "&:hover": { bgcolor: "#a81f1f" } }}
+                                                            >
+                                                                EXCLUIR
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+
+                                <TableFooter>
+                                    <TableRow>
+                                        <TableCell colSpan={6}>
+                                            <div className="livrossalvos-footer">
+                                                <span className="livrossalvos-exibindo">
+                                                    {filtrados.length === 0
+                                                        ? "Nenhum livro encontrado"
+                                                        : `Exibindo ${from}–${to} de ${filtrados.length} livro(s)`}
+                                                </span>
+                                                <Pagination
+                                                    count={totalPages}
+                                                    page={page}
+                                                    onChange={(_, value) => setPage(value)}
+                                                    color="primary"
+                                                    shape="rounded"
+                                                    siblingCount={1}
+                                                    boundaryCount={1}
+                                                    sx={{
+                                                        "& .MuiPaginationItem-root":       { color: "#37228B", fontWeight: 500 },
+                                                        "& .Mui-selected":                 { bgcolor: "#37228B !important", color: "#fff" },
+                                                        "& .MuiPaginationItem-root:hover": { bgcolor: "rgba(55,34,139,0.08)" },
+                                                    }}
+                                                />
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableFooter>
+
                             </Table>
                         </TableContainer>
-                        <Box sx={{ml:-120, mt:1}} >
-                            <Typography variant="body2" sx={{ color: '#808080' }}>
-                                Exibindo 1-4 de 200 livros(s)
-                            </Typography>
-                        </Box>
-                        <Box >
-                            <Pagination count={10} color="primary" sx={{ml:105, mt: 3}} />
-                        </Box>
-                    </Box>
+                    </div>
+
                 </Box>
             </Box>
-        </>
-    )
+        </Box>
+    );
 }
-export default LivrosSalvos;

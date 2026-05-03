@@ -15,18 +15,19 @@
 
 .titulo {
   margin-bottom: 4px;
-  font-weight: 300;
-  color: #333;
+  font-weight: 700;
+  color: #37228B;
+  font-family: 'Roboto', sans-serif;
   margin-top: 22px;
   text-align: center;
+  font-size: clamp(20px, 3vw, 28px);
 }
 
-
-
 .faixa-text {
-  color: #333;
-  font-weight: 300;
+  color: #0D0D0D;
+  font-weight: 400;
   font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
 }
 
 .input-grande {

@@ -25,7 +25,7 @@ function FazerNovaSenha() {
                 </Typography>
                 <Box className="faixa-senha"   sx={{mt: 6}} >
                     <Typography className="textoFaixa" sx={{ml:25}} >
-                        Recebemos seu pedido de redefinição de senha.informe abaixo a sua nova senha para alterar a senha atual.
+                        Recebemos seu pedido de redefinição de senha. Informe abaixo a sua nova senha para alterar a senha atual.
                     </Typography>
                 </Box>
                 <form onSubmit={Submit} >
