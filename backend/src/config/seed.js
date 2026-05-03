@@ -39,21 +39,6 @@ async function seedDatabase() {
         });
 
         await Funcionario.findOrCreate({
-            where: { email: "usuario@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: 'Usuário Teste',
-                cpf: '00000000003',
-                matricula: 'USR001',
-                cargo: 'Usuário',
-                setor: 'Usuários',
-                email: 'usuario@acervo7colinas.com.br',
-                telefone: '87999990003',
-                tipoAcesso: 'Usuário',
-                disponibilidade: 'Ativo'
-            }
-        });
-
-        await Funcionario.findOrCreate({
             where: { email: "entregador@acervo7colinas.com.br" },
             defaults: {
                 nomeCompleto: 'Entregador Teste',
