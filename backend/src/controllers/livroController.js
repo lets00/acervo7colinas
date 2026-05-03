@@ -1,5 +1,6 @@
 // acervo7colinas\backend\src\controllers\livroController.js
 import { livroSchema } from '../validators/livroValidator.js';
+import Livro from '../models/Livro.js';
 
 export function buscarLivroPorId(req, res) {
     const { id } = req.params;
@@ -146,7 +147,7 @@ export function listarAvaliacoes(req, res) {
 
 // cadastro de livros
 
-export function criarLivro(req, res) {
+export async function criarLivro(req, res) {
     const resultado = livroSchema.safeParse(req.body);
 
     if (!resultado.success) {
@@ -156,31 +157,17 @@ export function criarLivro(req, res) {
         });
     }
 
-    const {
-        titulo,
-        autor,
-        isbn,
-        editora,
-        ano,
-        descricao,
-        quantidadeExemplares,
-        genero
-    } = resultado.data;
+    try {
+       const novoLivro = await Livro.create(resultado.data);
 
-    const novoLivro = {
-        id: Date.now(),
-        titulo,
-        autor,
-        isbn,
-        editora,
-        ano,
-        descricao,
-        quantidadeExemplares,
-        genero,
-    };
-
-    return res.status(201).json({
-        mensagem: 'Livro cadastrado com sucesso!',
-        livro: novoLivro
-    });
+       return res.status(201).json({
+            mensagem: 'Livro cadastrado com sucesso!',
+            livro: novoLivro
+        });
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao cadastrar livro!',
+            erro: error.message
+        });
+    }  
 }

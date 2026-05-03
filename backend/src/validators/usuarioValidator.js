@@ -7,8 +7,7 @@ export const usuarioSchema = z.object({
     sexo: z.string().min(1, 'Este campo é obrigatório!'),
     dataNascimento: z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/,'Use o formato DD/MM/AAAA!'),
     email: z.string().email('Email inválido!'),
-    telefone1: z.string().min(1, 'Este campo é obrigatório!'),
-    telefone2: z.string().optional(),
+    telefone: z.string().min(1, 'Este campo é obrigatório!'),
     senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres!'),
     confirmacaoSenha: z.string(),
     captcha: z.boolean().refine((valor) => valor === true, {
