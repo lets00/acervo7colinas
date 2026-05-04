@@ -75,6 +75,126 @@ async function seedDatabase() {
             }
         });
 
+        await Usuario.findOrCreate({
+            where: { email: "usuario2.teste@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Lucas Andrade",
+                cpf: "00000000006",
+                rg: "0000006",
+                sexo: "Masculino",
+                dataNascimento: "1999-03-12",
+                email: "usuario2.teste@acervo7colinas.com.br",
+                telefone: "87999990001",
+                senha: senhaUsuarioTeste,
+                rua: "Rua das Flores",
+                numero: "12",
+                cep: "55290000",
+                bairro: "Boa Vista",
+                cidade: "Garanhuns",
+                complemento: "apto 101"
+            }
+        });
+
+        await Usuario.findOrCreate({
+            where: { email: "usuario3.teste@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Mariana Souza",
+                cpf: "00000000007",
+                rg: "0000007",
+                sexo: "Feminino",
+                dataNascimento: "2002-07-25",
+                email: "usuario3.teste@acervo7colinas.com.br",
+                telefone: "87999990002",
+                senha: senhaUsuarioTeste,
+                rua: "Av. Central",
+                numero: "45",
+                cep: "55290000",
+                bairro: "Centro",
+                cidade: "Garanhuns",
+                complemento: "casa"
+            }
+        });
+
+        await Usuario.findOrCreate({
+            where: { email: "usuario4.teste@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Carlos Henrique",
+                cpf: "00000000008",
+                rg: "0000008",
+                sexo: "Masculino",
+                dataNascimento: "1995-11-08",
+                email: "usuario4.teste@acervo7colinas.com.br",
+                telefone: "87999990003",
+                senha: senhaUsuarioTeste,
+                rua: "Rua do Sol",
+                numero: "78",
+                cep: "55290000",
+                bairro: "Heliópolis",
+                cidade: "Garanhuns",
+                complemento: "casa"
+            }
+        });
+
+        await Usuario.findOrCreate({
+            where: { email: "usuario5.teste@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Fernanda Lima",
+                cpf: "00000000009",
+                rg: "0000009",
+                sexo: "Feminino",
+                dataNascimento: "2000-05-19",
+                email: "usuario5.teste@acervo7colinas.com.br",
+                telefone: "87999990004",
+                senha: senhaUsuarioTeste,
+                rua: "Rua das Acácias",
+                numero: "22",
+                cep: "55290000",
+                bairro: "Magano",
+                cidade: "Garanhuns",
+                complemento: "apto 202"
+            }
+        });
+
+        await Usuario.findOrCreate({
+        where: { email: "ana.costa@acervo7colinas.com.br" },
+        defaults: {
+            nomeCompleto: "Ana Costa",
+            cpf: "00000000012",
+            rg: "0000011",
+            sexo: "Feminino",
+            dataNascimento: "2002-07-08",
+            email: "ana.costa@acervo7colinas.com.br",
+            telefone: "87999990004",
+            senha: senhaUsuarioTeste,
+            rua: "Rua D",
+            numero: "40",
+            cep: "55290000",
+            bairro: "Magano",
+            cidade: "Garanhuns",
+            complemento: "Apto 202"
+        }
+    });
+
+    await Usuario.findOrCreate({
+        where: { email: "lucas.almeida@acervo7colinas.com.br" },
+        defaults: {
+            nomeCompleto: "Lucas Almeida",
+            cpf: "00000000010",
+            rg: "0000010",
+            sexo: "Masculino",
+            dataNascimento: "1997-01-25",
+            email: "lucas.almeida@acervo7colinas.com.br",
+            telefone: "87999990005",
+            senha: senhaUsuarioTeste,
+            rua: "Rua E",
+            numero: "50",
+            cep: "55290000",
+            bairro: "São José",
+            cidade: "Garanhuns",
+            complemento: "Casa"
+        }
+    });
+
 
         await Livro.findOrCreate({
             where: { isbn: "9788550819341" },
