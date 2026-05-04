@@ -19,6 +19,7 @@ import Dashboard from "./pages/jsx/dashboard.jsx";
 import MeusEmprestimos from "./pages/jsx/MeusEmprestimos.jsx";
 import LivrosSalvos from "./pages/jsx/LivrosSalvos.jsx";
 import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
+import FuncionariosSalvos from "./pages/jsx/FuncionariosSalvos.jsx";
 
 //RadioButton do material
 const theme = createTheme();
@@ -46,7 +47,7 @@ function App() {
             <Route path="/livros-salvos" element={<LivrosSalvos />} />
             <Route path="/emprestimos" element={<MeusEmprestimos />} />
             <Route path="/acervo" element={<NossoAcervo />} />
-
+            <Route path="/funcionarios-salvos" element={<FuncionariosSalvos />} />
           </Routes>
 
         </Container>

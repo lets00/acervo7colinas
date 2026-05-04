@@ -5,53 +5,63 @@ import {
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/pt-br';
 import dayjs from 'dayjs';
 import Header from "../../components/jsx/Header";
 import '../css/CadastroLivros.css';
 import BotaoLivroCadastrar from '../../components/jsx/BotaoLivroCadastrar.jsx';
-import LivroCadastro from '../../assets/LivroCadastro.jpeg';
-import { styled } from '@mui/material/styles';
+import api from "../../services/apis";
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
 dayjs.locale('pt-br');
 
 
 function CadastroLivros() {
-  
-  const [generos, setGeneros] = useState("");
-  const [preview, setPreview] = useState(LivroCadastro);
+  const [formData, setFormData] = useState({
+    titulo: "",
+    isbn: "",
+    ano: null,
+    quantidadeExemplares: "",
+    genero: "",
+    autor: "",
+    editora: "",
+    descricao: "",
+  });
 
   const handleChange = (event) => {
-    setGeneros(event.target.value);
+    const { name, value } = event.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      if (preview !== LivroCadastro) {
-        URL.revokeObjectURL(preview);
-      }
-      setPreview(objectUrl);
-    }
+  const handleDateChange = (newValue) => {
+    setFormData(prev => ({ ...prev, ano: newValue }));
   };
 
-  const cadastrolivro = (e) => {
+  const cadastrolivro = async (e) => {
     e.preventDefault();
-    console.log("Cadastrou o livro com o gênero:", generos);
+
+    try {
+      const dataToSend = {
+        ...formData,
+        quantidadeExemplares: Number(formData.quantidadeExemplares),
+        ano: formData.ano && typeof formData.ano.year === 'function' 
+             ? formData.ano.year() 
+             : null,
+      };
+
+      await api.post("/livros", dataToSend);
+
+      alert("Livro cadastrado com sucesso!");
+      setFormData({
+        titulo: "", isbn: "", ano: null, quantidadeExemplares: "",
+        genero: "", autor: "", editora: "", descricao: "",
+      });
+
+    } catch (error) {
+      console.error("Erro completo:", error);
+      const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
+      alert(mensagem);
+    }
   };
 
   return (
@@ -73,25 +83,25 @@ function CadastroLivros() {
                 <Grid container spacing={6} justifyContent="center"   >
                   <Grid item xs={12} md={6} >
                     <Box className="coluna">
-                      <TextField required fullWidth label="Título" variant="outlined" sx={{ width: '468px' } } />
-                      <TextField required fullWidth label="ISBN" variant="outlined" sx={{ width: '468px' } } />
+                      <TextField required fullWidth label="Título" variant="outlined" sx={{ width: '468px' } }  name="titulo" value={formData.titulo} onChange={handleChange} />
+                      <TextField required fullWidth label="ISBN" variant="outlined" sx={{ width: '468px' } }  name="isbn" value={formData.isbn} onChange={handleChange} />
                       
                       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
                         <DatePicker
                           label="Ano"
+                          name="ano" value={formData.ano} onChange={handleDateChange}
                           views={['month', 'year']} 
                           format="MM/YYYY"
                           slotProps={{ textField: { fullWidth: true, required: true, sx: { width: '468px' } } }}
                         />
                       </LocalizationProvider>
 
-                      <TextField required fullWidth label="Quantidade de exemplares" type="number" sx={{ width: '468px' } } />
+                      <TextField required fullWidth label="Quantidade de exemplares" type="number" sx={{ width: '468px' } } name="quantidadeExemplares" value={formData.quantidadeExemplares} onChange={handleChange}/>
 
                       <FormControl required fullWidth sx={{ width: '468px' } } >
                         <InputLabel>Gênero</InputLabel>
                         <Select
-                          value={generos}
-                          onChange={handleChange}
+                          name="genero" value={formData.genero} onChange={handleChange}
                           input={<OutlinedInput label="Gênero" />}
                           displayEmpty
                         >
@@ -125,47 +135,16 @@ function CadastroLivros() {
 
                 <Grid item xs={12} md={6} >
                   <Box className="coluna" >
-                    <TextField required fullWidth label="Autor" variant="outlined"  sx={{ width: '468px' } }/>
-                    <TextField required fullWidth label="Editora" variant="outlined"  sx={{ width: '468px' } } />
+                    <TextField required fullWidth label="Autor" variant="outlined"  sx={{ width: '468px' } } name="autor" value={formData.autor} onChange={handleChange}/>
+                    <TextField required fullWidth label="Editora" variant="outlined"  sx={{ width: '468px' } } name="editora" value={formData.editora} onChange={handleChange} />
                       
-                    <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } } variant="outlined" helperText="0/100"/>
+                    <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } } variant="outlined" helperText="0/100" name="descricao" value={formData.descricao} onChange={handleChange}/>
                   </Box>
                  </Grid>
                 </Grid>
-                <Box className="barra-imagem" sx={{ mt: 5 }}>
-                  <Typography className="barra-texto" sx={{ml:60}}>
-                    Selecione a foto do livro:
-                  </Typography>
-                </Box>
-                <Grid container justifyContent="center" sx={{ mt: 7 }}>
-                <Box className="box-imagem" sx={{ textAlign: 'center' }}>
-                  <Typography className="texto-imagem">Selecionar Foto</Typography>
-                  <Box 
-                    component="img" 
-                    src={preview} 
-                    alt="Preview" 
-                    className="img-preview" 
-                    sx={{  objectFit: 'cover', display: 'block', mb: 2, mx: 'auto' }} 
-                  />
-                  <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    disableElevation
-                    className="botao-imagem"
-                    startIcon={<CloudUploadIcon />}
-                  >
-                    SELECIONAR FOTO
-                    <VisuallyHiddenInput
-                      type="file"
-                      onChange={handleFileChange}  
-                      accept="image/*"
-                    />
-                  </Button>
-                </Box>
-              </Grid>
-              <BotaoLivroCadastrar/>
+  
+                <BotaoLivroCadastrar/>
+
             </form>
         </Box>
     </Box>

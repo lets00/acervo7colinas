@@ -1,28 +1,97 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/jsx/Header";
 import {Box, Typography, TextField, Grid, InputAdornment, 
     FormControl, InputLabel, Checkbox, FormControlLabel, 
-    Button, OutlinedInput, IconButton, Radio, RadioGroup, FormLabel } from "@mui/material";
+    OutlinedInput, IconButton, Radio, RadioGroup, FormLabel } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../../pages/css/Funcionarios.css";
 import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import CampoFuncionario from "../../components/jsx/CampoFuncionario.jsx";
-
+import api from "../../services/apis";
 
 function CadastroFuncionarios() {
-    const [senha, setSenha] = React.useState('');
-    const [confirmarSenha, setConfirmarSenha] = React.useState('');
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-    const handleMouseDownPassword = (event) => event.preventDefault();
-    const handleMouseUpPassword = (event) => event.preventDefault();
-
-    function Submit(e) {
+    const [showPassword, setShowPassword] = useState(false);
+ 
+    const [formData, setFormData] = useState({
+        nomeCompleto: '',
+        cpf: '',
+        matricula: '',
+        cargo: '',
+        setor: '',
+        email: '',
+        telefone: '',
+        senha: '',
+        confirmacaoSenha: '',
+        tipoAcesso: 'Funcionário comum',
+        disponibilidade: 'Ativo',
+        captcha: false
+    });
+ 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+ 
+    const handleCaptchaChange = (e) => {
+        setFormData(prev => ({ ...prev, captcha: e.target.checked }));
+    };
+ 
+    const handleClickShowPassword = () => setShowPassword(prev => !prev);
+    const handleMouseDownPassword = (e) => e.preventDefault();
+    const handleMouseUpPassword = (e) => e.preventDefault();
+ 
+    async function Submit(e) {
         e.preventDefault();
-        console.log("Cadastrou!");
+ 
+        if (formData.senha !== formData.confirmacaoSenha) {
+            alert("As senhas não conferem!");
+            return;
+        }
+ 
+        if (!formData.captcha) {
+            alert("Por favor, confirme que você não é um robô!");
+            return;
+        }
+ 
+        const dados = {
+            nomeCompleto: formData.nomeCompleto,
+            cpf: formData.cpf,
+            matricula: formData.matricula,
+            cargo: formData.cargo,
+            setor: formData.setor,
+            email: formData.email,
+            telefone: formData.telefone,
+            senha: formData.senha,
+            tipoAcesso: formData.tipoAcesso,
+            disponibilidade: formData.disponibilidade
+        };
+ 
+        try {
+            await api.post('/funcionarios', dadosFuncionarios);
+            alert("Funcionário cadastrado com sucesso!");
+ 
+            setFormData({
+                nomeCompleto: '',
+                cpf: '',
+                matricula: '',
+                cargo: '',
+                setor: '',
+                email: '',
+                telefone: '',
+                senha: '',
+                confirmacaoSenha: '',
+                tipoAcesso: 'Funcionário comum',
+                disponibilidade: 'Ativo',
+                captcha: false
+            });
+ 
+            setShowPassword(false);
+ 
+        } catch (error) {
+            console.error("Erro detalhado:", error);
+            alert("Erro ao conectar com o servidor. Verifique o console (F12).");
+        }
     }
     return (
         <Box className="container">
@@ -43,7 +112,7 @@ function CadastroFuncionarios() {
 
                 <form onSubmit={Submit} >
                     <Box className="input-grande">
-                        <TextField required  fullWidth label="Nome Completo" variant="outlined"  size="small"
+                        <TextField required  fullWidth name="nomeCompleto" label="Nome Completo" variant="outlined"  size="small" value={formData.nomeCompleto} onChange={handleChange}
                         />
                     </Box>
                     <Grid container spacing={2} justifyContent="center">
@@ -52,11 +121,11 @@ function CadastroFuncionarios() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                    <TextField fullWidth label="CPF" size="small" sx={{width:"460px"}} />
+                                    <TextField fullWidth name="cpf" label="CPF" size="small" sx={{width:"460px"}}   value={formData.cpf} onChange={handleChange}/>
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <TextField fullWidth label="Matrículas dos funcionários" size="small"sx={{width:"460px"}} />
+                                    <TextField fullWidth name="matricula" label="Matrículas dos funcionários" size="small"sx={{width:"460px"}} value={formData.matricula} onChange={handleChange} />
                                 </Grid>
 
                             </Grid>
@@ -66,25 +135,27 @@ function CadastroFuncionarios() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Cargo" size="small" sx={{  width:"460px"}} />
+                                    <TextField required fullWidth name="cargo" label="Cargo" size="small" sx={{  width:"460px"}}   value={formData.cargo} onChange={handleChange}/>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Setor/Área" size="small" sx={{  width:"460px"}} />
+                                    <TextField required fullWidth name="setor" label="Setor/Área" size="small" sx={{  width:"460px"}}   value={formData.setor} onChange={handleChange}/>
                                 </Grid>
                             </Grid>
                         </Grid>
                         
                         <TextField
-                            required fullWidth label="Email" variant="outlined" className="email"
+                            required fullWidth name="email" label="Email" variant="outlined" className="email" value={formData.email} onChange={handleChange}
                         />
                        
                         <TextField
                             required
                             fullWidth
+                            name="telefone"
                             label="Numero"
                             variant="outlined"
                             size="small"
                             placeholder="Telefone"
+                            value={formData.telefone} onChange={handleChange}
                             sx={{
                                 maxWidth: '950px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
                             }}
@@ -121,8 +192,9 @@ function CadastroFuncionarios() {
                                 <InputLabel>Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
-                                    value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
+                                    name="senha"
+                                    value={formData.senha}
+                                    onChange={handleChange} 
                                     endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -142,8 +214,9 @@ function CadastroFuncionarios() {
                                 <InputLabel>Confirmar Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
-                                    value={confirmarSenha}
-                                    onChange={(e) => setConfirmarSenha(e.target.value)}
+                                    name="confirmacaoSenha"
+                                    value={formData.confirmacaoSenha}
+                                    onChange={handleChange}
                                     endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -163,36 +236,38 @@ function CadastroFuncionarios() {
                     </Grid>
                     <Grid sx={{ml:-60}}>
                         <FormControl sx={{ flexDirection: 'row',alignItems: 'center', mt:3  }}>
-                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="demo-radio-buttons-group-label">Tipo de acesso:</FormLabel>
+                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="tipo-acesso-label">Tipo de acesso:</FormLabel>
                                 <RadioGroup
                                     row
-                                    aria-labelledby="demo-radio-buttons-group-label"
-                                    defaultValue="female"
-                                    name="radio-buttons-group"
+                                    aria-labelledby="tipo-acesso-label"
+                                    name="tipoAcesso"
+                                    value={formData.tipoAcesso}
+                                    onChange={handleChange}
                                 >
-                                    <FormControlLabel value="female" control={<Radio />} label="Administrador" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
-                                    <FormControlLabel value="male" control={<Radio />} label="Funcionario comum"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="Administrador" control={<Radio />} label="Administrador" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="Funcionário comum" control={<Radio />} label="Funcionario comum"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
                                 </RadioGroup>
                         </FormControl>
                     </Grid>
                     <Grid sx={{ml:-80}}>
                         <FormControl sx={{ flexDirection: 'row',alignItems: 'center', mt:3 }}>
-                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="demo-radio-buttons-group-label">Disponibilidade:</FormLabel>
+                            <FormLabel sx={{color:"#242424", fontFamily: "'Roboto', sans-serif"}} id="disponibilidade-label">Disponibilidade:</FormLabel>
                                 <RadioGroup
                                     row
-                                    aria-labelledby="demo-radio-buttons-group-label"
-                                    defaultValue="female"
-                                    name="radio-buttons-group"
+                                    aria-labelledby="disponibilidade-label"
+                                    name="disponibilidade"
+                                    value={formData.disponibilidade}
+                                    onChange={handleChange}
                                 >
-                                    <FormControlLabel value="female" control={<Radio />} label="Ativo" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
-                                    <FormControlLabel value="male" control={<Radio />} label="Inativo"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="Ativo" control={<Radio />} label="Ativo" sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
+                                    <FormControlLabel value="Inativo" control={<Radio />} label="Inativo"  sx={{color:"#242424",  fontFamily: "'Roboto', sans-serif"}} />
                                 </RadioGroup>
                         </FormControl>
                     </Grid>
                     <CampoFuncionario/>
                     <Grid container justifyContent="center" sx={{mt:6}}>
                         <Box className="robot-box">
-                                <FormControlLabel control={<Checkbox />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
+                                <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
                         </Box>
                     </Grid>
                     <BotaoCadastrar/>
