@@ -8,6 +8,8 @@ async function seedDatabase() {
     try {
         await sequelize.sync({ alter: true });
 
+        const senhaFuncionario = await bcrypt.hash("123456", 10);
+
         await Funcionario.findOrCreate({
             where: { email: "admin@acervo7colinas.com.br" },
             defaults: {
@@ -18,6 +20,7 @@ async function seedDatabase() {
                 setor: 'Administração',
                 email: 'admin@acervo7colinas.com.br',
                 telefone: '87999990001',
+                senha: senhaFuncionario,
                 tipoAcesso: 'Administrador',
                 disponibilidade: 'Ativo'
             }
@@ -33,10 +36,12 @@ async function seedDatabase() {
                 setor: 'Atendimento',
                 email: 'funcionario@acervo7colinas.com.br',
                 telefone: '87999990002',
+                senha: senhaFuncionario,
                 tipoAcesso: 'Funcionário comum',
                 disponibilidade: 'Ativo'
             }
         });
+
 
         await Funcionario.findOrCreate({
             where: { email: "entregador@acervo7colinas.com.br" },
@@ -48,6 +53,7 @@ async function seedDatabase() {
                 setor: 'Entregas',
                 email: 'entregador@acervo7colinas.com.br',
                 telefone: '87999990004',
+                senha: senhaFuncionario,
                 tipoAcesso: 'Entregador',
                 disponibilidade: 'Ativo'
             }

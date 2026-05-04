@@ -21,7 +21,7 @@ Backend do sistema Acervo 7 Colinas, desenvolvido com Node.js, Express, Sequeliz
 npm install
 ```
 
-### 2. Subir o banco com Docker
+### 2. Subir o banco com Docker (abra docker desktop)
 
 ```bash
 docker compose up -d
