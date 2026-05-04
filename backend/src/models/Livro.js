@@ -1,46 +1,46 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 
-const Funcionario = sequelize.define('Funcionario', {
-    nomeCompleto: {
+const Livro = sequelize.define('Livro', {
+    titulo: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    cpf: {
+    autor: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    matricula: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    cargo: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    setor: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
+    isbn: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
-    telefone: {
+    editora: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    tipoAcesso: {
+    ano: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    descricao: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    quantidadeExemplares: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    genero: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    disponibilidade: {
+    img: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
-},{
-    tableName: 'funcionarios'
+}, {
+    tableName: 'livros'
 });
 
-export default Funcionario;
+export default Livro;
