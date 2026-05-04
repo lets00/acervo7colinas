@@ -1,5 +1,6 @@
 import Funcionario from "../models/Funcionario.js";
 import { funcionarioSchema } from "../validators/funcionarioValidator.js";
+import bcrypt from 'bcrypt';
 
 export async function criarFuncionario(req,res) {
     const resultado = funcionarioSchema.safeParse(req.body);
@@ -14,6 +15,8 @@ export async function criarFuncionario(req,res) {
     try {
         const dados = resultado.data;
 
+        const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
+
         const novoFuncionario = await Funcionario.create({
             nomeCompleto: dados.nomeCompleto,
             cpf: dados.cpf,
@@ -22,6 +25,7 @@ export async function criarFuncionario(req,res) {
             setor: dados.setor,
             email: dados.email,
             telefone: dados.telefone,
+            senha: senhaCriptografada,
             tipoAcesso: dados.tipoAcesso,
             disponibilidade: dados.disponibilidade    
         });
