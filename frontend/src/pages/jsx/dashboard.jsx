@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -13,7 +13,8 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
 import Footer from "../../components/jsx/Footer";
-
+import { isAuthenticated } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
@@ -53,6 +54,14 @@ const generos = [
 /* ─── componente ─── */
 
 export default function Dashboard() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            navigate("/login");
+        }
+    }, [navigate])
+
     // menu kebab por card de progresso
     const [anchorEls, setAnchorEls] = useState({});   
     const [destaques, setDestaques] = useState([]);
