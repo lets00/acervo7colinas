@@ -87,7 +87,7 @@ export default function Header() {
                         height: 36,
                         bgcolor: "#00A83F",
                         color: "#fff",
-                        fontSize: "20px",
+                        fontSize: "16px",
                         fontWeight: 600,
                         cursor: "pointer",
                       }}

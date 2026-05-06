@@ -1,4 +1,3 @@
-// src/utils/auth.js  ← apague TUDO e coloque só isso
 
 export const saveToken = (token) => {
     localStorage.setItem('token', token);

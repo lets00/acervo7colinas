@@ -54,6 +54,7 @@ const generos = [
 /* ─── componente ─── */
 
 export default function Dashboard() {
+    // teste de uso do login obrigatório com redirecionamento
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -62,7 +63,6 @@ export default function Dashboard() {
         }
     }, [navigate])
 
-    // menu kebab por card de progresso
     const [anchorEls, setAnchorEls] = useState({});   
     const [destaques, setDestaques] = useState([]);
     

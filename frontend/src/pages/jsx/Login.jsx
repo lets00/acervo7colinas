@@ -58,7 +58,7 @@ export default function Login() {
         setErro(data.mensagem || 'Erro ao fazer login.');
       }
     } catch (err) {
-      setErro('Erro de conexão com o servidor.');
+      setErro('Erro da conexão com o servidor.');
     } finally {
       setLoading(false);
     }
