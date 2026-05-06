@@ -31,6 +31,10 @@ const Funcionario = sequelize.define('Funcionario', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    senha: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     tipoAcesso: {
         type: DataTypes.STRING,
         allowNull: false
