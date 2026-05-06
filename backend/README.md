@@ -21,7 +21,7 @@ Backend do sistema Acervo 7 Colinas, desenvolvido com Node.js, Express, Sequeliz
 npm install
 ```
 
-### 2. Subir o banco com Docker
+### 2. Subir o banco com Docker (abra docker desktop)
 
 ```bash
 docker compose up -d
@@ -76,3 +76,30 @@ POST /livros
 ## Observação
 
 O banco é populado com dados iniciais de livros, funcionários e usuário de teste através do arquivo `seed.js`.
+
+## Login
+
+O sistema possui autenticação com bcrypt e JWT.
+
+Usuário de teste criado pelo seed:
+
+Email: usuario.teste@acervo7colinas.com.br  
+Senha: 123456
+
+Rota:
+
+POST /login
+
+Body:
+
+{
+  "email": "usuario.teste@acervo7colinas.com.br",
+  "senha": "123456"
+}
+
+Retorno esperado:
+
+{
+  "mensagem": "Login realizado com sucesso",
+  "token": "..."
+}
