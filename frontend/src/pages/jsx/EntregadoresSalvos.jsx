@@ -32,7 +32,7 @@ import "../css/LivrosSalvos.css";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import api from "../../services/apis";
 
-const PERFIL_OPTIONS = ["Todos", "Administrador", "Funcionário", "Estagiário", "A a Z", "Z a A"];
+const PERFIL_OPTIONS = ["Todos","A a Z", "Z a A"];
 
 const selectSx = {
     height: 40,
@@ -50,63 +50,71 @@ const actionBtnSx = {
     boxShadow: "none",
 };
 
-export default function FuncionariosSalvos() {
-    const [funcionarios, setFuncionarios] = useState([]);
-    const [loading, setLoading]           = useState(true);
-    const [error, setError]               = useState(null);
-
+export default function EntregadoresSalvos() {
+    const [entregadores, setEntregadores] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [perfilFiltro, setPerfilFiltro] = useState("Todos");
-    const [busca, setBusca]               = useState("");
-    const [page, setPage]                 = useState(1);
-    const [rowsPerPage]                   = useState(5);
+    const [busca, setBusca] = useState("");
+    const [page, setPage] = useState(1);
+    const rowsPerPage = 5;
 
-    const fetchFuncionarios = async () => {
+    const fetchEntregadores = async () => {
         try {
             setLoading(true);
             setError(null);
             const { data } = await api.get("/funcionarios");
-            setFuncionarios(Array.isArray(data) ? data : data.content ?? []);
+            const entregadoresFiltrados = (Array.isArray(data) ? data : data.content ?? [])
+                .filter(func => func.cargo?.toLowerCase() === 'entregador' || func.tipoAcesso?.toLowerCase() === 'entregador');
+            setEntregadores(entregadoresFiltrados);
         } catch (err) {
-            setError(err.message || "Erro ao carregar funcionários.");
+            const mensagem = err.response?.data?.message || err.message || "Erro ao carregar entregadores.";
+            setError(mensagem);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDeletarFuncionario = async (id) => {
-        if (!window.confirm("Deseja excluir este funcionário?")) return;
+    useEffect(() => {
+        fetchEntregadores();
+    }, []);
+
+    const handleDeletarEntregador = async (id) => {
+        if (!window.confirm("Deseja realmente excluir este entregador?")) return;
         try {
             await api.delete(`/funcionarios/${id}`);
-            setFuncionarios((prev) => prev.filter((f) => f.id !== id));
+            setEntregadores((prev) => prev.filter((item) => item.id !== id));
         } catch (err) {
-            alert("Erro ao excluir: " + err.message);
+            const mensagem = err.response?.data?.message || err.message || "Erro ao excluir entregador.";
+            alert("Erro ao excluir: " + mensagem);
         }
     };
 
-    useEffect(() => {
-        fetchFuncionarios();
-    }, []);
+    const entregadoresFiltrados = useMemo(() => {
+        let resultado = [...entregadores];
+
+        if (busca) {
+            const termo = busca.toLowerCase();
+            resultado = resultado.filter(ent => 
+                ent.nomeCompleto?.toLowerCase().includes(termo) || 
+                ent.email?.toLowerCase().includes(termo)
+            );
+        }
+
+        if (perfilFiltro === "A a Z") {
+            resultado.sort((a, b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
+        } else if (perfilFiltro === "Z a A") {
+            resultado.sort((a, b) => b.nomeCompleto.localeCompare(a.nomeCompleto));
+        }
+
+        return resultado;
+    }, [entregadores, perfilFiltro, busca]);
 
 
-    const funcionariosFiltrados = useMemo(() => {
-        return funcionarios.filter((funcionario) => {
-        const matchPerfil =
-            perfilFiltro === "Todos" ||
-            funcionario.perfil?.toLowerCase() === perfilFiltro.toLowerCase();
-
-        const matchBusca =
-            busca === "" ||
-            funcionario.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-            funcionario.email?.toLowerCase().includes(busca.toLowerCase());
-
-        return matchPerfil && matchBusca;
-        });
-    }, [funcionarios, perfilFiltro, busca]);
-
-    const totalPages         = Math.max(1, Math.ceil(funcionariosFiltrados.length / rowsPerPage));
-    const funcionariosPagina = funcionariosFiltrados.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-    const from               = funcionariosFiltrados.length === 0 ? 0 : (page - 1) * rowsPerPage + 1;
-    const to                 = Math.min(page * rowsPerPage, funcionariosFiltrados.length);
+    const totalPages = Math.max(1, Math.ceil(entregadoresFiltrados.length / rowsPerPage));
+    const entregadoresPagina = entregadoresFiltrados.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+    const from = entregadoresFiltrados.length === 0 ? 0 : (page - 1) * rowsPerPage + 1;
+    const to = Math.min(page * rowsPerPage, entregadoresFiltrados.length);
 
     return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px", width: "100%" }}>
@@ -116,7 +124,7 @@ export default function FuncionariosSalvos() {
         <Box className="livrossalvos-page" sx={{ width: "100%" }}>
 
           <div className="livrossalvos-topbar">
-            <h1 className="livrossalvos-titulo">Funcionários Cadastrados</h1>
+            <h1 className="livrossalvos-titulo">Entregadores Cadastrados</h1>
           </div>
 
           <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width: "1200px" }} />
@@ -146,7 +154,7 @@ export default function FuncionariosSalvos() {
               <OutlinedInput
                 value={busca}
                 onChange={(e) => { setBusca(e.target.value); setPage(1); }}
-                placeholder="Procure por nome ou email do funcionário"
+                placeholder="Procure por nome ou email do Entregadores"
                 size="small"
                 fullWidth
                 endAdornment={
@@ -183,52 +191,54 @@ export default function FuncionariosSalvos() {
           {!loading && !error && (
             <div className="livrossalvos-table-wrapper">
               <TableContainer sx={{ width: "100%" }}>
-                <Table aria-label="tabela de funcionários cadastrados" sx={{ width: "100%" }}>
+                <Table aria-label="tabela de entregadores cadastrados" sx={{ width: "100%" }}>
 
                   <TableHead>
                     <TableRow>
                       <TableCell>ID</TableCell>
-                      <TableCell>Funcionário</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Perfil / Cargo</TableCell>
-                      <TableCell>Data de Cadastro</TableCell>
+                      <TableCell>Nome</TableCell>
+                      <TableCell>Setor</TableCell>
+                      <TableCell>Disponibilidade</TableCell>
+                      <TableCell>Telefone</TableCell>
+                      <TableCell>Tipo de Acesso</TableCell>
                       <TableCell align="center">Ações</TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
-                    {funcionariosPagina.length === 0 ? (
+                    {entregadoresPagina.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} align="center" sx={{ py: 4, color: "#888" }}>
-                          Nenhum funcionário encontrado.
+                        <TableCell colSpan={7} align="center" sx={{ py: 4, color: "#888" }}>
+                          Nenhum entregador encontrado.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      funcionariosPagina.map((funcionario) => (
-                        <TableRow key={funcionario.id}>
-                          <TableCell><em>{funcionario.id}</em></TableCell>
+                      entregadoresPagina.map((entregador) => (
+                        <TableRow key={entregador.id}>
+                          <TableCell><em>{entregador.id}</em></TableCell>
 
                           <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                               <Avatar
-                                src={funcionario.fotoPerfil ?? funcionario.capa}
-                                alt={funcionario.nome}
+                                src={entregador.fotoPerfil ?? entregador.capa}
+                                alt={entregador.nomeCompleto}
                                 variant="rounded"
                                 sx={{ width: 36, height: 36, flexShrink: 0 }}
                               >
                                 <AssignmentIcon fontSize="small" />
                               </Avatar>
-                              {funcionario.nome}
+                              {entregador.nomeCompleto}
                             </Box>
                           </TableCell>
 
-                          <TableCell>{funcionario.email}</TableCell>
-                          <TableCell>{funcionario.perfil ?? funcionario.cargo}</TableCell>
-                          <TableCell><em>{funcionario.dataCadastro}</em></TableCell>
+                          <TableCell>{entregador.setor ?? "-"}</TableCell>
+                          <TableCell>{entregador.disponibilidade ?? "-"}</TableCell>
+                          <TableCell>{entregador.telefone ?? "-"}</TableCell>
+                          <TableCell>{entregador.tipoAcesso ?? "-"}</TableCell>
 
                           <TableCell align="center">
                             <div className="acoes-cell">
-                              <Tooltip title="Ver perfil do funcionário">
+                              <Tooltip title="Ver perfil do entregador">
                                 <Button
                                   variant="contained"
                                   size="small"
@@ -239,12 +249,12 @@ export default function FuncionariosSalvos() {
                                 </Button>
                               </Tooltip>
 
-                              <Tooltip title="Excluir funcionário">
+                              <Tooltip title="Excluir Entregador">
                                 <Button
                                   variant="contained"
                                   size="small"
                                   startIcon={<DeleteIcon />}
-                                  onClick={() => handleDeletarFuncionario(funcionario.id)}
+                                  onClick={() => handleDeletarEntregador(entregador.id)}
                                   sx={{ ...actionBtnSx, bgcolor: "#c62828", color: "#fff", "&:hover": { bgcolor: "#a81f1f" } }}
                                 >
                                   Excluir
@@ -259,12 +269,12 @@ export default function FuncionariosSalvos() {
 
                   <TableFooter>
                     <TableRow>
-                      <TableCell colSpan={6}>
+                      <TableCell colSpan={7}>
                         <div className="livrossalvos-footer">
                           <span className="livrossalvos-exibindo">
-                            {funcionariosFiltrados.length === 0
-                              ? "Nenhum funcionário encontrado"
-                              : `Exibindo ${from}–${to} de ${funcionariosFiltrados.length} funcionário(s)`}
+                            {entregadoresFiltrados.length === 0
+                              ? "Nenhum entregador encontrado"
+                              : `Exibindo ${from}–${to} de ${entregadoresFiltrados.length} entregador(es)`}
                           </span>
                           <Pagination
                             count={totalPages}

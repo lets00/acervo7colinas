@@ -67,7 +67,8 @@ export default function FuncionariosSalvos() {
             const { data } = await api.get("/funcionarios");
             setFuncionarios(Array.isArray(data) ? data : data.content ?? []);
         } catch (err) {
-            setError(err.message || "Erro ao carregar funcionários.");
+            const mensagem = err.response?.data?.message || err.message || "Erro ao carregar funcionários.";
+            setError(mensagem);
         } finally {
             setLoading(false);
         }
@@ -79,7 +80,8 @@ export default function FuncionariosSalvos() {
             await api.delete(`/funcionarios/${id}`);
             setFuncionarios((prev) => prev.filter((f) => f.id !== id));
         } catch (err) {
-            alert("Erro ao excluir: " + err.message);
+            const mensagem = err.response?.data?.message || err.message || "Erro ao excluir funcionário.";
+            alert("Erro ao excluir: " + mensagem);
         }
     };
 
@@ -89,18 +91,26 @@ export default function FuncionariosSalvos() {
 
 
     const funcionariosFiltrados = useMemo(() => {
-        return funcionarios.filter((funcionario) => {
-        const matchPerfil =
-            perfilFiltro === "Todos" ||
-            funcionario.perfil?.toLowerCase() === perfilFiltro.toLowerCase();
+        let resultado = funcionarios.filter((funcionario) => {
+            const matchPerfil =
+                perfilFiltro === "Todos" ||
+                funcionario.tipoAcesso?.toLowerCase() === perfilFiltro.toLowerCase();
 
-        const matchBusca =
-            busca === "" ||
-            funcionario.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-            funcionario.email?.toLowerCase().includes(busca.toLowerCase());
+            const matchBusca =
+                busca === "" ||
+                funcionario.nomeCompleto?.toLowerCase().includes(busca.toLowerCase()) ||
+                funcionario.email?.toLowerCase().includes(busca.toLowerCase());
 
-        return matchPerfil && matchBusca;
+            return matchPerfil && matchBusca;
         });
+
+        if (perfilFiltro === "A a Z") {
+            resultado.sort((a, b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
+        } else if (perfilFiltro === "Z a A") {
+            resultado.sort((a, b) => b.nomeCompleto.localeCompare(a.nomeCompleto));
+        }
+
+        return resultado;
     }, [funcionarios, perfilFiltro, busca]);
 
     const totalPages         = Math.max(1, Math.ceil(funcionariosFiltrados.length / rowsPerPage));
@@ -188,7 +198,7 @@ export default function FuncionariosSalvos() {
                   <TableHead>
                     <TableRow>
                       <TableCell>ID</TableCell>
-                      <TableCell>Funcionário</TableCell>
+                      <TableCell>Nome</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>Perfil / Cargo</TableCell>
                       <TableCell>Data de Cadastro</TableCell>
@@ -212,19 +222,19 @@ export default function FuncionariosSalvos() {
                             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                               <Avatar
                                 src={funcionario.fotoPerfil ?? funcionario.capa}
-                                alt={funcionario.nome}
+                                alt={funcionario.nomeCompleto}
                                 variant="rounded"
                                 sx={{ width: 36, height: 36, flexShrink: 0 }}
                               >
                                 <AssignmentIcon fontSize="small" />
                               </Avatar>
-                              {funcionario.nome}
+                              {funcionario.nomeCompleto}
                             </Box>
                           </TableCell>
 
                           <TableCell>{funcionario.email}</TableCell>
-                          <TableCell>{funcionario.perfil ?? funcionario.cargo}</TableCell>
-                          <TableCell><em>{funcionario.dataCadastro}</em></TableCell>
+                          <TableCell>{funcionario.tipoAcesso ?? funcionario.cargo}</TableCell>
+                          <TableCell><em>{funcionario.createdAt ? new Date(funcionario.createdAt).toLocaleDateString('pt-BR') : '-'}</em></TableCell>
 
                           <TableCell align="center">
                             <div className="acoes-cell">

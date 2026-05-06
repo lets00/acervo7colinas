@@ -16,6 +16,8 @@ import api from "../../services/apis";
 dayjs.locale('pt-br');
 
 
+const DESCRICAO_MAX = 100;
+
 function CadastroLivros() {
   const [formData, setFormData] = useState({
     titulo: "",
@@ -27,42 +29,77 @@ function CadastroLivros() {
     editora: "",
     descricao: "",
   });
-
+ 
+  const [errors, setErrors] = useState({});
+ 
   const handleChange = (event) => {
     const { name, value } = event.target;
+ 
+    if (name === 'descricao' && value.length > DESCRICAO_MAX) return;
+ 
+    if (name === 'quantidadeExemplares' && Number(value) < 0) return;
+ 
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
 
+    setErrors(prev => ({ ...prev, [name]: false }));
+  };
+ 
   const handleDateChange = (newValue) => {
     setFormData(prev => ({ ...prev, ano: newValue }));
+    setErrors(prev => ({ ...prev, ano: false }));
   };
+ 
 
+  const validar = () => {
+    const novosErros = {};
+    if (!formData.titulo.trim()) novosErros.titulo = true;
+    if (!formData.isbn.trim()) novosErros.isbn = true;
+    if (!formData.ano) novosErros.ano = true;
+    if (!formData.quantidadeExemplares || Number(formData.quantidadeExemplares) <= 0)
+      novosErros.quantidadeExemplares = true;
+    if (!formData.genero) novosErros.genero = true;
+    if (!formData.autor.trim()) novosErros.autor = true;
+    if (!formData.editora.trim()) novosErros.editora = true;
+    setErrors(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
+ 
   const cadastrolivro = async (e) => {
     e.preventDefault();
-
+ 
+    if (!validar()) {
+      alert("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+ 
     try {
       const dataToSend = {
         ...formData,
         quantidadeExemplares: Number(formData.quantidadeExemplares),
-        ano: formData.ano && typeof formData.ano.year === 'function' 
-             ? formData.ano.year() 
-             : null,
+        ano: formData.ano.year(),
       };
-
-      await api.post("/livros", dataToSend);
-
-      alert("Livro cadastrado com sucesso!");
-      setFormData({
-        titulo: "", isbn: "", ano: null, quantidadeExemplares: "",
-        genero: "", autor: "", editora: "", descricao: "",
-      });
-
+ 
+      console.log("Enviando para o backend:", dataToSend);
+ 
+      const response = await api.post("/livros", dataToSend);
+ 
+      if (response.status === 201 || response.status === 200) {
+        alert("Livro cadastrado com sucesso!");
+        setFormData({
+          titulo: "", isbn: "", ano: null, quantidadeExemplares: "",
+          genero: "", autor: "", editora: "", descricao: "",
+        });
+        setErrors({});
+      }
+ 
     } catch (error) {
-      console.error("Erro completo:", error);
+      console.error("Erro na requisição:", error);
       const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
-      alert(mensagem);
+      alert(`Erro: ${mensagem}`);
     }
   };
+ 
+  const descricaoHelper = `${formData.descricao.length}/${DESCRICAO_MAX}`;
 
   return (
     <Box className="container" >
@@ -138,7 +175,7 @@ function CadastroLivros() {
                     <TextField required fullWidth label="Autor" variant="outlined"  sx={{ width: '468px' } } name="autor" value={formData.autor} onChange={handleChange}/>
                     <TextField required fullWidth label="Editora" variant="outlined"  sx={{ width: '468px' } } name="editora" value={formData.editora} onChange={handleChange} />
                       
-                    <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } } variant="outlined" helperText="0/100" name="descricao" value={formData.descricao} onChange={handleChange}/>
+                    <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } } variant="outlined" helperText={descricaoHelper} name="descricao" value={formData.descricao} onChange={handleChange}/>
                   </Box>
                  </Grid>
                 </Grid>

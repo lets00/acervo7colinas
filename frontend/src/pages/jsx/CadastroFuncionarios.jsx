@@ -53,6 +53,12 @@ function CadastroFuncionarios() {
             alert("Por favor, confirme que você não é um robô!");
             return;
         }
+
+        // Validação frontend: checar campos obrigatórios
+        if (!formData.nomeCompleto || !formData.cpf || !formData.matricula || !formData.cargo || !formData.setor || !formData.email || !formData.telefone) {
+            alert("Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
  
         const dados = {
             nomeCompleto: formData.nomeCompleto,
@@ -62,13 +68,12 @@ function CadastroFuncionarios() {
             setor: formData.setor,
             email: formData.email,
             telefone: formData.telefone,
-            senha: formData.senha,
             tipoAcesso: formData.tipoAcesso,
             disponibilidade: formData.disponibilidade
         };
  
         try {
-            await api.post('/funcionarios', dadosFuncionarios);
+            await api.post('/funcionarios', dados);
             alert("Funcionário cadastrado com sucesso!");
  
             setFormData({
@@ -90,7 +95,8 @@ function CadastroFuncionarios() {
  
         } catch (error) {
             console.error("Erro detalhado:", error);
-            alert("Erro ao conectar com o servidor. Verifique o console (F12).");
+            const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
+            alert(`Erro: ${mensagem}`);
         }
     }
     return (
