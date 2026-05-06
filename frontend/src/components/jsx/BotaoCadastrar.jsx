@@ -3,7 +3,7 @@ function BotaoCadastrar(){
     return (
          <> 
             <Box className="botoes" sx={{mt:6}}> 
-                <Button  className="btn-cadastrar" sx={{color:"#ffff"}} >
+                <Button type="submit" className="btn-cadastrar" sx={{color:"#ffff"}} >
                      CADASTRAR 
                 </Button>
                 <Button variant="outlined" className="btn-cancelar" >
