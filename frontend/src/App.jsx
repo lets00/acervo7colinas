@@ -19,6 +19,8 @@ import Dashboard from "./pages/jsx/dashboard.jsx";
 import MeusEmprestimos from "./pages/jsx/MeusEmprestimos.jsx";
 import LivrosSalvos from "./pages/jsx/LivrosSalvos.jsx";
 import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
+import FuncionariosSalvos from "./pages/jsx/FuncionariosSalvos.jsx";
+import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import UsuariosSalvos from "./pages/jsx/UsuariosSalvos.jsx";
 
 //RadioButton do material
@@ -47,7 +49,10 @@ function App() {
             <Route path="/livros-salvos" element={<LivrosSalvos />} />
             <Route path="/emprestimos" element={<MeusEmprestimos />} />
             <Route path="/acervo" element={<NossoAcervo />} />
+            <Route path="/funcionarios-salvos" element={<FuncionariosSalvos />} />
+            <Route path="/entregadores-salvos" element={<EntregadoresSalvos />} />
             <Route path="/usuarios-salvos" element={<UsuariosSalvos />} />
+            
           </Routes>
 
         </Container>

@@ -10,34 +10,98 @@ import dayjs from 'dayjs';
 import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import "../css/Usuario.css";
 import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
+import api from "../../services/apis";
 
 dayjs.locale('pt-br');
 
 function CadastroUsuarios() {
-    const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
-    
-    const [cidade, setCidade] = React.useState('Garanhuns');
+    const [formData, setFormData] = useState({
+    nomeCompleto: '',
+    cpf: '',
+    rg: '',
+    sexo: '',
+    dataNascimento: null,
+    telefone: '',
+    email: '',
+    senha: '',
+    confirmarSenha: '',
+    captcha: false,
+    rua: '',
+    numero: '',
+    cep: '',
+    bairro: '',
+    cidade: 'Garanhuns',
+    complemento: ''
+  });
+ 
+  const [showPassword, setShowPassword] = useState(false);
+  const [senhaError, setSenhaError] = useState(false);
+ 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'senha' || name === 'confirmarSenha') {
+      setSenhaError(false);
+    }
+  };
+ 
+  const handleCaptchaChange = (e) => {
+    setFormData(prev => ({ ...prev, captcha: e.target.checked }));
+  };
+ 
+  const handleDateChange = (newValue) => {
+    setFormData(prev => ({ ...prev, dataNascimento: newValue }));
+  };
+ 
+  const handleMouseDownPassword = (event) => event.preventDefault();
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseUpPassword = (event) => event.preventDefault();
+ 
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-    const [senha, setSenha] = React.useState('');
-    const [confirmarSenha, setConfirmarSenha] = React.useState('');
-    const [showPassword, setShowPassword] = React.useState(false);
-    const handleCidadeChange = (event) => {
-        setCidade(event.target.value);
+    // Validação frontend: checar campos obrigatórios
+    if (!formData.nomeCompleto || !formData.cpf || !formData.rg || !formData.sexo || !formData.dataNascimento || !formData.email || !formData.telefone || !formData.rua || !formData.numero || !formData.cep || !formData.bairro || !formData.cidade || !formData.complemento) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
     }
 
-    function Submit(e) {
-        e.preventDefault();
-        console.log("Cadastrou o usuário!");
+    if (formData.senha !== formData.confirmarSenha) {
+      setSenhaError(true);
+      alert("As senhas não conferem!");
+      return;
     }
-    const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
+ 
+    if (!formData.captcha) {
+      alert("Por favor, confirme que você não é um robô.");
+      return;
+    }
+ 
+    const { confirmarSenha, captcha, rua, numero, cep, bairro, cidade, complemento, ...rest } = formData;
+ 
+    const payload = {
+      ...rest,
+      dataNascimento: formData.dataNascimento ? formData.dataNascimento.format('DD/MM/YYYY') : null,
+      confirmacaoSenha: confirmarSenha,
+      captcha,
+      endereco: { rua, numero, cep, bairro, cidade, complemento }
     };
+ 
+    try {
+      const response = await api.post('/usuarios', payload);
+      alert("Usuário cadastrado com sucesso!");
+      setFormData({
+        nomeCompleto: '', cpf: '', rg: '', sexo: '', dataNascimento: null,
+        telefone: '', email: '', senha: '', confirmarSenha: '', captcha: false,
+        rua: '', numero: '', cep: '', bairro: '', cidade: 'Garanhuns', complemento: ''
+      });
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
 
-    const handleMouseUpPassword = (event) => {
-        event.preventDefault();
-    };
+      const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
+      alert(`Erro: ${mensagem}`);
+    }
+  }
     return (
         <Box className="container" >
             <Header />
@@ -56,10 +120,11 @@ function CadastroUsuarios() {
                     </Typography>
                 </Box>
 
-                <form onSubmit={Submit} >
+                <form onSubmit={handleSubmit} >
                     <Box className="iput-grande" >
-                        <TextField required  fullWidth label="Nome Completo" variant="outlined" sx={{ maxWidth: '950px', mx: 'auto', mb: 2, mt: 2 }} size="small"
-                        />
+                        <TextField
+                            required name="nomeCompleto" fullWidth label="Nome Completo"
+                            variant="outlined" value={formData.nomeCompleto} onChange={handleChange} size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }} />
                     </Box>
                     <Grid container spacing={2} justifyContent="center">
 
@@ -67,11 +132,11 @@ function CadastroUsuarios() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                <TextField required fullWidth label="CPF" size="small" sx={{width:"460px"}} />
+                                <TextField required fullWidth label="CPF" size="small" sx={{width:"460px"}} name="cpf" value={formData.cpf} onChange={handleChange}/>
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField required fullWidth label="RG" size="small"sx={{width:"460px"}} />
+                                <TextField required fullWidth label="RG" size="small"sx={{width:"460px"}} name="rg" value={formData.rg} onChange={handleChange}/>
                                 </Grid>
 
                             </Grid>
@@ -81,7 +146,7 @@ function CadastroUsuarios() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Sexo" size="small" sx={{  width:"460px"}} />
+                                    <TextField required fullWidth label="Sexo" size="small" sx={{  width:"460px"}} name="sexo" value={formData.sexo} onChange={handleChange} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}  adapterLocale="pt-br">
@@ -90,6 +155,7 @@ function CadastroUsuarios() {
                                             views={['year', 'month', 'day']}
                                             format="DD/MM/YYYY"
                                             sx={{  width:"460px" }}
+                                            value={formData.dataNascimento} onChange={(value) => setFormData({...formData, dataNascimento: value})}
                                             slotProps={{
                                                 textField: {
                                                     fullWidth: true,
@@ -104,43 +170,34 @@ function CadastroUsuarios() {
                         </Grid>
                         
                         <TextField
-                            required fullWidth label="Email" variant="outlined" size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
-                        />
-                       <Grid item xs={12} md={12}>
+                            required fullWidth label="Email" variant="outlined" size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }} name="email" value={formData.email}  onChange={handleChange} />
+                       <Grid item xs={12} md={12} >
                             <Grid container spacing={4} justifyContent="center">
                                 <Grid item xs={4}>
                                     <TextField
-                                        required fullWidth label="Numero" variant="outlined" size="small" placeholder="Telefone"
-                                        sx={{
-                                            width: '950px', mb: 2, mx: 'auto','& .MuiFormHelperText-root': { marginLeft: 0, color: '#666'}
-                                        }}
+                                        required fullWidth label="Telefone" variant="outlined" size="small"
+                                        placeholder="(00) 00000-0000"
+                                        name="telefone" value={formData.telefone} onChange={handleChange}
+                                        sx={{ width: '950px', mb: 2, mx: 'auto' }}
                                         InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <img
-                                                            src="https://flagcdn.com/w20/br.png"
-                                                            alt="Brasil"
-                                                            style={{ width: 20, borderRadius: '2px' }} />
-                                                        <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>
-                                                            + 55
-                                                        </Typography>
-                                                        <Box sx={{borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <img src="https://flagcdn.com/w20/br.png" alt="Brasil" style={{ width: 20, borderRadius: '2px' }} />
+                                            </Box>
+                                            </InputAdornment>
+                                        ),
                                         }}
                                     />
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={4}>
-                            <FormControl sx={{ mt: -1, width: '460px', mb:2}} variant="outlined">
+            <Grid container spacing={4}>
+              <FormControl sx={{ mt: -1, width: '460px', mb:2}} variant="outlined">
                                 <InputLabel>Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
-                                    value={senha}
-                                    onChange={(e) => setSenha(e.target.value)}
+                                    name="senha" value={formData.senha} onChange={handleChange}
                                     endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -160,8 +217,7 @@ function CadastroUsuarios() {
                                 <InputLabel>Confirmar Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
-                                    value={confirmarSenha}
-                                    onChange={(e) => setConfirmarSenha(e.target.value)}
+                                    name="confirmarSenha" value={formData.confirmarSenha} onChange={handleChange} 
                                     endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -191,11 +247,11 @@ function CadastroUsuarios() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Rua" size="small" sx={{width:"794px", mt:2}} />
+                                    <TextField required fullWidth label="Rua" size="small" sx={{ width: "794px", mt: 2 }} name="rua" value={formData.rua} onChange={handleChange} />
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Numero" size="small"sx={{width:"120px", mt:2}} />
+                                    <TextField required fullWidth label="Numero" size="small"sx={{width:"120px", mt:2}} name="numero" value={formData.numero}  onChange={handleChange}/>
                                 </Grid>
 
                             </Grid>
@@ -204,11 +260,11 @@ function CadastroUsuarios() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                    <TextField requiredfullWidth label="CEP" size="small" sx={{width:"460px", mt:1 }} />
+                                    <TextField required fullWidth label="CEP" size="small" sx={{width:"460px", mt:1 }} name="cep" value={formData.cep}  onChange={handleChange}/>
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <TextField required fullWidth label="Bairro" size="small"sx={{width:"460px", mt:1}} />
+                                    <TextField required fullWidth label="Bairro" size="small"sx={{width:"460px", mt:1}} name="bairro" value={formData.bairro}  onChange={handleChange}/>
                                 </Grid>
 
                             </Grid>
@@ -221,9 +277,8 @@ function CadastroUsuarios() {
                                         <Select
                                             labelId="select-cidade-label"
                                             id="select-cidade"
-                                            value={cidade}
+                                            name="cidade" value={formData.cidade} onChange={handleChange}
                                             label="Cidade"
-                                            onChange={handleCidadeChange}
                                         >
                                             <MenuItem value="Garanhuns">Garanhuns</MenuItem>
                                         </Select>
@@ -231,7 +286,7 @@ function CadastroUsuarios() {
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                <TextField required fullWidth label="Complemento" size="small"sx={{width:"460px", mt:1}} />
+                                <TextField required fullWidth label="Complemento" size="small"sx={{width:"460px", mt:1}} name="complemento" value={formData.complemento}  onChange={handleChange}/>
                                 </Grid>
 
                             </Grid>
@@ -242,7 +297,8 @@ function CadastroUsuarios() {
                     
                     <Grid container justifyContent="center" sx={{mt:5}}>
                         <Box className="checkbox-box">
-                                <FormControlLabel control={<Checkbox />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
+                            <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} 
+                            label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
                         </Box>
                     </Grid>
                     <BotaoCadastrar/>
