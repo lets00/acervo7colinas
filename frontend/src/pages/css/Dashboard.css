@@ -81,6 +81,7 @@
     border-bottom: 2px solid #F2A21E;
     padding-bottom: 8px;
     margin-bottom: 40px;
+
 }
 
 
@@ -154,7 +155,7 @@
 /* ===================== */
 
 .charts-section {
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 .chart-card {

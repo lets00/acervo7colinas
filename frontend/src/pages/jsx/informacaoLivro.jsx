@@ -181,7 +181,6 @@ function InformacaoLivro() {
 
                 </div>
 
-                {/* 📚 EXEMPLARES */}
                 <SectionHeader title="Exemplares" />
 
                 <div className="exemplares-section">

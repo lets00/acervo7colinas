@@ -204,7 +204,7 @@ export default function Dashboard() {
 
 
                 {/* VISÃO GERAL */}
-                <div style={{ marginBottom: "80px" }}>   
+                <div style={{ marginBottom: "40px" }}>   
                     <SectionHeader title="Visão geral" />
                 </div>
 

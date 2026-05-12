@@ -27,6 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import Header from "../../components/jsx/Header";
+import SectionHeader from "../../components/jsx/SectionHeader";
+
 
 /* ─────────────────────────────────────────
    CONSTANTES
@@ -162,18 +164,8 @@ export default function UsuariosSalvos() {
                 <Box sx={{ px: { xs: 2, md: 4 }, py: 3, width: "100%" }}>
 
                     {/* ── Título ── */}
-                    <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-                        <h1
-                            style={{
-                                fontSize: 28,
-                                fontWeight: 700,
-                                color: "#1a1a2e",
-                                margin: 0,
-                            }}
-                        >
-                            Usuários Cadastrados!
-                        </h1>
-                    </Box>
+                    <SectionHeader title="Usuários Cadastrados!"  marginBottom="10px"/>
+            
 
                     {/* ── Barra de filtros ── */}
                     <Box
