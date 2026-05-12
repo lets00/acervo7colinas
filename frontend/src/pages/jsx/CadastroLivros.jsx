@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { 
-  Box, Button, Grid, MenuItem, TextField, Typography, 
-  FormControl, InputLabel, Select, OutlinedInput 
-} from "@mui/material";
+import { Box, Grid, MenuItem, TextField, Typography, 
+  FormControl, InputLabel, Select, OutlinedInput } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -12,6 +10,7 @@ import Header from "../../components/jsx/Header";
 import '../css/CadastroLivros.css';
 import BotaoLivroCadastrar from '../../components/jsx/BotaoLivroCadastrar.jsx';
 import api from "../../services/apis";
+import CampoCadastrosLivros from "../../components/jsx/CampoCadastrosLivros.jsx";
 
 dayjs.locale('pt-br');
 
@@ -19,6 +18,9 @@ dayjs.locale('pt-br');
 const DESCRICAO_MAX = 100;
 
 function CadastroLivros() {
+  const [imagemLivro, setImagemLivro] = useState(null); 
+       
+
   const [formData, setFormData] = useState({
     titulo: "",
     isbn: "",
@@ -50,48 +52,35 @@ function CadastroLivros() {
   };
  
 
-  const validar = () => {
-    const novosErros = {};
-    if (!formData.titulo.trim()) novosErros.titulo = true;
-    if (!formData.isbn.trim()) novosErros.isbn = true;
-    if (!formData.ano) novosErros.ano = true;
-    if (!formData.quantidadeExemplares || Number(formData.quantidadeExemplares) <= 0)
-      novosErros.quantidadeExemplares = true;
-    if (!formData.genero) novosErros.genero = true;
-    if (!formData.autor.trim()) novosErros.autor = true;
-    if (!formData.editora.trim()) novosErros.editora = true;
-    setErrors(novosErros);
-    return Object.keys(novosErros).length === 0;
-  };
- 
   const cadastrolivro = async (e) => {
     e.preventDefault();
- 
     if (!validar()) {
       alert("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
- 
+
     try {
-      const dataToSend = {
-        ...formData,
-        quantidadeExemplares: Number(formData.quantidadeExemplares),
-        ano: formData.ano.year(),
-      };
- 
-      console.log("Enviando para o backend:", dataToSend);
- 
-      const response = await api.post("/livros", dataToSend);
- 
+      const dataToSend = new FormData();
+      dataToSend.append('imagem', imagemLivro);
+      dataToSend.append('titulo', formData.titulo);
+      dataToSend.append('isbn', formData.isbn);
+      dataToSend.append('ano', formData.ano.year());
+      dataToSend.append('quantidadeExemplares', Number(formData.quantidadeExemplares));
+      dataToSend.append('genero', formData.genero);
+      dataToSend.append('autor', formData.autor);
+      dataToSend.append('editora', formData.editora);
+      dataToSend.append('descricao', formData.descricao);
+
+      const response = await api.post("/livros", dataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' }, 
+      });
+
       if (response.status === 201 || response.status === 200) {
         alert("Livro cadastrado com sucesso!");
-        setFormData({
-          titulo: "", isbn: "", ano: null, quantidadeExemplares: "",
-          genero: "", autor: "", editora: "", descricao: "",
-        });
+        setFormData({ titulo: "", isbn: "", ano: null, quantidadeExemplares: "", genero: "", autor: "", editora: "", descricao: "" });
+        setImagemLivro(null);
         setErrors({});
       }
- 
     } catch (error) {
       console.error("Erro na requisição:", error);
       const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
@@ -157,7 +146,7 @@ function CadastroLivros() {
                           <MenuItem value="Poesia">Poesia</MenuItem>
                           <MenuItem value="Suspense">Suspense</MenuItem>
                           <MenuItem value="Biografia">Biografia</MenuItem>
-                          <MenuItem value="Autorajuda">Autorajuda</MenuItem>
+                          <MenuItem value="Autorajuda">Autoajuda</MenuItem>
                           <MenuItem value="Historia">História</MenuItem>
                           <MenuItem value="Filosofia">Filosofia</MenuItem>
                           <MenuItem value="Religiao">Religião e Espiritualidade</MenuItem>
@@ -178,9 +167,10 @@ function CadastroLivros() {
                     <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } } variant="outlined" helperText={descricaoHelper} name="descricao" value={formData.descricao} onChange={handleChange}/>
                   </Box>
                  </Grid>
-                </Grid>
-  
-                <BotaoLivroCadastrar/>
+              </Grid> 
+              <CampoCadastrosLivros onChange={(file) => setImagemLivro(file)} />
+                
+              <BotaoLivroCadastrar/>
 
             </form>
         </Box>

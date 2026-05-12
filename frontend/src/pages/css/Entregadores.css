@@ -53,3 +53,19 @@
   min-height: 30px;
   background-color: #d3d3d3;
 }
+
+.container-retangulo {
+  width: 450px;       
+  height: 200px;      
+  border: 2px solid #898989;
+  padding: 20px;      
+  border-radius: 8px;  
+}
+
+.container-retangulo-um {
+  width: 860px;       
+  height: 150px;      
+  border: 2px solid #898989;
+  padding: 20px;      
+  border-radius: 8px;  
+}
