@@ -92,11 +92,6 @@ function Login() {
                   Esqueceu a senha?
                 </Typography>
               </Box>
-              <Box>
-                <FormControlLabel 
-                  control={<Checkbox {...label} color="primary" />} 
-                  label="Aceito os termos e condições" sx={{ml:-62, mt:7}} />
-              </Box>
               <Box className="botoes" sx={{mt:3}}> 
                 <Button  className="btn-cadastrar" sx={{color:"#ffff", width: "750px"}} >
                      Entrar

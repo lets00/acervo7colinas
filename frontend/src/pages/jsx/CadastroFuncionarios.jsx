@@ -54,23 +54,25 @@ function CadastroFuncionarios() {
             return;
         }
 
-        // Validação frontend: checar campos obrigatórios
         if (!formData.nomeCompleto || !formData.cpf || !formData.matricula || !formData.cargo || !formData.setor || !formData.email || !formData.telefone) {
             alert("Por favor, preencha todos os campos obrigatórios.");
             return;
         }
  
         const dados = {
-            nomeCompleto: formData.nomeCompleto,
-            cpf: formData.cpf,
-            matricula: formData.matricula,
-            cargo: formData.cargo,
-            setor: formData.setor,
-            email: formData.email,
-            telefone: formData.telefone,
-            tipoAcesso: formData.tipoAcesso,
-            disponibilidade: formData.disponibilidade
-        };
+        nomeCompleto: formData.nomeCompleto,
+        cpf: formData.cpf,
+        matricula: formData.matricula,
+        cargo: formData.cargo,
+        setor: formData.setor,
+        email: formData.email,
+        telefone: formData.telefone,
+        tipoAcesso: formData.tipoAcesso,
+        disponibilidade: formData.disponibilidade,
+        senha: formData.senha,
+        confirmacaoSenha: formData.confirmacaoSenha,
+        captcha: formData.captcha
+    };
  
         try {
             await api.post('/funcionarios', dados);
