@@ -22,13 +22,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 import SearchIcon from "@mui/icons-material/Search";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
-
 
 /* ─────────────────────────────────────────
    CONSTANTES
@@ -86,6 +84,7 @@ function formatDate(dateStr) {
 function getAvatarColor(id) {
     return AVATAR_COLORS[id % AVATAR_COLORS.length];
 }
+
 /* ─────────────────────────────────────────
    COMPONENTE PRINCIPAL
 ───────────────────────────────────────── */
@@ -128,7 +127,6 @@ export default function UsuariosSalvos() {
     /* ── Filtros e paginação ── */
     const filtrados = useMemo(() => {
         return usuarios.filter((u) => {
-            // O campo status pode não existir; assumimos "Ativo" como padrão
             const status = u.status || "Ativo";
             const matchStatus = statusFiltro === "Todos" || status === statusFiltro;
             const term = busca.toLowerCase();
@@ -164,27 +162,11 @@ export default function UsuariosSalvos() {
                 <Box sx={{ px: { xs: 2, md: 4 }, py: 3, width: "100%" }}>
 
                     {/* ── Título ── */}
-                    <SectionHeader title="Usuários Cadastrados!"  marginBottom="10px"/>
-            
+                    <SectionHeader title="Usuários Cadastrados!" marginBottom="10px" />
 
                     {/* ── Barra de filtros ── */}
-                    <Box
-                        sx={{
-                            bgcolor: "#CCD3F8",
-                            borderRadius: "0px",
-                            px: 3,
-                            py: 2,
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 2,
-                            flexWrap: "wrap",
-                            mb: 3,
-                        }}
-                    >
-                        <FilterAltIcon sx={{ color: "#37228B" }} />
-                        <span style={{ fontWeight: 600, fontSize: 14, color: "#37228B" }}>
-                            Filtrar:
-                        </span>
+                    <div className="livrossalvos-filters">
+                        <span className="filter-inline-label">Filtrar:</span>
 
                         <FormControl size="small">
                             <Select
@@ -204,34 +186,28 @@ export default function UsuariosSalvos() {
                             </Select>
                         </FormControl>
 
-                        <Box sx={{ flex: 1 }} />
+                        <div style={{ flex: 1 }} />
+                        <span className="filter-inline-label">Buscar:</span>
 
-                        <span style={{ fontWeight: 600, fontSize: 14, color: "#37228B" }}>
-                            Buscar:
-                        </span>
-
-                        <OutlinedInput
-                            value={busca}
-                            onChange={(e) => {
-                                setBusca(e.target.value);
-                                setPage(1);
-                            }}
-                            placeholder="Buscar..."
-                            size="small"
-                            sx={{
-                                borderRadius: "8px",
-                                bgcolor: "#fff",
-                                fontSize: 14,
-                                height: 40,
-                                minWidth: 220,
-                            }}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <SearchIcon sx={{ color: "#555", fontSize: 18 }} />
-                                </InputAdornment>
-                            }
-                        />
-                    </Box>
+                        <div className="filter-search-wrapper">
+                            <OutlinedInput
+                                value={busca}
+                                onChange={(e) => {
+                                    setBusca(e.target.value);
+                                    setPage(1);
+                                }}
+                                placeholder="Buscar usuário..."
+                                size="small"
+                                fullWidth
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <SearchIcon sx={{ color: "#555" }} />
+                                    </InputAdornment>
+                                }
+                                sx={{ borderRadius: "8px", bgcolor: "#fff", fontSize: 14, height: 40 }}
+                            />
+                        </div>
+                    </div>
 
                     {/* ── Loading ── */}
                     {loading && (
@@ -273,7 +249,6 @@ export default function UsuariosSalvos() {
                                                         fontSize: 14,
                                                         py: 1.5,
                                                         borderBottom: "none",
-                                                        
                                                     }}
                                                 >
                                                     {col}
@@ -313,15 +288,9 @@ export default function UsuariosSalvos() {
                                                         <em>{String(row.id).padStart(3, "0")}</em>
                                                     </TableCell>
 
-                                                    {/* Nome + Avatar com iniciais */}
+                                                    {/* Nome + Avatar */}
                                                     <TableCell>
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                alignItems: "center",
-                                                                gap: 1.5,
-                                                            }}
-                                                        >
+                                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                                                             <Avatar
                                                                 src={row.fotoPerfil || row.foto || row.avatar || undefined}
                                                                 sx={{
@@ -367,13 +336,7 @@ export default function UsuariosSalvos() {
 
                                                     {/* Ações */}
                                                     <TableCell align="center">
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                gap: 1,
-                                                                justifyContent: "center",
-                                                            }}
-                                                        >
+                                                        <Box sx={{ display: "flex", gap: 1, justifyContent: "center" }}>
                                                             <Tooltip title="Ver perfil do usuário">
                                                                 <Button
                                                                     variant="contained"
