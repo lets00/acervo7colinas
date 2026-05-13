@@ -1,12 +1,12 @@
 import { Box, Button, Grid, Typography } from "@mui/material"; 
-function BotaoCadastrar(){ 
+function BotaoCadastrar({ onCancel = () => {} }){ 
     return (
          <> 
             <Box className="botoes" sx={{mt:6}}> 
                 <Button type="submit" className="btn-cadastrar" sx={{color:"#ffff"}} >
                      CADASTRAR 
                 </Button>
-                <Button variant="outlined" className="btn-cancelar" >
+                <Button type="button" variant="outlined" className="btn-cancelar" onClick={onCancel} >
                      CANCELAR 
                 </Button> 
             </Box> 
