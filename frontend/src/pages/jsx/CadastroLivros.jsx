@@ -85,7 +85,7 @@ function CadastroLivros() {
     const dataToSend = new FormData();
     dataToSend.append("titulo", formData.titulo);
     dataToSend.append("isbn", formData.isbn);
-    dataToSend.append("ano", formData.ano ? formData.ano.year() : "");
+    dataToSend.append("ano", formData.ano ? String(formData.ano.year()) : "");
     dataToSend.append("quantidadeExemplares", formData.quantidadeExemplares);
     dataToSend.append("genero", formData.genero);
     dataToSend.append("autor", formData.autor);
@@ -96,11 +96,13 @@ function CadastroLivros() {
       dataToSend.append("img", imagemLivro); 
     }
 
+    console.log("=== DADOS ENVIADOS ===");
+    for (let [key, value] of dataToSend.entries()) {
+      console.log(`${key}:`, value);
+    }
+
     try {
       const response = await api.post("/livros", dataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
       });
   
       if (response.status === 201 || response.status === 200) {
@@ -109,11 +111,13 @@ function CadastroLivros() {
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
+
+      console.error("=== DETALHES DO ERRO ===", error.response?.data);
+
       const mensagemErro = error.response?.data?.message || "Erro ao conectar com o servidor.";
       alert(`Erro: ${mensagemErro}`);
     }
   };
-
   const descricaoHelper = `${formData.descricao.length}/${DESCRICAO_MAX}`;
 
   return (
