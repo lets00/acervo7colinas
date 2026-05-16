@@ -1,4 +1,5 @@
-import { Box, Button, Grid, Typography } from "@mui/material"; 
+import { Box, Button,Typography } from "@mui/material"; 
+import Grid from "@mui/material/Grid2";
 function BotaoCadastrar({ onCancel = () => {} }){ 
     return (
          <> 

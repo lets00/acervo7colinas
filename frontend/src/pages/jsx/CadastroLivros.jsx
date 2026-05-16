@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Box, Grid, MenuItem, TextField, Typography, 
+import { Box, MenuItem, TextField, Typography, 
   FormControl, InputLabel, Select, OutlinedInput, FormHelperText } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/pt-br';
+import Grid from "@mui/material/Grid2";
 import dayjs from 'dayjs';
 import Header from "../../components/jsx/Header";
 import '../css/CadastroLivros.css';
@@ -137,7 +138,7 @@ function CadastroLivros() {
 
             <form onSubmit={cadastrolivro} >
                 <Grid container spacing={6} justifyContent="center"   >
-                  <Grid item xs={12} md={6} >
+                  <Grid size={{ xs: 12, md: 6 }} >
                     <Box className="coluna">
                       <TextField required fullWidth label="Título" error={!!errors.titulo} helperText={errors.titulo && "Título é obrigatório"} variant="outlined" sx={{ width: '468px' } }  name="titulo" value={formData.titulo} onChange={handleChange} />
                       <TextField required fullWidth label="ISBN" error={!!errors.isbn} helperText={errors.isbn && "ISBN é obrigatório"} variant="outlined" sx={{ width: '468px' } }  name="isbn" value={formData.isbn} onChange={handleChange} />
@@ -199,7 +200,7 @@ function CadastroLivros() {
                     </Box>
                 </Grid>
 
-                <Grid item xs={12} md={6} >
+                <Grid size={{ xs: 12, md: 6 }} >
                   <Box className="coluna" >
                     <TextField required fullWidth label="Autor" variant="outlined"  error={!!errors.autor} helperText={errors.autor && "Autor é obrigatório"}  sx={{ width: '468px' } } name="autor" value={formData.autor} onChange={handleChange}/>
                     <TextField required fullWidth label="Editora" variant="outlined"  error={!!errors.editora} helperText={errors.editora && "Editora é obrigatória"}  sx={{ width: '468px' } } name="editora" value={formData.editora} onChange={handleChange} />
