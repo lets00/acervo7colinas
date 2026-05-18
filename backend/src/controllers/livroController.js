@@ -148,7 +148,13 @@ export function listarAvaliacoes(req, res) {
 // cadastro de livros
 
 export async function criarLivro(req, res) {
-    const resultado = livroSchema.safeParse(req.body);
+
+    const dados = {
+        ...req.body,
+        img: req.file ? `/capas/${req.file.filename}`: null
+    };
+
+    const resultado = livroSchema.safeParse(dados);
 
     if (!resultado.success) {
         return res.status(400).json({

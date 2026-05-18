@@ -1,5 +1,6 @@
 // acervo7colinas\backend\src\routes\livroRoutes.js
 import { Router } from 'express';
+import upload from '../middlewares/upload.js';
 import {
     criarLivro,
     buscarLivroPorId,
@@ -11,7 +12,7 @@ import {
 
 const router = Router();
 
-router.post('/', criarLivro);
+router.post('/', upload.single('img'), criarLivro);
 
 router.get('/', listarLivros);
 router.get('/:id', buscarLivroPorId);
