@@ -2,6 +2,7 @@ import sequelize from "./database.js";
 import Funcionario from "../models/Funcionario.js";
 import Livro from "../models/Livro.js";
 import Usuario from "../models/Usuario.js";
+import Entregador from "../models/Entregador.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {

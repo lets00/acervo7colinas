@@ -1,14 +1,16 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
+import { email } from 'zod';
 
-const Usuario = sequelize.define('Usuario', {
+const Entregador = sequelize.define('Entregador', {
     nomeCompleto: {
         type: DataTypes.STRING,
         allowNull: false
     },
     cpf: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     rg: {
         type: DataTypes.STRING,
@@ -24,7 +26,8 @@ const Usuario = sequelize.define('Usuario', {
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     telefone: {
         type: DataTypes.STRING,
@@ -32,7 +35,7 @@ const Usuario = sequelize.define('Usuario', {
     },
     senha: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     rua: {
         type: DataTypes.STRING, 
@@ -58,20 +61,36 @@ const Usuario = sequelize.define('Usuario', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    tipoVeiculo: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    disponibilidade: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    placa: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    tipoBicicleta: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    tamanhoBolsa: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     fotoPerfil: {
         type: DataTypes.STRING,
         allowNull: true
     },
-    fotoRg: {
+    fotoCnh: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
-    comprovanteResidencial: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
 }, {
-    tableName: 'usuarios'
+    tableName: 'entregadores'
 });
 
-export default Usuario;
+export default Entregador;
