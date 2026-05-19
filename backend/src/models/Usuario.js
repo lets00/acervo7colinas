@@ -64,11 +64,11 @@ const Usuario = sequelize.define('Usuario', {
     },
     fotoRg: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     comprovanteResidencial: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: 'usuarios'

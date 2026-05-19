@@ -20,7 +20,7 @@ export async function criarEntregador(req, res) {
 
         const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
 
-        const novoEntregador = await Usuario.create({
+        const novoEntregador = await Entregador.create({
             nomeCompleto: dados.nomeCompleto,
             cpf: dados.cpf,
             rg: dados.rg,
