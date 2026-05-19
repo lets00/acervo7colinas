@@ -39,7 +39,7 @@ export async function criarEntregador(req, res) {
             disponibilidade: dados.disponibilidade,
             placa: dados.placa,
             tipoBicicleta: dados.tipoBicicleta,
-            tamanhoBag: dados.tamanhoBag,
+            tamanhoBolsa: dados.tamanhoBolsa,
             fotoPerfil: dados.fotoPerfil,
             fotoCnh: dados.fotoCnh
         });

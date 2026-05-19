@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import { email } from 'zod';
 
 const Entregador = sequelize.define('Entregador', {
     nomeCompleto: {

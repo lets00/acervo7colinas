@@ -9,68 +9,59 @@ async function seedDatabase() {
     try {
         await sequelize.sync({ alter: true });
 
-        const senhaFuncionario = await bcrypt.hash("123456", 10);
+        const senhaPadrao = await bcrypt.hash("123456", 10);
 
-        await Funcionario.findOrCreate({
-            where: { email: "admin@acervo7colinas.com.br" },
+        await Usuario.findOrCreate({
+            where: { email: "usuario@acervo7colinas.com.br" },
             defaults: {
-                nomeCompleto: 'Administrador do Sistema',
+                nomeCompleto: 'Usuário Teste',
                 cpf: '00000000001',
-                matricula: 'ADM001',
-                cargo: 'Administrador',
-                setor: 'Administração',
+                rg: '1234567',
+                sexo: 'Feminino',
+                dataNascimento: '2001-11-01',
                 email: 'admin@acervo7colinas.com.br',
                 telefone: '87999990001',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Administrador',
-                disponibilidade: 'Ativo'
+                senha: senhaPadrao,
+                rua: 'Rua das flores',
+                numero: '123',
+                cep: '55290000',
+                bairro: 'Centro',
+                cidade: 'Garanhuns',
+                complemento: 'Apto 101',
+                fotoPerfil: null,
+                fotoRg: null,
+                comprovanteResidencial: null
             }
         });
 
         await Funcionario.findOrCreate({
             where: { email: "funcionario@acervo7colinas.com.br" },
             defaults: {
-                nomeCompleto: 'Funcionário da Biblioteca',
+                nomeCompleto: 'Funcionário Teste',
                 cpf: '00000000002',
                 matricula: 'FUN001',
                 cargo: 'Atendente',
                 setor: 'Atendimento',
-                email: 'funcionario@acervo7colinas.com.br',
-                telefone: '87999990002',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Funcionário comum',
-                disponibilidade: 'Ativo'
+                email: 'admin@acervo7colinas.com.br',
+                telefone: '87999880001',
+                senha: senhaPadrao,
+                tipoAcesso: 'Funcionario',
+                disponibilidade: 'Ativo',
+                fotoPerfil: null
             }
         });
-
 
         await Funcionario.findOrCreate({
-            where: { email: "entregador@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: 'Entregador Teste',
-                cpf: '00000000004',
-                matricula: 'ENT001',
-                cargo: 'Entregador',
-                setor: 'Entregas',
-                email: 'entregador@acervo7colinas.com.br',
-                telefone: '87999990004',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Entregador',
-                disponibilidade: 'Ativo'
-            }
-        });
-
-        const senhaUsuarioTeste = await bcrypt.hash("123456", 10);
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario.teste@acervo7colinas.com.br" },
+            where: { email: "admin@acervo7colinas.com.br" },
             defaults: {
                 nomeCompleto: "Débora Gomes",
-                cpf: "00000000005",
-                rg: "0000005",
+                cpf: "00000000003",
+                matricula: 'FUN001',
+                cargo: 'Atendente',
+                setor: 'Atendimento',
                 sexo: "Feminino",
                 dataNascimento: "2001-10-16",
-                email: "usuario.teste@acervo7colinas.com.br",
+                email: "admin@acervo7colinas.com.br",
                 telefone: "87999998822",
                 senha: senhaUsuarioTeste,
                 rua: "Rua dos palmares",
@@ -82,6 +73,32 @@ async function seedDatabase() {
             }
         });
 
+        await Entregador.findOrCreate({
+            where: { email: "entregador@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: 'Entregador Teste',
+                cpf: '00000000004',
+                rg: '7234567',
+                sexo: 'Masculino',
+                dataNascimento: '2001-12-22',
+                email: 'entregador@acervo7colinas.com.br',
+                telefone: '87999991101',
+                senha: senhaPadrao,
+                rua: 'Rua das entregas',
+                numero: '42',
+                cep: '55290000',
+                bairro: 'Centro',
+                cidade: 'Garanhuns',
+                complemento: 'casa',
+                tipoVeiculo: 'Moto',
+                disponibilidade: 'Manhã',
+                placa: 'ABC1D23',
+                tipoBicicleta: null,
+                tamanhoBolsa: 'Grande',
+                fotoPerfil: null,
+                fotoCnh: null
+            }
+        });
 
         await Livro.findOrCreate({
             where: { isbn: "9788550819341" },

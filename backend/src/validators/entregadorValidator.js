@@ -22,7 +22,7 @@ export const entregadorSchema = z.object({
     disponibilidade: z.string().min(1, 'Este campo é obrigatório!'),
     placa: z.string().optional(),
     tipoBicicleta: z.string().optional(),
-    tamanhoBag: z.string().optional(),
+    tamanhoBolsa: z.string().optional(),
     fotoPerfil: z.string().optional(),
     fotoCnh: z.string().optional(),
     captcha: z.boolean().refine((valor) => valor === true, {
