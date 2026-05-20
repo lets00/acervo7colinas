@@ -19,7 +19,7 @@ async function seedDatabase() {
                 rg: '1234567',
                 sexo: 'Feminino',
                 dataNascimento: '2001-11-01',
-                email: 'admin@acervo7colinas.com.br',
+                email: 'usuario@acervo7colinas.com.br',
                 telefone: '87999990001',
                 senha: senhaPadrao,
                 rua: 'Rua das flores',
@@ -42,7 +42,7 @@ async function seedDatabase() {
                 matricula: 'FUN001',
                 cargo: 'Atendente',
                 setor: 'Atendimento',
-                email: 'admin@acervo7colinas.com.br',
+                email: 'funcionario@acervo7colinas.com.br',
                 telefone: '87999880001',
                 senha: senhaPadrao,
                 tipoAcesso: 'Funcionario',
@@ -54,22 +54,17 @@ async function seedDatabase() {
         await Funcionario.findOrCreate({
             where: { email: "admin@acervo7colinas.com.br" },
             defaults: {
-                nomeCompleto: "Débora Gomes",
+                nomeCompleto: "Admin Teste",
                 cpf: "00000000003",
-                matricula: 'FUN001',
-                cargo: 'Atendente',
-                setor: 'Atendimento',
-                sexo: "Feminino",
-                dataNascimento: "2001-10-16",
+                matricula: 'ADM001',
+                cargo: 'Administrador',
+                setor: 'Administração',
                 email: "admin@acervo7colinas.com.br",
-                telefone: "87999998822",
-                senha: senhaUsuarioTeste,
-                rua: "Rua dos palmares",
-                numero: "01",
-                cep: "55290000",
-                bairro: "heliopolis",
-                cidade: "garanhuns",
-                complemento: "casa"
+                telefone: "87999998722",
+                senha: senhaPadrao,
+                tipoAcesso: 'Administrador',
+                disponibilidade: 'Ativo',
+                fotoPerfil: null
             }
         });
 
