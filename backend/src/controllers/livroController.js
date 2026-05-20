@@ -149,8 +149,12 @@ export function listarAvaliacoes(req, res) {
 
 export async function criarLivro(req, res) {
 
+    console.log(req.file);
+
     const dados = {
         ...req.body,
+        ano: Number(req.body.ano),
+        quantidadeExemplares: Number(req.body.quantidadeExemplares),
         img: req.file ? `/capas/${req.file.filename}`: null
     };
 
