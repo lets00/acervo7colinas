@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'; 
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import "../css/EntregadoresCampo.css";
 
 import PerfilCadastros from '../../assets/PerfilCadastros.png'; 
@@ -20,26 +20,7 @@ import CNH from '../../assets/CNH.png';
     width: 1,
   });
 
-function CampoEntregador() {
-   
-  const [perfilImg, setPerfilImg] = useState(PerfilCadastros);
-  const [cnhImg, setCnhImg] = useState(CNH);
-
-  const handleFileChange = (event, tipo) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (tipo === 'perfil') {
-          setPerfilImg(reader.result);
-        } else {
-          setCnhImg(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
-      
-    }
-  };
+function CampoEntregador({ perfilImg, cnhImg, onFileChange }) {
     return (
         <>
             <Grid container justifyContent="center" >
@@ -60,7 +41,7 @@ function CampoEntregador() {
                             <Typography className="textoCard textoPerfil" >
                                 Selecionar Foto
                             </Typography>
-                            <Box component="img" src={PerfilCadastros} alt="Perfil" className="imgPerfil" />
+                            <Box component="img" src={perfilImg || PerfilCadastros} alt="Perfil" className="imgPerfil" />
                             <Button
                                 component="label"
                                 role={undefined}
@@ -72,9 +53,9 @@ function CampoEntregador() {
                             >
                                 SELECIONAR FOTO
                                 <VisuallyHiddenInput
-                                type="file"
-                                onChange={handleFileChange}  
-                                accept="image/*"
+                                    type="file"
+                                    onChange={(event) => onFileChange(event, 'perfilFoto')}
+                                    accept="image/*"
                                 />
                             </Button>
                     </Box>
@@ -82,7 +63,7 @@ function CampoEntregador() {
                             <Typography className="textoCard textoCNH" >
                                 Selecionar Foto do RG
                             </Typography>
-                            <Box component="img" src={CNH} alt="CNH" className="imgCNH" />
+                            <Box component="img" src={cnhImg || CNH} alt="CNH" className="imgCNH" />
                             <Button
                                 component="label"
                                 role={undefined}
@@ -94,9 +75,9 @@ function CampoEntregador() {
                             >
                                 SELECIONAR FOTO
                                 <VisuallyHiddenInput
-                                type="file"
-                                onChange={handleFileChange}  
-                                accept="image/*"
+                                    type="file"
+                                    onChange={(event) => onFileChange(event, 'cnhFoto')}
+                                    accept="image/*"
                                 />
                             </Button>
                     </Box>

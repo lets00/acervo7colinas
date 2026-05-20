@@ -1,7 +1,9 @@
 
 import React, { useState } from "react";
 import Header from "../../components/jsx/Header";
-import { Box, Typography, TextField,Grid ,InputAdornment, FormControl, InputLabel, Select, MenuItem, Checkbox, FormControlLabel,Button,  OutlinedInput, IconButton } from "@mui/material";
+import { Box, Typography, TextField, Grid, InputAdornment, FormControl, 
+InputLabel, Select, MenuItem, Checkbox, FormControlLabel, 
+OutlinedInput, IconButton} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -60,7 +62,6 @@ function CadastroUsuarios() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // Validação frontend: checar campos obrigatórios
     if (!formData.nomeCompleto || !formData.cpf || !formData.rg || !formData.sexo || !formData.dataNascimento || !formData.email || !formData.telefone || !formData.rua || !formData.numero || !formData.cep || !formData.bairro || !formData.cidade || !formData.complemento) {
         alert("Por favor, preencha todos os campos obrigatórios.");
         return;
@@ -77,14 +78,13 @@ function CadastroUsuarios() {
       return;
     }
  
-    const { confirmarSenha, captcha, rua, numero, cep, bairro, cidade, complemento, ...rest } = formData;
+    const { confirmarSenha, rua, numero, cep, bairro, cidade, complemento, ...rest } = formData;
  
     const payload = {
-      ...rest,
-      dataNascimento: formData.dataNascimento ? formData.dataNascimento.format('DD/MM/YYYY') : null,
-      confirmacaoSenha: confirmarSenha,
-      captcha,
-      endereco: { rua, numero, cep, bairro, cidade, complemento }
+        ...rest,
+        dataNascimento: formData.dataNascimento ? formData.dataNascimento.format('DD/MM/YYYY') : null,
+        confirmacaoSenha: confirmarSenha,
+        endereco: { rua, numero, cep, bairro, cidade, complemento }
     };
  
     try {
@@ -121,7 +121,7 @@ function CadastroUsuarios() {
                 </Box>
 
                 <form onSubmit={handleSubmit} >
-                    <Box className="iput-grande" >
+                    <Box className="input-grande" >
                         <TextField
                             required name="nomeCompleto" fullWidth label="Nome Completo"
                             variant="outlined" value={formData.nomeCompleto} onChange={handleChange} size="small" sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }} />
@@ -180,13 +180,15 @@ function CadastroUsuarios() {
                                         name="telefone" value={formData.telefone} onChange={handleChange}
                                         sx={{ width: '950px', mb: 2, mx: 'auto' }}
                                         InputProps={{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                <img src="https://flagcdn.com/w20/br.png" alt="Brasil" style={{ width: 20, borderRadius: '2px' }} />
-                                            </Box>
-                                            </InputAdornment>
-                                        ),
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <img src="https://flagcdn.com/w20/br.png" alt="Brasil" style={{ width: 20, borderRadius: '2px' }} />
+                                                    <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>+ 55</Typography>
+                                                    <Box sx={{ borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
+                                                </Box>
+                                                </InputAdornment>
+                                            ),
                                         }}
                                     />
                                 </Grid>

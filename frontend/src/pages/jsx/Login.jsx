@@ -139,24 +139,9 @@ export default function Login() {
                   Esqueceu a senha?
                 </Typography>
               </Box>
-
-              <Box>
-                <FormControlLabel
-                  control={<Checkbox {...label} color="primary" />}
-                  label="Aceito os termos e condições"
-                  sx={{ ml: -62, mt: 7 }}
-                />
-              </Box>
-
-              <Box className="botoes" sx={{ mt: 3 }}>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-cadastrar"
-                  sx={{ color: "#ffff", width: "750px" }}
-                  startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
-                >
-                  {loading ? "Entrando..." : "Entrar"}
+              <Box className="botoes" sx={{mt:3}}> 
+                <Button  className="btn-cadastrar" sx={{color:"#ffff", width: "750px"}} >
+                     Entrar
                 </Button>
               </Box>
 
