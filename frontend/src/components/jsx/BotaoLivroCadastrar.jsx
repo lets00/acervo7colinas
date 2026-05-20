@@ -2,7 +2,7 @@
 import { Box, Button} from "@mui/material";
 import "../css/BotaoCadastrarLivro.css";
 
- function BotaoLivroCadastrar({ onCancel }){
+function BotaoLivroCadastrar({ onCancel }){
     return (
         <>
             <Box className="botoes">

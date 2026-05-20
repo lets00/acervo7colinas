@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const usuarioSchema = z.object({
+export const entregadorSchema = z.object({
     nomeCompleto: z.string().min(1, 'Este campo é obrigatório!'),
     cpf: z.string().min(11, 'CPF inválido!'),
     rg: z.string().min(1, 'Este campo é obrigatório!'),
@@ -11,16 +11,20 @@ export const usuarioSchema = z.object({
     senha: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres!'),
     confirmacaoSenha: z.string(),
     endereco: z.object({
-        rua: z.string().min(1, 'Este campo é obrigatório'),
-        numero: z.string().min(1, 'Este campo é obrigatório'),
-        cep: z.string().min(1, 'Este campo é obrigatório'),
-        bairro: z.string().min(1, 'Este campo é obrigatório'),
-        cidade: z.string().min(1, 'Este campo é obrigatório'),
-        complemento: z.string().min(1, 'Este campo é obrigatório')
+        rua: z.string().min(1, 'Este campo é obrigatório!'),
+        numero: z.string().min(1, 'Este campo é obrigatório!'),
+        cep: z.string().min(1, 'Este campo é obrigatório!'),
+        bairro: z.string().min(1, 'Este campo é obrigatório!'),
+        cidade: z.string().min(1, 'Este campo é obrigatório!'),
+        complemento: z.string().min(1, 'Este campo é obrigatório!')
     }),
+    tipoVeiculo: z.string().min(1, 'Este campo é obrigatório!'),
+    disponibilidade: z.string().min(1, 'Este campo é obrigatório!'),
+    placa: z.string().optional(),
+    tipoBicicleta: z.string().optional(),
+    tamanhoBolsa: z.string().optional(),
     fotoPerfil: z.string().optional(),
-    fotoRg: z.string().optional(),
-    comprovanteResidencial: z.string().optional(),
+    fotoCnh: z.string().optional(),
     captcha: z.boolean().refine((valor) => valor === true, {
         message: 'Confirme que você não é um robô!'
     })
