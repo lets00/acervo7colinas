@@ -20,6 +20,7 @@ export const funcionarioSchema = z.object({
             message: 'Selecione uma disponibilidade válida!'
         })
     }),
+    fotoPerfil:z.string().optional(),
     captcha: z.boolean().refine((valor) => valor === true, {
         message: 'Confirme que você não é um robô!'
     })

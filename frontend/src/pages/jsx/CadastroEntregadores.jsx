@@ -42,23 +42,33 @@ const initialState = {
     captcha: false
 };
 
-function CadastroEntregadores() {
 
+function CadastroEntregadores() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
+    const [perfilPreview, setPerfilPreview] = useState(null);
+    const [cnhPreview, setCnhPreview] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleFileChange = (event, tipo) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const previewUrl = URL.createObjectURL(file);
+        if (tipo === 'perfilFoto') {
+            setPerfilPreview(previewUrl);
+        } else if (tipo === 'cnhFoto') {
+            setCnhPreview(previewUrl);
+        }
+    };
+
     const handleCaptchaChange = (e) => {
         setFormData(prev => ({ ...prev, captcha: e.target.checked }));
     };
-
-    const handleClickShowPassword = () => setShowPassword(prev => !prev);
-    const handleMouseDownPassword = (e) => e.preventDefault();
-    const handleMouseUpPassword = (e) => e.preventDefault();
 
     const handleDateChange = (newValue) => {
         setFormData(prev => ({ ...prev, dataNascimento: newValue }));
@@ -69,65 +79,58 @@ function CadastroEntregadores() {
         return base ? `ENT-${base.slice(-6)}` : `ENT-${Date.now()}`;
     };
 
-    async function Submit(e) {
+    const handleCancel = () => {
+        setFormData(initialState);
+        setPerfilPreview(null);
+        setCnhPreview(null);
+    };
+
+    async function handleSubmit(e) {
         e.preventDefault();
+        if (formData.senha !== formData.confirmacaoSenha) return alert("As senhas não conferem!");
+        if (!formData.captcha) return alert("Confirme o captcha!");
 
-        if (formData.senha !== formData.confirmacaoSenha) {
-            alert("As senhas não conferem!");
-            return;
-        }
-
-        if (!formData.captcha) {
-            alert("Por favor, confirme que você não é um robô!");
-            return;
-        }
-
-        if (!formData.nomeCompleto || !formData.cpf || !formData.rg || !formData.sexo || !formData.dataNascimento || !formData.email || !formData.telefone) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
-            return;
-        }
-
-        const dados = {
-    nomeCompleto: formData.nomeCompleto,
-    cpf: formData.cpf,
-    rg: formData.rg,
-    sexo: formData.sexo,
-    dataNascimento: formData.dataNascimento ? formData.dataNascimento.format('DD/MM/YYYY') : null,
-    matricula: gerarMatricula(formData.cpf),
-    cargo: 'Entregador',
-    setor: 'Entrega',
-    email: formData.email,
-    telefone: formData.telefone,
-    tipoAcesso: formData.tipoAcesso,
-    disponibilidade: formData.disponibilidade,
-    tipoEntrega: formData.tipoEntrega,
-    placa: formData.placa,
-    tipoBicicleta: formData.tipoBicicleta,
-    espacoBicicleta: formData.espacoBicicleta,
-    endereco: {
-        rua: formData.rua,
-        numero: formData.numero,
-        cep: formData.cep,
-        bairro: formData.bairro,
-        cidade: formData.cidade,
-        complemento: formData.complemento,
-    },
-    senha: formData.senha,
-    confirmacaoSenha: formData.confirmacaoSenha,
-    captcha: formData.captcha
-};
+        const payload = {
+            nomeCompleto: formData.nomeCompleto,
+            cpf: formData.cpf,
+            rg: formData.rg,
+            sexo: formData.sexo,
+            dataNascimento: formData.dataNascimento ? dayjs(formData.dataNascimento).format('YYYY-MM-DD') : null,
+            matricula: gerarMatricula(formData.cpf),
+            cargo: 'Entregador',
+            setor: 'Entrega',
+            email: formData.email,
+            telefone: formData.telefone,
+            tipoAcesso: formData.tipoAcesso,
+            disponibilidade: formData.disponibilidade,
+            tipoEntrega: formData.tipoEntrega,
+            placa: formData.placa,
+            tipoBicicleta: formData.tipoBicicleta,
+            espacoBicicleta: formData.espacoBicicleta,
+            endereco: {
+                rua: formData.rua,
+                numero: formData.numero,
+                cep: formData.cep,
+                bairro: formData.bairro,
+                cidade: formData.cidade,
+                complemento: formData.complemento,
+            },
+            senha: formData.senha,
+            confirmacaoSenha: formData.confirmacaoSenha,
+            captcha: formData.captcha
+        };
 
         try {
-            await api.post('/entregador', dados);
-            alert("Entregador cadastrado com sucesso!");
+            await api.post('/funcionarios', payload);
+            alert("Sucesso!");
             setFormData(initialState);
+            setPerfilPreview(null);
+            setCnhPreview(null);
         } catch (error) {
-            console.error("Erro ao cadastrar entregador:", error);
-            const mensagem = error.response?.data?.message || "Erro ao cadastrar. Tente novamente.";
-            alert(`Erro: ${mensagem}`);
+            console.error(error);
+            alert("Erro ao cadastrar.");
         }
     }
-
     return (
         <Box className="container">
             <Header />
@@ -147,7 +150,7 @@ function CadastroEntregadores() {
                     </Typography>
                 </Box>
 
-                <form onSubmit={Submit}>
+                <form onSubmit={handleSubmit}>
                     <Box className="inputGrande">
                         <TextField
                             required
@@ -209,7 +212,7 @@ function CadastroEntregadores() {
                                         <DatePicker
                                             label="Data de Nascimento"
                                             views={['year', 'month', 'day']}
-                                            format="DD/MM/YYYY"
+                                            format="YYYY-MM-DD"
                                             sx={{ width: "460px" }}
                                             value={formData.dataNascimento}
                                             onChange={handleDateChange}
@@ -482,7 +485,11 @@ function CadastroEntregadores() {
                         </Grid>
                     </Grid>
 
-                    <CampoEntregador />
+                    <CampoEntregador 
+                        perfilImg={perfilPreview} 
+                        cnhImg={cnhPreview} 
+                        onFileChange={handleFileChange} 
+                    />
 
                     <Grid container justifyContent="center" sx={{ mt: 6 }}>
                         <Box className="boxCaptcha">
@@ -494,7 +501,7 @@ function CadastroEntregadores() {
                         </Box>
                     </Grid>
 
-                    <BotaoCadastrar />
+                    <BotaoCadastrar onCancel={handleCancel} />
                 </form>
             </Box>
         </Box>

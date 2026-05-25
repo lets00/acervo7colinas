@@ -2,205 +2,98 @@ import sequelize from "./database.js";
 import Funcionario from "../models/Funcionario.js";
 import Livro from "../models/Livro.js";
 import Usuario from "../models/Usuario.js";
+import Entregador from "../models/Entregador.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {
     try {
         await sequelize.sync({ alter: true });
 
-        const senhaFuncionario = await bcrypt.hash("123456", 10);
+        const senhaPadrao = await bcrypt.hash("123456", 10);
 
-        await Funcionario.findOrCreate({
-            where: { email: "admin@acervo7colinas.com.br" },
+        await Usuario.findOrCreate({
+            where: { email: "usuario@acervo7colinas.com.br" },
             defaults: {
-                nomeCompleto: 'Administrador do Sistema',
+                nomeCompleto: 'Usuário Teste',
                 cpf: '00000000001',
-                matricula: 'ADM001',
-                cargo: 'Administrador',
-                setor: 'Administração',
-                email: 'admin@acervo7colinas.com.br',
+                rg: '1234567',
+                sexo: 'Feminino',
+                dataNascimento: '2001-11-01',
+                email: 'usuario@acervo7colinas.com.br',
                 telefone: '87999990001',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Administrador',
-                disponibilidade: 'Ativo'
+                senha: senhaPadrao,
+                rua: 'Rua das flores',
+                numero: '123',
+                cep: '55290000',
+                bairro: 'Centro',
+                cidade: 'Garanhuns',
+                complemento: 'Apto 101',
+                fotoPerfil: null,
+                fotoRg: null,
+                comprovanteResidencial: null
             }
         });
 
         await Funcionario.findOrCreate({
             where: { email: "funcionario@acervo7colinas.com.br" },
             defaults: {
-                nomeCompleto: 'Funcionário da Biblioteca',
+                nomeCompleto: 'Funcionário Teste',
                 cpf: '00000000002',
                 matricula: 'FUN001',
                 cargo: 'Atendente',
                 setor: 'Atendimento',
                 email: 'funcionario@acervo7colinas.com.br',
-                telefone: '87999990002',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Funcionário comum',
-                disponibilidade: 'Ativo'
+                telefone: '87999880001',
+                senha: senhaPadrao,
+                tipoAcesso: 'Funcionario',
+                disponibilidade: 'Ativo',
+                fotoPerfil: null
             }
         });
 
-
         await Funcionario.findOrCreate({
+            where: { email: "admin@acervo7colinas.com.br" },
+            defaults: {
+                nomeCompleto: "Admin Teste",
+                cpf: "00000000003",
+                matricula: 'ADM001',
+                cargo: 'Administrador',
+                setor: 'Administração',
+                email: "admin@acervo7colinas.com.br",
+                telefone: "87999998722",
+                senha: senhaPadrao,
+                tipoAcesso: 'Administrador',
+                disponibilidade: 'Ativo',
+                fotoPerfil: null
+            }
+        });
+
+        await Entregador.findOrCreate({
             where: { email: "entregador@acervo7colinas.com.br" },
             defaults: {
                 nomeCompleto: 'Entregador Teste',
                 cpf: '00000000004',
-                matricula: 'ENT001',
-                cargo: 'Entregador',
-                setor: 'Entregas',
+                rg: '7234567',
+                sexo: 'Masculino',
+                dataNascimento: '2001-12-22',
                 email: 'entregador@acervo7colinas.com.br',
-                telefone: '87999990004',
-                senha: senhaFuncionario,
-                tipoAcesso: 'Entregador',
-                disponibilidade: 'Ativo'
+                telefone: '87999991101',
+                senha: senhaPadrao,
+                rua: 'Rua das entregas',
+                numero: '42',
+                cep: '55290000',
+                bairro: 'Centro',
+                cidade: 'Garanhuns',
+                complemento: 'casa',
+                tipoVeiculo: 'Moto',
+                disponibilidade: 'Manhã',
+                placa: 'ABC1D23',
+                tipoBicicleta: null,
+                tamanhoBolsa: 'Grande',
+                fotoPerfil: null,
+                fotoCnh: null
             }
         });
-
-        const senhaUsuarioTeste = await bcrypt.hash("123456", 10);
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario.teste@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: "Débora Gomes",
-                cpf: "00000000005",
-                rg: "0000005",
-                sexo: "Feminino",
-                dataNascimento: "2001-10-16",
-                email: "usuario.teste@acervo7colinas.com.br",
-                telefone: "87999998822",
-                senha: senhaUsuarioTeste,
-                rua: "Rua dos palmares",
-                numero: "01",
-                cep: "55290000",
-                bairro: "heliopolis",
-                cidade: "garanhuns",
-                complemento: "casa"
-            }
-        });
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario2.teste@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: "Lucas Andrade",
-                cpf: "00000000006",
-                rg: "0000006",
-                sexo: "Masculino",
-                dataNascimento: "1999-03-12",
-                email: "usuario2.teste@acervo7colinas.com.br",
-                telefone: "87999990001",
-                senha: senhaUsuarioTeste,
-                rua: "Rua das Flores",
-                numero: "12",
-                cep: "55290000",
-                bairro: "Boa Vista",
-                cidade: "Garanhuns",
-                complemento: "apto 101"
-            }
-        });
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario3.teste@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: "Mariana Souza",
-                cpf: "00000000007",
-                rg: "0000007",
-                sexo: "Feminino",
-                dataNascimento: "2002-07-25",
-                email: "usuario3.teste@acervo7colinas.com.br",
-                telefone: "87999990002",
-                senha: senhaUsuarioTeste,
-                rua: "Av. Central",
-                numero: "45",
-                cep: "55290000",
-                bairro: "Centro",
-                cidade: "Garanhuns",
-                complemento: "casa"
-            }
-        });
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario4.teste@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: "Carlos Henrique",
-                cpf: "00000000008",
-                rg: "0000008",
-                sexo: "Masculino",
-                dataNascimento: "1995-11-08",
-                email: "usuario4.teste@acervo7colinas.com.br",
-                telefone: "87999990003",
-                senha: senhaUsuarioTeste,
-                rua: "Rua do Sol",
-                numero: "78",
-                cep: "55290000",
-                bairro: "Heliópolis",
-                cidade: "Garanhuns",
-                complemento: "casa"
-            }
-        });
-
-        await Usuario.findOrCreate({
-            where: { email: "usuario5.teste@acervo7colinas.com.br" },
-            defaults: {
-                nomeCompleto: "Fernanda Lima",
-                cpf: "00000000009",
-                rg: "0000009",
-                sexo: "Feminino",
-                dataNascimento: "2000-05-19",
-                email: "usuario5.teste@acervo7colinas.com.br",
-                telefone: "87999990004",
-                senha: senhaUsuarioTeste,
-                rua: "Rua das Acácias",
-                numero: "22",
-                cep: "55290000",
-                bairro: "Magano",
-                cidade: "Garanhuns",
-                complemento: "apto 202"
-            }
-        });
-
-        await Usuario.findOrCreate({
-        where: { email: "ana.costa@acervo7colinas.com.br" },
-        defaults: {
-            nomeCompleto: "Ana Costa",
-            cpf: "00000000012",
-            rg: "0000011",
-            sexo: "Feminino",
-            dataNascimento: "2002-07-08",
-            email: "ana.costa@acervo7colinas.com.br",
-            telefone: "87999990004",
-            senha: senhaUsuarioTeste,
-            rua: "Rua D",
-            numero: "40",
-            cep: "55290000",
-            bairro: "Magano",
-            cidade: "Garanhuns",
-            complemento: "Apto 202"
-        }
-    });
-
-    await Usuario.findOrCreate({
-        where: { email: "lucas.almeida@acervo7colinas.com.br" },
-        defaults: {
-            nomeCompleto: "Lucas Almeida",
-            cpf: "00000000010",
-            rg: "0000010",
-            sexo: "Masculino",
-            dataNascimento: "1997-01-25",
-            email: "lucas.almeida@acervo7colinas.com.br",
-            telefone: "87999990005",
-            senha: senhaUsuarioTeste,
-            rua: "Rua E",
-            numero: "50",
-            cep: "55290000",
-            bairro: "São José",
-            cidade: "Garanhuns",
-            complemento: "Casa"
-        }
-    });
-
 
         await Livro.findOrCreate({
             where: { isbn: "9788550819341" },

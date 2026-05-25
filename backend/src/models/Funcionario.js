@@ -42,6 +42,10 @@ const Funcionario = sequelize.define('Funcionario', {
     disponibilidade: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    fotoPerfil: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },{
     tableName: 'funcionarios'

@@ -113,7 +113,7 @@ function CampoCadastrosLivros({ onChange, error, helperText }) {
         </Box>
         {error && (
           <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-            {helperText || "A foto do livro é obrigatória."}
+            {helperText || "A foto do livro é obrigatória"}
           </Typography>
         )}
       </Box>

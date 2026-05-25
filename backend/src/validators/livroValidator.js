@@ -14,5 +14,5 @@ export const livroSchema = z.object({
         .int('A quantidade de exemplares deve ser um número inteiro!')
         .min(1, 'Deve haver pelo menos 1 exemplar!'),
     genero: z.string().min(1, 'Este campo é obrigatório!'),
-    img: z.string().max(255).optional()
+    img: z.string().max(255).nullable().optional()
 });
