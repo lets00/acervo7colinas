@@ -58,10 +58,14 @@ function Home() {
         );
     }
 
+
     useEffect(() => {
-        fetch("http://localhost:3000/destaques")
+        fetch("http://localhost:3000/livros")
             .then(res => res.json())
-            .then(setDestaques);
+            .then(data => {
+            // Adapte conforme sua API retorna os dados
+            setDestaques(data);   // ou data.destaques, dependendo da resposta
+            });
 
         fetch("http://localhost:3000/novidades")
             .then(res => res.json())

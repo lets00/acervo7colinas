@@ -31,8 +31,6 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Container  maxWidth={false} sx={{ marginTop: '2rem' }}> 
-
-          
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />

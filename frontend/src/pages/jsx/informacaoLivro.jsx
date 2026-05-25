@@ -149,9 +149,7 @@ function InformacaoLivro() {
 
                         <div className="livro-generos">
                             <p>Gêneros:</p>
-                            {livro.generos?.map((g, index) => (
-                                <span key={index}>{g}</span>
-                            ))}
+                            <span>{livro.genero}</span>
                         </div>
 
                         <div className="descricao-container">
