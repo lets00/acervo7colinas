@@ -46,89 +46,105 @@ const initialState = {
 function CadastroEntregadores() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
-    const [perfilPreview, setPerfilPreview] = useState(null);
-    const [cnhPreview, setCnhPreview] = useState(null);
+    const [fotos, setFotos] = useState({ perfilFoto: null, cnhFoto: null });
+    const [errors, setErrors] = useState({});
 
+    const [resetKey, setResetKey] = useState(0);
+ 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (event, tipo) => {
-        const file = event.target.files[0];
+    const handleFileChange = (file, tipo) => {
         if (!file) return;
-
-        const previewUrl = URL.createObjectURL(file);
-        if (tipo === 'perfilFoto') {
-            setPerfilPreview(previewUrl);
-        } else if (tipo === 'cnhFoto') {
-            setCnhPreview(previewUrl);
-        }
+        setFotos(prev => ({ ...prev, [tipo]: file }));
+        setErrors(prev => ({ ...prev, [tipo]: null }));
     };
-
+ 
     const handleCaptchaChange = (e) => {
         setFormData(prev => ({ ...prev, captcha: e.target.checked }));
     };
-
+ 
     const handleDateChange = (newValue) => {
         setFormData(prev => ({ ...prev, dataNascimento: newValue }));
     };
-
+ 
     const gerarMatricula = (cpf) => {
         const base = cpf ? cpf.replace(/\D/g, '') : '';
         return base ? `ENT-${base.slice(-6)}` : `ENT-${Date.now()}`;
     };
-
+ 
     const handleCancel = () => {
         setFormData(initialState);
-        setPerfilPreview(null);
-        setCnhPreview(null);
+        setFotos({ perfilFoto: null, cnhFoto: null });
+        setErrors({});
+        setResetKey(k => k + 1); 
     };
-
+ 
+    const handleClickShowPassword = () => setShowPassword(show => !show);
+    const handleMouseDownPassword = (e) => e.preventDefault();
+    const handleMouseUpPassword = (e) => e.preventDefault();
+ 
+    const validarFormulario = () => {
+        const novosErros = {};
+        if (!fotos.perfilFoto) novosErros.perfilFoto = "A foto de perfil é obrigatória";
+        if (!fotos.cnhFoto)    novosErros.cnhFoto    = "A foto da CNH é obrigatória";
+        setErrors(novosErros);
+        return Object.keys(novosErros).length === 0;
+    };
+ 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (formData.senha !== formData.confirmacaoSenha) return alert("As senhas não conferem!");
-        if (!formData.captcha) return alert("Confirme o captcha!");
-
-        const payload = {
-            nomeCompleto: formData.nomeCompleto,
-            cpf: formData.cpf,
-            rg: formData.rg,
-            sexo: formData.sexo,
-            dataNascimento: formData.dataNascimento ? dayjs(formData.dataNascimento).format('YYYY-MM-DD') : null,
-            matricula: gerarMatricula(formData.cpf),
-            cargo: 'Entregador',
-            setor: 'Entrega',
-            email: formData.email,
-            telefone: formData.telefone,
-            tipoAcesso: formData.tipoAcesso,
-            disponibilidade: formData.disponibilidade,
-            tipoEntrega: formData.tipoEntrega,
-            placa: formData.placa,
-            tipoBicicleta: formData.tipoBicicleta,
-            espacoBicicleta: formData.espacoBicicleta,
-            endereco: {
-                rua: formData.rua,
-                numero: formData.numero,
-                cep: formData.cep,
-                bairro: formData.bairro,
-                cidade: formData.cidade,
-                complemento: formData.complemento,
-            },
-            senha: formData.senha,
-            confirmacaoSenha: formData.confirmacaoSenha,
-            captcha: formData.captcha
-        };
-
+ 
+        if (formData.senha !== formData.confirmacaoSenha) {
+            return alert("As senhas não conferem!");
+        }
+        if (!formData.captcha) {
+            return alert("Confirme o captcha!");
+        }
+        if (!validarFormulario()) {
+            return alert("Por favor, adicione as fotos obrigatórias.");
+        }
+ 
+        const dataToSend = new FormData();
+        dataToSend.append("nomeCompleto",     formData.nomeCompleto);
+        dataToSend.append("cpf",              formData.cpf);
+        dataToSend.append("rg",               formData.rg);
+        dataToSend.append("sexo",             formData.sexo);
+        dataToSend.append("dataNascimento",   formData.dataNascimento ? dayjs(formData.dataNascimento).format('YYYY-MM-DD') : "");
+        dataToSend.append("matricula",        gerarMatricula(formData.cpf));
+        dataToSend.append("cargo",            'Entregador');
+        dataToSend.append("setor",            'Entrega');
+        dataToSend.append("email",            formData.email);
+        dataToSend.append("telefone",         formData.telefone);
+        dataToSend.append("tipoAcesso",       formData.tipoAcesso);
+        dataToSend.append("disponibilidade",  formData.disponibilidade);
+        dataToSend.append("tipoEntrega",      formData.tipoEntrega);
+        dataToSend.append("placa",            formData.placa);
+        dataToSend.append("tipoBicicleta",    formData.tipoBicicleta);
+        dataToSend.append("espacoBicicleta",  formData.espacoBicicleta);
+        dataToSend.append("senha",            formData.senha);
+        dataToSend.append("endereco", JSON.stringify({
+            rua:         formData.rua,
+            numero:      formData.numero,
+            cep:         formData.cep,
+            bairro:      formData.bairro,
+            cidade:      formData.cidade,
+            complemento: formData.complemento,
+        }));
+ 
+        if (fotos.perfilFoto) dataToSend.append("perfilFoto", fotos.perfilFoto);
+        if (fotos.cnhFoto)    dataToSend.append("cnhFoto",    fotos.cnhFoto);
+ 
         try {
-            await api.post('/funcionarios', payload);
-            alert("Sucesso!");
-            setFormData(initialState);
-            setPerfilPreview(null);
-            setCnhPreview(null);
+            await api.post('/funcionarios', dataToSend);
+            alert("Entregador cadastrado com sucesso!");
+            handleCancel();
         } catch (error) {
-            console.error(error);
-            alert("Erro ao cadastrar.");
+            console.error("Erro na requisição:", error);
+            const mensagemErro = error.response?.data?.message || "Erro ao cadastrar.";
+            alert(`Erro: ${mensagemErro}`);
         }
     }
     return (
@@ -443,52 +459,52 @@ function CadastroEntregadores() {
                             </FormControl>
                         </Grid>
 
-                        <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                        {(formData.tipoEntrega === 'Carro' || formData.tipoEntrega === 'Moto') && (
+                            <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
+                                <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
                                 Placa do Carro/Moto
-                            </Typography>
-                            <TextField
+                                </Typography>
+                                <TextField
                                 fullWidth label="Placa" size="small"
                                 sx={{ width: "760px", mt: 1 }}
                                 name="placa" value={formData.placa} onChange={handleChange}
-                            />
-                        </Grid>
+                                />
+                            </Grid>
+                        )}
 
-                        <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                        {formData.tipoEntrega === 'Bicicleta' && (
+                            <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
+                                <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
                                 Bicicleta Informações
-                            </Typography>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Typography>
+                                <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
                                 <RadioGroup
-                                    row
-                                    aria-labelledby="tipo-bicicleta-label"
-                                    name="tipoBicicleta"
+                                    row name="tipoBicicleta"
                                     value={formData.tipoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Bicicleta comum" control={<Radio />} label="Bicicleta comum" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Bicicleta elétrica" control={<Radio />} label="Bicicleta elétrica" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel value="Bicicleta comum" control={<Radio />} label="Bicicleta comum" sx={{ color: "#242424" }} />
+                                    <FormControlLabel value="Bicicleta elétrica" control={<Radio />} label="Bicicleta elétrica" sx={{ color: "#242424" }} />
                                 </RadioGroup>
-                            </Grid>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Grid>
+                                <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
                                 <RadioGroup
-                                    row
-                                    aria-labelledby="espaco-bicicleta-label"
-                                    name="espacoBicicleta"
+                                    row name="espacoBicicleta"
                                     value={formData.espacoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Pequena (Mochila)" control={<Radio />} label="Pequena (Mochila)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Média (Caixa/Cesta)" control={<Radio />} label="Média (Caixa/Cesta)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel value="Pequena (Mochila)" control={<Radio />} label="Pequena (Mochila)" sx={{ color: "#242424" }} />
+                                    <FormControlLabel value="Média (Caixa/Cesta)" control={<Radio />} label="Média (Caixa/Cesta)" sx={{ color: "#242424" }} />
                                 </RadioGroup>
+                                </Grid>
                             </Grid>
+                        )}
                         </Grid>
-                    </Grid>
 
-                    <CampoEntregador 
-                        perfilImg={perfilPreview} 
-                        cnhImg={cnhPreview} 
-                        onFileChange={handleFileChange} 
+                    <CampoEntregador
+                        onFileChange={handleFileChange}
+                        errors={errors}
+                        resetKey={resetKey}
                     />
 
                     <Grid container justifyContent="center" sx={{ mt: 6 }}>

@@ -10,23 +10,29 @@ import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import CampoFuncionario from "../../components/jsx/CampoFuncionario.jsx";
 import api from "../../services/apis";
 
+const initialState = {
+    nomeCompleto: '',
+    cpf: '',
+    matricula: '',
+    cargo: '',
+    setor: '',
+    email: '',
+    telefone: '',
+    senha: '',
+    confirmacaoSenha: '',
+    tipoAcesso: 'Funcionário comum',
+    disponibilidade: 'Ativo',
+    captcha: false
+};
+
 function CadastroFuncionarios() {
+    const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
- 
-    const [formData, setFormData] = useState({
-        nomeCompleto: '',
-        cpf: '',
-        matricula: '',
-        cargo: '',
-        setor: '',
-        email: '',
-        telefone: '',
-        senha: '',
-        confirmacaoSenha: '',
-        tipoAcesso: 'Funcionário comum',
-        disponibilidade: 'Ativo',
-        captcha: false
-    });
+
+    const [perfilFoto, setPerfilFoto] = useState(null);
+    const [errors, setErrors] = useState({});
+
+    const [resetKey, setResetKey] = useState(0);
  
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,71 +42,72 @@ function CadastroFuncionarios() {
     const handleCaptchaChange = (e) => {
         setFormData(prev => ({ ...prev, captcha: e.target.checked }));
     };
+
+    const handleFileChange = (file) => {
+        if (!file) return;
+        setPerfilFoto(file);
+        setErrors(prev => ({ ...prev, perfilFoto: false }));
+    };
  
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
     const handleMouseDownPassword = (e) => e.preventDefault();
     const handleMouseUpPassword = (e) => e.preventDefault();
  
-    async function Submit(e) {
+    const handleCancel = () => {
+        setFormData(initialState);
+        setPerfilFoto(null);
+        setErrors({});
+        setShowPassword(false);
+        setResetKey(k => k + 1); 
+    };
+ 
+    const validarFormulario = () => {
+        const novosErros = {};
+        if (!perfilFoto) novosErros.perfilFoto = true;
+        setErrors(novosErros);
+        return Object.keys(novosErros).length === 0;
+    };
+ 
+    async function handleSubmit(e) {
         e.preventDefault();
  
         if (formData.senha !== formData.confirmacaoSenha) {
             alert("As senhas não conferem!");
             return;
         }
- 
         if (!formData.captcha) {
             alert("Por favor, confirme que você não é um robô!");
             return;
         }
-
-        if (!formData.nomeCompleto || !formData.cpf || !formData.matricula || !formData.cargo || !formData.setor || !formData.email || !formData.telefone) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
+        if (!validarFormulario()) {
+            alert("Por favor, adicione a foto de perfil obrigatória.");
             return;
         }
  
-        const dados = {
-        nomeCompleto: formData.nomeCompleto,
-        cpf: formData.cpf,
-        matricula: formData.matricula,
-        cargo: formData.cargo,
-        setor: formData.setor,
-        email: formData.email,
-        telefone: formData.telefone,
-        tipoAcesso: formData.tipoAcesso,
-        disponibilidade: formData.disponibilidade,
-        senha: formData.senha,
-        confirmacaoSenha: formData.confirmacaoSenha,
-        captcha: formData.captcha
-    };
+        const dataToSend = new FormData();
+        dataToSend.append("nomeCompleto",    formData.nomeCompleto);
+        dataToSend.append("cpf",             formData.cpf);
+        dataToSend.append("matricula",       formData.matricula);
+        dataToSend.append("cargo",           formData.cargo);
+        dataToSend.append("setor",           formData.setor);
+        dataToSend.append("email",           formData.email);
+        dataToSend.append("telefone",        formData.telefone);
+        dataToSend.append("tipoAcesso",      formData.tipoAcesso);
+        dataToSend.append("disponibilidade", formData.disponibilidade);
+        dataToSend.append("senha",           formData.senha);
+        dataToSend.append("perfilFoto",      perfilFoto);
  
         try {
-            await api.post('/funcionarios', dados);
+            await api.post('/funcionarios', dataToSend);
             alert("Funcionário cadastrado com sucesso!");
- 
-            setFormData({
-                nomeCompleto: '',
-                cpf: '',
-                matricula: '',
-                cargo: '',
-                setor: '',
-                email: '',
-                telefone: '',
-                senha: '',
-                confirmacaoSenha: '',
-                tipoAcesso: 'Funcionário comum',
-                disponibilidade: 'Ativo',
-                captcha: false
-            });
- 
-            setShowPassword(false);
- 
+            handleCancel();
         } catch (error) {
             console.error("Erro detalhado:", error);
             const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
             alert(`Erro: ${mensagem}`);
         }
     }
+ 
     return (
         <Box className="container">
             <Header />
@@ -118,7 +125,7 @@ function CadastroFuncionarios() {
                     </Typography>
                 </Box>
 
-                <form onSubmit={Submit} >
+                <form onSubmit={handleSubmit} >
                     <Box className="input-grande">
                         <TextField required  fullWidth name="nomeCompleto" label="Nome Completo" variant="outlined"  size="small" value={formData.nomeCompleto} onChange={handleChange}
                         />
@@ -272,7 +279,11 @@ function CadastroFuncionarios() {
                                 </RadioGroup>
                         </FormControl>
                     </Grid>
-                    <CampoFuncionario/>
+                     <CampoFuncionario
+                        onFileChange={handleFileChange}
+                        error={!!errors.perfilFoto}
+                        resetKey={resetKey}
+                    />
                     <Grid container justifyContent="center" sx={{mt:6}}>
                         <Box className="robot-box">
                                 <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
