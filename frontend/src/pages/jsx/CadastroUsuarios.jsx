@@ -3,7 +3,7 @@ import Header from "../../components/jsx/Header";
 import {
     Box, Typography, TextField, Grid, InputAdornment, FormControl,
     InputLabel, Select, MenuItem, Checkbox, FormControlLabel,
-    OutlinedInput, IconButton
+    OutlinedInput, IconButton, FormHelperText
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -39,15 +39,18 @@ const initialState = {
 function CadastroUsuarios() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
-    const [senhaError, setSenhaError] = useState(false);
     const [fotos, setFotos] = useState({ perfil: null, rg: null, residencia: null });
     const [errors, setErrors] = useState({});
     const [resetKey, setResetKey] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        if (name === 'senha' || name === 'confirmarSenha') setSenhaError(false);
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
     const handleCaptchaChange = (e) => {
@@ -72,68 +75,83 @@ function CadastroUsuarios() {
         setFormData(initialState);
         setFotos({ perfil: null, rg: null, residencia: null });
         setErrors({});
-        setSenhaError(false);
         setShowPassword(false);
+        setStatusMessage({ type: '', text: '' });
         setResetKey(k => k + 1);
     };
 
     const validarFormulario = () => {
         const novosErros = {};
-        if (!fotos.perfil)     novosErros.perfil     = "A foto de perfil é obrigatória";
-        if (!fotos.rg)         novosErros.rg         = "A foto do RG é obrigatória";
-        if (!fotos.residencia) novosErros.residencia = "O comprovante de residência é obrigatório";
+
+        if (!formData.nomeCompleto.trim()) novosErros.nomeCompleto = "Nome completo é obrigatório";
+        if (!formData.cpf.trim()) novosErros.cpf = "CPF é obrigatório";
+        if (!formData.rg.trim()) novosErros.rg = "RG é obrigatório";
+        if (!formData.sexo) novosErros.sexo = "Sexo é obrigatório";
+        if (!formData.dataNascimento) novosErros.dataNascimento = "Data de nascimento é obrigatória";
+        if (!formData.email.trim()) novosErros.email = "E-mail é obrigatório";
+        if (!formData.telefone.trim()) novosErros.telefone = "Telefone é obrigatório";
+        if (!formData.senha) novosErros.senha = "Senha é obrigatória";
+        if (!formData.confirmarSenha) novosErros.confirmarSenha = "Confirmação de senha é obrigatória";
+        if (formData.senha && formData.confirmarSenha && formData.senha !== formData.confirmarSenha) {
+            novosErros.confirmarSenha = "As senhas não conferem";
+        }
+        if (!formData.rua.trim()) novosErros.rua = "Rua é obrigatória";
+        if (!formData.numero.trim()) novosErros.numero = "Número é obrigatório";
+        if (!formData.cep.trim()) novosErros.cep = "CEP é obrigatório";
+        if (!formData.bairro.trim()) novosErros.bairro = "Bairro é obrigatório";
+        if (!formData.cidade.trim()) novosErros.cidade = "Cidade é obrigatória";
+        if (!formData.complemento.trim()) novosErros.complemento = "Complemento é obrigatório";
+        if (!fotos.perfil) novosErros.fotoPerfil = "A foto de perfil é obrigatória";
+        if (!fotos.rg) novosErros.fotoRg = "A foto do RG é obrigatória";
+        if (!fotos.residencia) novosErros.comprovanteResidencial = "O comprovante de residência é obrigatório";
+        if (!formData.captcha) novosErros.captcha = "Confirme que você não é um robô";
         setErrors(novosErros);
         return Object.keys(novosErros).length === 0;
     };
 
     async function handleSubmit(e) {
         e.preventDefault();
-
-        if (formData.senha !== formData.confirmarSenha) {
-            setSenhaError(true);
-            alert("As senhas não conferem!");
-            return;
-        }
-        if (!formData.captcha) {
-            alert("Por favor, confirme que você não é um robô.");
-            return;
-        }
+        setStatusMessage({ type: '', text: '' });
         if (!validarFormulario()) {
-            alert("Por favor, adicione todas as fotos obrigatórias.");
             return;
         }
-
-        const dataToSend = new FormData();
-        dataToSend.append("nomeCompleto",   formData.nomeCompleto);
-        dataToSend.append("cpf",            formData.cpf);
-        dataToSend.append("rg",             formData.rg);
-        dataToSend.append("sexo",           formData.sexo);
-        dataToSend.append("dataNascimento", formData.dataNascimento ? formData.dataNascimento.format('DD/MM/YYYY') : "");
-        dataToSend.append("telefone",       formData.telefone);
-        dataToSend.append("email",          formData.email);
-        dataToSend.append("senha",          formData.senha);
-        dataToSend.append("confirmacaoSenha", formData.confirmarSenha);
-        dataToSend.append("endereco", JSON.stringify({
-            rua:         formData.rua,
-            numero:      formData.numero,
-            cep:         formData.cep,
-            bairro:      formData.bairro,
-            cidade:      formData.cidade,
-            complemento: formData.complemento,
-        }));
-
-        if (fotos.perfil)     dataToSend.append("perfilFoto",    fotos.perfil);
-        if (fotos.rg)         dataToSend.append("rgFoto",         fotos.rg);
-        if (fotos.residencia) dataToSend.append("residenciaFoto", fotos.residencia);
-
+        // Envio de arquivos reais via FormData
+        const formDataPayload = new FormData();
+        formDataPayload.append('nomeCompleto', formData.nomeCompleto.trim());
+        formDataPayload.append('cpf', formData.cpf.trim());
+        formDataPayload.append('rg', formData.rg.trim());
+        formDataPayload.append('sexo', formData.sexo);
+        formDataPayload.append('dataNascimento', dayjs(formData.dataNascimento).format('DD/MM/YYYY'));
+        formDataPayload.append('telefone', formData.telefone.trim());
+        formDataPayload.append('email', formData.email.trim());
+        formDataPayload.append('senha', formData.senha);
+        formDataPayload.append('confirmacaoSenha', formData.confirmarSenha);
+        formDataPayload.append('rua', formData.rua.trim());
+        formDataPayload.append('numero', formData.numero.trim());
+        formDataPayload.append('cep', formData.cep.trim());
+        formDataPayload.append('bairro', formData.bairro.trim());
+        formDataPayload.append('cidade', formData.cidade.trim());
+        formDataPayload.append('complemento', formData.complemento.trim());
+        formDataPayload.append('captcha', formData.captcha);
+        if (fotos.perfil) formDataPayload.append('fotoPerfil', fotos.perfil);
+        if (fotos.rg) formDataPayload.append('fotoRg', fotos.rg);
+        if (fotos.residencia) formDataPayload.append('comprovanteResidencial', fotos.residencia);
         try {
-            await api.post('/usuarios', dataToSend);
-            alert("Usuário cadastrado com sucesso!");
-            handleCancel();
+            setIsSubmitting(true);
+            await api.post('/usuarios', formDataPayload, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setStatusMessage({ type: 'success', text: 'Usuário cadastrado com sucesso!' });
+            setFormData(initialState);
+            setFotos({ perfil: null, rg: null, residencia: null });
+            setErrors({});
+            setShowPassword(false);
+            setResetKey(k => k + 1);
         } catch (error) {
-            console.error("Erro ao cadastrar:", error);
-            const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
-            alert(`Erro: ${mensagem}`);
+            const mensagem = error.response?.data?.mensagem || error.response?.data?.message || 'Erro ao conectar com o servidor.';
+            setStatusMessage({ type: 'error', text: mensagem });
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -226,12 +244,12 @@ function CadastroUsuarios() {
                         </Grid>
 
                         <Grid container spacing={4}>
-                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined">
+                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined" error={!!errors.senha}>
                                 <InputLabel>Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
                                     name="senha" value={formData.senha} onChange={handleChange}
-                                    error={senhaError}
+                                    error={!!errors.senha}
                                     endAdornment={
                                         <InputAdornment position="end">
                                             <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} onMouseUp={handleMouseUpPassword} edge="end">
@@ -241,14 +259,15 @@ function CadastroUsuarios() {
                                     }
                                     label="Senha" sx={{ height: "50px" }}
                                 />
+                                {errors.senha && <FormHelperText>{errors.senha}</FormHelperText>}
                             </FormControl>
 
-                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined">
+                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined" error={!!errors.confirmarSenha}>
                                 <InputLabel>Confirmar Senha</InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? 'text' : 'password'}
                                     name="confirmarSenha" value={formData.confirmarSenha} onChange={handleChange}
-                                    error={senhaError}
+                                    error={!!errors.confirmarSenha}
                                     endAdornment={
                                         <InputAdornment position="end">
                                             <IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} onMouseUp={handleMouseUpPassword} edge="end">
@@ -258,6 +277,7 @@ function CadastroUsuarios() {
                                     }
                                     label="Confirmar Senha" sx={{ height: "50px" }}
                                 />
+                                {errors.confirmarSenha && <FormHelperText>{errors.confirmarSenha}</FormHelperText>}
                             </FormControl>
                         </Grid>
                     </Grid>
@@ -322,10 +342,27 @@ function CadastroUsuarios() {
                                 label="Não Sou Robô"
                                 sx={{ color: "#000", ml: -40 }}
                             />
+                            {errors.captcha && (
+                                <Typography color="error" variant="caption" sx={{ display: 'block', mt: 1 }}>
+                                    {errors.captcha}
+                                </Typography>
+                            )}
                         </Box>
                     </Grid>
 
-                    <BotaoCadastrar onCancel={handleCancel} />
+                    {statusMessage.text && (
+                        <Typography
+                            sx={{
+                                mt: 3,
+                                textAlign: 'center',
+                                color: statusMessage.type === 'success' ? 'success.main' : 'error.main'
+                            }}
+                        >
+                            {statusMessage.text}
+                        </Typography>
+                    )}
+
+                     <BotaoCadastrar onCancel={handleCancel} loading={isSubmitting} disabled={isSubmitting} />
                 </form>
             </Box>
         </Box>

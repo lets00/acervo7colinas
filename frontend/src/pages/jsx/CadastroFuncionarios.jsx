@@ -28,17 +28,21 @@ const initialState = {
 function CadastroFuncionarios() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
-
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [perfilFoto, setPerfilFoto] = useState(null);
     const [errors, setErrors] = useState({});
-
     const [resetKey, setResetKey] = useState(0);
- 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
- 
+
     const handleCaptchaChange = (e) => {
         setFormData(prev => ({ ...prev, captcha: e.target.checked }));
     };
@@ -48,66 +52,84 @@ function CadastroFuncionarios() {
         setPerfilFoto(file);
         setErrors(prev => ({ ...prev, perfilFoto: false }));
     };
- 
+
     const handleClickShowPassword = () => setShowPassword(prev => !prev);
+    const handleClickShowConfirmPassword = () => setShowConfirmPassword(prev => !prev);
     const handleMouseDownPassword = (e) => e.preventDefault();
     const handleMouseUpPassword = (e) => e.preventDefault();
- 
+
     const handleCancel = () => {
         setFormData(initialState);
         setPerfilFoto(null);
         setErrors({});
         setShowPassword(false);
-        setResetKey(k => k + 1); 
+        setShowConfirmPassword(false);
+        setStatusMessage({ type: '', text: '' });
+        setResetKey(k => k + 1);
     };
- 
+
     const validarFormulario = () => {
         const novosErros = {};
-        if (!perfilFoto) novosErros.perfilFoto = true;
+        if (!formData.nomeCompleto.trim()) novosErros.nomeCompleto = "Nome completo é obrigatório";
+        if (!formData.cpf.trim()) novosErros.cpf = "CPF é obrigatório";
+        if (!formData.matricula.trim()) novosErros.matricula = "Matrícula é obrigatória";
+        if (!formData.cargo.trim()) novosErros.cargo = "Cargo é obrigatório";
+        if (!formData.setor.trim()) novosErros.setor = "Setor é obrigatório";
+        if (!formData.email.trim()) novosErros.email = "E-mail é obrigatório";
+        if (!formData.telefone.trim()) novosErros.telefone = "Telefone é obrigatório";
+        if (!formData.senha) novosErros.senha = "Senha é obrigatória";
+        if (!formData.confirmacaoSenha) novosErros.confirmacaoSenha = "Confirmação de senha é obrigatória";
+        if (formData.senha && formData.confirmacaoSenha && formData.senha !== formData.confirmacaoSenha) {
+            novosErros.confirmacaoSenha = "As senhas não conferem";
+        }
+        if (!perfilFoto) novosErros.perfilFoto = "A foto de perfil é obrigatória";
+        if (!formData.captcha) novosErros.captcha = "Confirme que você não é um robô";
         setErrors(novosErros);
         return Object.keys(novosErros).length === 0;
     };
- 
+
     async function handleSubmit(e) {
         e.preventDefault();
- 
-        if (formData.senha !== formData.confirmacaoSenha) {
-            alert("As senhas não conferem!");
-            return;
-        }
-        if (!formData.captcha) {
-            alert("Por favor, confirme que você não é um robô!");
-            return;
-        }
+        setStatusMessage({ type: '', text: '' });
         if (!validarFormulario()) {
-            alert("Por favor, adicione a foto de perfil obrigatória.");
             return;
         }
- 
-        const dataToSend = new FormData();
-        dataToSend.append("nomeCompleto",    formData.nomeCompleto);
-        dataToSend.append("cpf",             formData.cpf);
-        dataToSend.append("matricula",       formData.matricula);
-        dataToSend.append("cargo",           formData.cargo);
-        dataToSend.append("setor",           formData.setor);
-        dataToSend.append("email",           formData.email);
-        dataToSend.append("telefone",        formData.telefone);
-        dataToSend.append("tipoAcesso",      formData.tipoAcesso);
-        dataToSend.append("disponibilidade", formData.disponibilidade);
-        dataToSend.append("senha",           formData.senha);
-        dataToSend.append("perfilFoto",      perfilFoto);
- 
+        // Envio de arquivos reais via FormData
+        const formDataPayload = new FormData();
+        formDataPayload.append('nomeCompleto', formData.nomeCompleto.trim());
+        formDataPayload.append('cpf', formData.cpf.trim());
+        formDataPayload.append('matricula', formData.matricula.trim());
+        formDataPayload.append('cargo', formData.cargo.trim());
+        formDataPayload.append('setor', formData.setor.trim());
+        formDataPayload.append('email', formData.email.trim());
+        formDataPayload.append('telefone', formData.telefone.trim());
+        formDataPayload.append('senha', formData.senha);
+        formDataPayload.append('confirmacaoSenha', formData.confirmacaoSenha);
+        formDataPayload.append('tipoAcesso', formData.tipoAcesso);
+        formDataPayload.append('disponibilidade', formData.disponibilidade);
+        formDataPayload.append('captcha', formData.captcha);
+        if (perfilFoto) formDataPayload.append('fotoPerfil', perfilFoto);
         try {
-            await api.post('/funcionarios', dataToSend);
-            alert("Funcionário cadastrado com sucesso!");
-            handleCancel();
+            setIsSubmitting(true);
+            await api.post('/funcionarios', formDataPayload, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setStatusMessage({ type: 'success', text: 'Funcionário cadastrado com sucesso!' });
+            setFormData(initialState);
+            setPerfilFoto(null);
+            setErrors({});
+            setShowPassword(false);
+            setShowConfirmPassword(false);
+            setResetKey(k => k + 1);
         } catch (error) {
-            console.error("Erro detalhado:", error);
-            const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
-            alert(`Erro: ${mensagem}`);
+            console.error('Erro detalhado:', error);
+            const mensagem = error.response?.data?.mensagem || error.response?.data?.message || 'Erro ao conectar com o servidor.';
+            setStatusMessage({ type: 'error', text: mensagem });
+        } finally {
+            setIsSubmitting(false);
         }
     }
- 
+
     return (
         <Box className="container">
             <Header />
@@ -136,11 +158,11 @@ function CadastroFuncionarios() {
                             <Grid container spacing={4}>
                                 
                                 <Grid item xs={6}>
-                                    <TextField fullWidth name="cpf" label="CPF" size="small" sx={{width:"460px"}}   value={formData.cpf} onChange={handleChange}/>
+                                    <TextField fullWidth name="cpf" label="CPF" size="small" sx={{width:"460px"}}   value={formData.cpf} onChange={handleChange} error={!!errors.cpf}helperText={errors.cpf || ''}/>
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <TextField fullWidth name="matricula" label="Matrículas dos funcionários" size="small"sx={{width:"460px"}} value={formData.matricula} onChange={handleChange} />
+                                    <TextField fullWidth name="matricula" label="Matrículas dos funcionários" size="small"sx={{width:"460px"}} value={formData.matricula} onChange={handleChange} error={!!errors.matricula} helperText={errors.matricula || ''}/>
                                 </Grid>
 
                             </Grid>
@@ -209,44 +231,44 @@ function CadastroFuncionarios() {
                                     type={showPassword ? 'text' : 'password'}
                                     name="senha"
                                     value={formData.senha}
-                                    onChange={handleChange} 
+                                    onChange={handleChange}
                                     endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                        >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                onMouseUp={handleMouseUpPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
                                     }
                                     label="Senha" sx={{height:"50px"}}
                                 />
-                            </FormControl>     
+                            </FormControl>
                             <FormControl sx={{ mt: -1, width: '460px'}} variant="outlined">
                                 <InputLabel>Confirmar Senha</InputLabel>
                                 <OutlinedInput
-                                    type={showPassword ? 'text' : 'password'}
+                                    type={showConfirmPassword ? 'text' : 'password'}
                                     name="confirmacaoSenha"
                                     value={formData.confirmacaoSenha}
                                     onChange={handleChange}
                                     endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                        >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={handleClickShowConfirmPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                onMouseUp={handleMouseUpPassword}
+                                                edge="end"
+                                            >
+                                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
                                     }
                                     label="Confirmar Senha" sx={{height:"50px"}}
                                 />
-                            </FormControl>  
+                            </FormControl>
                         </Grid>      
                     </Grid>
                     <Grid sx={{ml:-60}}>
@@ -287,9 +309,27 @@ function CadastroFuncionarios() {
                     <Grid container justifyContent="center" sx={{mt:6}}>
                         <Box className="robot-box">
                                 <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
+                                {errors.captcha && (
+                                    <Typography color="error" variant="caption" sx={{ display: 'block', mt: 1 }}>
+                                        {errors.captcha}
+                                    </Typography>
+                                )}
                         </Box>
                     </Grid>
-                    <BotaoCadastrar/>
+
+                    {statusMessage.text && (
+                        <Typography
+                            sx={{
+                                mt: 3,
+                                textAlign: 'center',
+                                color: statusMessage.type === 'success' ? 'success.main' : 'error.main'
+                            }}
+                        >
+                            {statusMessage.text}
+                        </Typography>
+                    )}
+
+                     <BotaoCadastrar onCancel={handleCancel} loading={isSubmitting} disabled={isSubmitting} />
                 </form>
             </Box>
         </Box>
