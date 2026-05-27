@@ -3,7 +3,19 @@ import Usuario from '../models/Usuario.js';
 import { usuarioSchema } from "../validators/usuarioValidator.js";
 
 export async function criarUsuario(req, res) {
-    const resultado = usuarioSchema.safeParse(req.body);
+
+    const fotoPerfil = req.files?.fotoPerfil?.[0]?`/perfil/${req.files.fotoPerfil[0].filename}`: null;
+    const fotoRg = req.files?.fotoRg?.[0]?`/rg/${req.files.fotoRg[0].filename}`: null;
+    const comprovanteResidencial = req.files?.comprovanteResidencial?.[0]?`/residencia/${req.files.comprovanteResidencial[0].filename}`: null;
+    
+    const dadosParaValidar = {
+        ...req.body,
+        fotoPerfil,
+        fotoRg,
+        comprovanteResidencial
+    };
+
+    const resultado = usuarioSchema.safeParse(dadosParaValidar);
 
     if (!resultado.success) {
         return res.status(400).json({
@@ -34,7 +46,10 @@ export async function criarUsuario(req, res) {
             cep: dados.endereco.cep,
             bairro: dados.endereco.bairro,
             cidade: dados.endereco.cidade,
-            complemento: dados.endereco.complemento
+            complemento: dados.endereco.complemento,
+            fotoPerfil: dados.fotoPerfil,
+            fotoRg: dados.fotoRg,
+            comprovanteResidencial: dados.comprovanteResidencial
         });
         
         return res.status(201).json({
