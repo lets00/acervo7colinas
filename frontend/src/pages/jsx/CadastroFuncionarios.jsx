@@ -91,29 +91,37 @@ function CadastroFuncionarios() {
     async function handleSubmit(e) {
         e.preventDefault();
         setStatusMessage({ type: '', text: '' });
-        if (!validarFormulario()) {
-            return;
-        }
-        // Envio de arquivos reais via FormData
-        const formDataPayload = new FormData();
-        formDataPayload.append('nomeCompleto', formData.nomeCompleto.trim());
-        formDataPayload.append('cpf', formData.cpf.trim());
-        formDataPayload.append('matricula', formData.matricula.trim());
-        formDataPayload.append('cargo', formData.cargo.trim());
-        formDataPayload.append('setor', formData.setor.trim());
-        formDataPayload.append('email', formData.email.trim());
-        formDataPayload.append('telefone', formData.telefone.trim());
-        formDataPayload.append('senha', formData.senha);
-        formDataPayload.append('confirmacaoSenha', formData.confirmacaoSenha);
-        formDataPayload.append('tipoAcesso', formData.tipoAcesso);
-        formDataPayload.append('disponibilidade', formData.disponibilidade);
-        formDataPayload.append('captcha', formData.captcha);
-        if (perfilFoto) formDataPayload.append('fotoPerfil', perfilFoto);
+        if (!validarFormulario()) return;
+
         try {
             setIsSubmitting(true);
-            await api.post('/funcionarios', formDataPayload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+
+            let fotoBase64 = null;
+            if (perfilFoto) {
+                fotoBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(perfilFoto);
+                });
+            }
+
+            await api.post('/funcionarios', {
+                nomeCompleto: formData.nomeCompleto.trim(),
+                cpf: formData.cpf.trim(),
+                matricula: formData.matricula.trim(),
+                cargo: formData.cargo.trim(),
+                setor: formData.setor.trim(),
+                email: formData.email.trim(),
+                telefone: formData.telefone.trim(),
+                senha: formData.senha,
+                confirmacaoSenha: formData.confirmacaoSenha,
+                tipoAcesso: formData.tipoAcesso,
+                disponibilidade: formData.disponibilidade,
+                captcha: formData.captcha,
+                fotoPerfil: fotoBase64
             });
+
             setStatusMessage({ type: 'success', text: 'Funcionário cadastrado com sucesso!' });
             setFormData(initialState);
             setPerfilFoto(null);
@@ -121,6 +129,7 @@ function CadastroFuncionarios() {
             setShowPassword(false);
             setShowConfirmPassword(false);
             setResetKey(k => k + 1);
+
         } catch (error) {
             console.error('Erro detalhado:', error);
             const mensagem = error.response?.data?.mensagem || error.response?.data?.message || 'Erro ao conectar com o servidor.';

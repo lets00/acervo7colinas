@@ -112,41 +112,55 @@ function CadastroUsuarios() {
     async function handleSubmit(e) {
         e.preventDefault();
         setStatusMessage({ type: '', text: '' });
-        if (!validarFormulario()) {
-            return;
-        }
-        // Envio de arquivos reais via FormData
-        const formDataPayload = new FormData();
-        formDataPayload.append('nomeCompleto', formData.nomeCompleto.trim());
-        formDataPayload.append('cpf', formData.cpf.trim());
-        formDataPayload.append('rg', formData.rg.trim());
-        formDataPayload.append('sexo', formData.sexo);
-        formDataPayload.append('dataNascimento', dayjs(formData.dataNascimento).format('DD/MM/YYYY'));
-        formDataPayload.append('telefone', formData.telefone.trim());
-        formDataPayload.append('email', formData.email.trim());
-        formDataPayload.append('senha', formData.senha);
-        formDataPayload.append('confirmacaoSenha', formData.confirmarSenha);
-        formDataPayload.append('rua', formData.rua.trim());
-        formDataPayload.append('numero', formData.numero.trim());
-        formDataPayload.append('cep', formData.cep.trim());
-        formDataPayload.append('bairro', formData.bairro.trim());
-        formDataPayload.append('cidade', formData.cidade.trim());
-        formDataPayload.append('complemento', formData.complemento.trim());
-        formDataPayload.append('captcha', formData.captcha);
-        if (fotos.perfil) formDataPayload.append('fotoPerfil', fotos.perfil);
-        if (fotos.rg) formDataPayload.append('fotoRg', fotos.rg);
-        if (fotos.residencia) formDataPayload.append('comprovanteResidencial', fotos.residencia);
+        if (!validarFormulario()) return;
+
         try {
             setIsSubmitting(true);
-            await api.post('/usuarios', formDataPayload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+
+            const converterParaBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
+
+            const perfilBase64    = fotos.perfil     ? await converterParaBase64(fotos.perfil)     : null;
+            const rgBase64        = fotos.rg         ? await converterParaBase64(fotos.rg)         : null;
+            const residenciaBase64 = fotos.residencia ? await converterParaBase64(fotos.residencia) : null;
+
+            const payload = {
+                nomeCompleto:     formData.nomeCompleto.trim(),
+                cpf:              formData.cpf.trim(),
+                rg:               formData.rg.trim(),
+                sexo:             formData.sexo,
+                dataNascimento:   dayjs(formData.dataNascimento).format('DD/MM/YYYY'),
+                email:            formData.email.trim(),
+                telefone:         formData.telefone.trim(),
+                senha:            formData.senha,
+                confirmacaoSenha: formData.confirmarSenha,
+                endereco: {
+                    rua:         formData.rua.trim(),
+                    numero:      formData.numero.trim(),
+                    cep:         formData.cep.trim(),
+                    bairro:      formData.bairro.trim(),
+                    cidade:      formData.cidade.trim(),
+                    complemento: formData.complemento.trim(),
+                },
+                fotoPerfil:              perfilBase64,
+                fotoRg:                  rgBase64,
+                comprovanteResidencial:  residenciaBase64,
+                captcha:                 formData.captcha,
+            };
+
+            await api.post('/usuarios', payload);
+
             setStatusMessage({ type: 'success', text: 'Usuário cadastrado com sucesso!' });
             setFormData(initialState);
             setFotos({ perfil: null, rg: null, residencia: null });
             setErrors({});
             setShowPassword(false);
             setResetKey(k => k + 1);
+
         } catch (error) {
             const mensagem = error.response?.data?.mensagem || error.response?.data?.message || 'Erro ao conectar com o servidor.';
             setStatusMessage({ type: 'error', text: mensagem });

@@ -125,45 +125,52 @@ function CadastroEntregadores() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-
         setStatusMessage({ type: '', text: '' });
+        if (!validarFormulario()) return;
 
-        if (!validarFormulario()) {
-            return;
-        }
-
-        // Envio de arquivos reais via FormData
-        const formDataPayload = new FormData();
-        formDataPayload.append('nomeCompleto', formData.nomeCompleto.trim());
-        formDataPayload.append('cpf', formData.cpf.trim());
-        formDataPayload.append('rg', formData.rg.trim());
-        formDataPayload.append('sexo', formData.sexo);
-        formDataPayload.append('dataNascimento', dayjs(formData.dataNascimento).format('DD/MM/YYYY'));
-        formDataPayload.append('email', formData.email.trim());
-        formDataPayload.append('telefone', formData.telefone.trim());
-        formDataPayload.append('senha', formData.senha);
-        formDataPayload.append('confirmacaoSenha', formData.confirmacaoSenha);
-        formDataPayload.append('rua', formData.rua.trim());
-        formDataPayload.append('numero', formData.numero.trim());
-        formDataPayload.append('cep', formData.cep.trim());
-        formDataPayload.append('bairro', formData.bairro.trim());
-        formDataPayload.append('cidade', formData.cidade.trim());
-        formDataPayload.append('complemento', formData.complemento.trim());
-        formDataPayload.append('tipoVeiculo', formData.tipoEntrega);
-        formDataPayload.append('disponibilidade', formData.disponibilidade);
-        if (formData.tipoEntrega !== 'Bicicleta') formDataPayload.append('placa', formData.placa.trim());
-        if (formData.tipoEntrega === 'Bicicleta') {
-            formDataPayload.append('tipoBicicleta', formData.tipoBicicleta);
-            formDataPayload.append('tamanhoBolsa', formData.espacoBicicleta);
-        }
-        formDataPayload.append('captcha', formData.captcha);
-        if (fotos.perfilFoto) formDataPayload.append('fotoPerfil', fotos.perfilFoto);
-        if (fotos.cnhFoto) formDataPayload.append('fotoCnh', fotos.cnhFoto);
         try {
             setIsSubmitting(true);
-            await api.post('/entregadores', formDataPayload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+
+            const converterParaBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
+
+            const perfilBase64 = fotos.perfilFoto ? await converterParaBase64(fotos.perfilFoto) : null;
+            const cnhBase64   = fotos.cnhFoto    ? await converterParaBase64(fotos.cnhFoto)    : null;
+
+            const payload = {
+                nomeCompleto:     formData.nomeCompleto.trim(),
+                cpf:              formData.cpf.trim(),
+                rg:               formData.rg.trim(),
+                sexo:             formData.sexo,
+                dataNascimento:   dayjs(formData.dataNascimento).format('DD/MM/YYYY'),
+                email:            formData.email.trim(),
+                telefone:         formData.telefone.trim(),
+                senha:            formData.senha,
+                confirmacaoSenha: formData.confirmacaoSenha,
+                endereco: {
+                    rua:         formData.rua.trim(),
+                    numero:      formData.numero.trim(),
+                    cep:         formData.cep.trim(),
+                    bairro:      formData.bairro.trim(),
+                    cidade:      formData.cidade.trim(),
+                    complemento: formData.complemento.trim(),
+                },
+                tipoVeiculo:     formData.tipoEntrega,
+                disponibilidade: formData.disponibilidade,
+                placa:           formData.tipoEntrega !== 'Bicicleta' ? formData.placa.trim() : undefined,
+                tipoBicicleta:   formData.tipoEntrega === 'Bicicleta' ? formData.tipoBicicleta : undefined,
+                tamanhoBolsa:    formData.tipoEntrega === 'Bicicleta' ? formData.espacoBicicleta : undefined,
+                fotoPerfil:      perfilBase64,
+                fotoCnh:         cnhBase64,
+                captcha:         formData.captcha,  // ← faltava esse!
+            };
+
+            await api.post('/entregadores', payload);
+
             setStatusMessage({ type: 'success', text: 'Entregador cadastrado com sucesso!' });
             setFormData(initialState);
             setFotos({ perfilFoto: null, cnhFoto: null });
@@ -171,6 +178,7 @@ function CadastroEntregadores() {
             setShowPassword(false);
             setShowConfirmPassword(false);
             setResetKey(k => k + 1);
+
         } catch (error) {
             console.error('Erro na requisição:', error);
             const mensagemErro =
