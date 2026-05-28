@@ -50,6 +50,30 @@ export async function criarEntregador(req, res) {
         });
 
     } catch (error) {
+
+        if (error.name === 'SequelizeUniqueConstraintError') {
+
+            const campo = error.errors[0].path;
+
+            if (campo === 'email') {
+                return res.status(400).json({
+                    mensagem: 'Este email já está cadastrado!'
+                });
+            }
+
+            if (campo === 'cpf') {
+                return res.status(400).json({
+                    mensagem: 'Este CPF já está cadastrado!'
+                });
+            }
+            
+            if (campo === 'placa') {
+                return res.status(400).json({
+                    mensagem: 'Esta placa já está cadastrada!'
+                });
+            }
+        }
+
         return res.status(500).json({
             mensagem: 'Erro ao cadastrar entregador!',
             erro: error.message
