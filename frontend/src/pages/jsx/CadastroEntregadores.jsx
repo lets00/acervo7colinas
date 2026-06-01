@@ -3,7 +3,8 @@ import Header from "../../components/jsx/Header";
 import {
     Box, Typography, TextField, Grid, FormLabel, RadioGroup,
     InputAdornment, FormControl, InputLabel, Select, MenuItem,
-    Checkbox, FormControlLabel, OutlinedInput, IconButton, Radio
+    Checkbox, FormControlLabel, OutlinedInput, IconButton, Radio,
+    FormHelperText
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -38,107 +39,169 @@ const initialState = {
     placa: '',
     tipoBicicleta: 'Bicicleta comum',
     espacoBicicleta: 'Pequena (Mochila)',
-    tipoAcesso: 'Funcionário comum',
     captcha: false
 };
-
 
 function CadastroEntregadores() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
-    const [perfilPreview, setPerfilPreview] = useState(null);
-    const [cnhPreview, setCnhPreview] = useState(null);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [fotos, setFotos] = useState({ perfilFoto: null, cnhFoto: null });
+    const [errors, setErrors] = useState({});
+    const [resetKey, setResetKey] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
 
-    const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-    };
-    const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-    };
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
-    const handleMouseUpPassword = (event) => {
-        event.preventDefault();
-    };
-
-    const handleFileChange = (event, tipo) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const previewUrl = URL.createObjectURL(file);
-        if (tipo === 'perfilFoto') {
-            setPerfilPreview(previewUrl);
-        } else if (tipo === 'cnhFoto') {
-            setCnhPreview(previewUrl);
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: null
+            }));
         }
     };
 
+    const handleFileChange = (file, tipo) => {
+        if (!file) return;
+        setFotos(prev => ({ ...prev, [tipo]: file }));
+        setErrors(prev => ({ ...prev, [tipo]: null }));
+    };
+ 
     const handleCaptchaChange = (e) => {
         setFormData(prev => ({ ...prev, captcha: e.target.checked }));
     };
-
+ 
     const handleDateChange = (newValue) => {
         setFormData(prev => ({ ...prev, dataNascimento: newValue }));
     };
 
-    const gerarMatricula = (cpf) => {
-        const base = cpf ? cpf.replace(/\D/g, '') : '';
-        return base ? `ENT-${base.slice(-6)}` : `ENT-${Date.now()}`;
-    };
-
     const handleCancel = () => {
         setFormData(initialState);
-        setPerfilPreview(null);
-        setCnhPreview(null);
+        setFotos({ perfilFoto: null, cnhFoto: null });
+        setErrors({});
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+        setStatusMessage({ type: '', text: '' });
+        setResetKey(k => k + 1);
+    };
+
+    const handleClickShowPassword = () => setShowPassword(show => !show);
+    const handleClickShowConfirmPassword = () => setShowConfirmPassword(show => !show);
+    const handleMouseDownPassword = (e) => e.preventDefault();
+    const handleMouseUpPassword = (e) => e.preventDefault();
+
+    const validarFormulario = () => {
+        const novosErros = {};
+
+        if (!formData.nomeCompleto.trim()) novosErros.nomeCompleto = "Nome completo é obrigatório";
+        if (!formData.cpf.trim()) novosErros.cpf = "CPF é obrigatório";
+        if (!formData.rg.trim()) novosErros.rg = "RG é obrigatório";
+        if (!formData.sexo) novosErros.sexo = "Sexo é obrigatório";
+        if (!formData.dataNascimento) novosErros.dataNascimento = "Data de nascimento é obrigatória";
+        if (!formData.email.trim()) novosErros.email = "E-mail é obrigatório";
+        if (!formData.telefone.trim()) novosErros.telefone = "Telefone é obrigatório";
+        if (!formData.senha) novosErros.senha = "Senha é obrigatória";
+        if (!formData.confirmacaoSenha) novosErros.confirmacaoSenha = "Confirmação de senha é obrigatória";
+        if (formData.senha && formData.confirmacaoSenha && formData.senha !== formData.confirmacaoSenha) {
+            novosErros.confirmacaoSenha = "As senhas não conferem";
+        }
+
+        if (!formData.rua.trim()) novosErros.rua = "Rua é obrigatória";
+        if (!formData.numero.trim()) novosErros.numero = "Número é obrigatório";
+        if (!formData.cep.trim()) novosErros.cep = "CEP é obrigatório";
+        if (!formData.bairro.trim()) novosErros.bairro = "Bairro é obrigatório";
+        if (!formData.cidade.trim()) novosErros.cidade = "Cidade é obrigatória";
+        if (!formData.complemento.trim()) novosErros.complemento = "Complemento é obrigatório";
+        if (!fotos.perfilFoto) novosErros.perfilFoto = "A foto de perfil é obrigatória";
+        if (!fotos.cnhFoto) novosErros.cnhFoto = "A foto da CNH é obrigatória";
+
+        if ((formData.tipoEntrega === 'Carro' || formData.tipoEntrega === 'Moto') && !formData.placa.trim()) {
+            novosErros.placa = "Placa é obrigatória para Carro e Moto";
+        }
+        if (!formData.captcha) novosErros.captcha = "Confirme que você não é um robô";
+
+        setErrors(novosErros);
+        return Object.keys(novosErros).length === 0;
     };
 
     async function handleSubmit(e) {
         e.preventDefault();
-        if (formData.senha !== formData.confirmacaoSenha) return alert("As senhas não conferem!");
-        if (!formData.captcha) return alert("Confirme o captcha!");
-
-        const payload = {
-            nomeCompleto: formData.nomeCompleto,
-            cpf: formData.cpf,
-            rg: formData.rg,
-            sexo: formData.sexo,
-            dataNascimento: formData.dataNascimento ? dayjs(formData.dataNascimento).format('YYYY-MM-DD') : null,
-            matricula: gerarMatricula(formData.cpf),
-            cargo: 'Entregador',
-            setor: 'Entrega',
-            email: formData.email,
-            telefone: formData.telefone,
-            tipoAcesso: formData.tipoAcesso,
-            disponibilidade: formData.disponibilidade,
-            tipoEntrega: formData.tipoEntrega,
-            placa: formData.placa,
-            tipoBicicleta: formData.tipoBicicleta,
-            espacoBicicleta: formData.espacoBicicleta,
-            endereco: {
-                rua: formData.rua,
-                numero: formData.numero,
-                cep: formData.cep,
-                bairro: formData.bairro,
-                cidade: formData.cidade,
-                complemento: formData.complemento,
-            },
-            senha: formData.senha,
-            confirmacaoSenha: formData.confirmacaoSenha,
-            captcha: formData.captcha
-        };
+        setStatusMessage({ type: '', text: '' });
+        if (!validarFormulario()) return;
 
         try {
-            await api.post('/funcionarios', payload);
-            alert("Sucesso!");
+            setIsSubmitting(true);
+
+            const converterParaBase64 = (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+
+            const perfilBase64 = fotos.perfilFoto ? await converterParaBase64(fotos.perfilFoto) : null;
+            const cnhBase64   = fotos.cnhFoto    ? await converterParaBase64(fotos.cnhFoto)    : null;
+
+            const payload = {
+                nomeCompleto:     formData.nomeCompleto.trim(),
+                cpf:              formData.cpf.trim(),
+                rg:               formData.rg.trim(),
+                sexo:             formData.sexo,
+                dataNascimento:   dayjs(formData.dataNascimento).format('DD/MM/YYYY'),
+                email:            formData.email.trim(),
+                telefone:         formData.telefone.trim(),
+                senha:            formData.senha,
+                confirmacaoSenha: formData.confirmacaoSenha,
+                endereco: {
+                    rua:         formData.rua.trim(),
+                    numero:      formData.numero.trim(),
+                    cep:         formData.cep.trim(),
+                    bairro:      formData.bairro.trim(),
+                    cidade:      formData.cidade.trim(),
+                    complemento: formData.complemento.trim(),
+                },
+                tipoVeiculo:     formData.tipoEntrega,
+                disponibilidade: formData.disponibilidade,
+                placa:           formData.tipoEntrega !== 'Bicicleta' ? formData.placa.trim() : undefined,
+                tipoBicicleta:   formData.tipoEntrega === 'Bicicleta' ? formData.tipoBicicleta : undefined,
+                tamanhoBolsa:    formData.tipoEntrega === 'Bicicleta' ? formData.espacoBicicleta : undefined,
+                fotoPerfil:      perfilBase64,
+                fotoCnh:         cnhBase64,
+                captcha:         formData.captcha,  // ← faltava esse!
+            };
+
+            await api.post('/entregadores', payload);
+
+            setStatusMessage({ type: 'success', text: 'Entregador cadastrado com sucesso!' });
             setFormData(initialState);
-            setPerfilPreview(null);
-            setCnhPreview(null);
+            setFotos({ perfilFoto: null, cnhFoto: null });
+            setErrors({});
+            setShowPassword(false);
+            setShowConfirmPassword(false);
+            setResetKey(k => k + 1);
+
         } catch (error) {
-            console.error(error.response);
+            console.error('Erro na requisição:', error);
+            console.error('Resposta do servidor:', error.response?.data);
+
+            const mensagemErro =
+                error.response?.data?.mensagem ||
+                error.response?.data?.message ||
+                'Erro ao conectar com o servidor.';
+
+            setStatusMessage({
+                type: 'error',
+                text: mensagemErro
+            });
+        } finally {
+            setIsSubmitting(false);
         }
     }
     return (
@@ -187,6 +250,8 @@ function CadastroEntregadores() {
                                         name="cpf"
                                         value={formData.cpf}
                                         onChange={handleChange}
+                                        error={Boolean(errors.cpf)}
+                                        helperText={errors.cpf || ''}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -198,6 +263,8 @@ function CadastroEntregadores() {
                                         name="rg"
                                         value={formData.rg}
                                         onChange={handleChange}
+                                        error={Boolean(errors.rg)}
+                                        helperText={errors.rg || ''}
                                     />
                                 </Grid>
                             </Grid>
@@ -215,6 +282,8 @@ function CadastroEntregadores() {
                                         name="sexo"
                                         value={formData.sexo}
                                         onChange={handleChange}
+                                        error={Boolean(errors.sexo)}
+                                        helperText={errors.sexo || ''}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -232,6 +301,8 @@ function CadastroEntregadores() {
                                                     fullWidth: true,
                                                     required: true,
                                                     size: "small",
+                                                    error: Boolean(errors.dataNascimento),
+                                                    helperText: errors.dataNascimento || ''
                                                 }
                                             }}
                                         />
@@ -250,6 +321,8 @@ function CadastroEntregadores() {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
+                            error={Boolean(errors.email)}
+                            helperText={errors.email || ''}
                         />
 
                         <TextField
@@ -262,7 +335,8 @@ function CadastroEntregadores() {
                             value={formData.telefone}
                             onChange={handleChange}
                             placeholder="Telefone"
-                            helperText="Propostas serão enviadas para este número via WhatsApp"
+                            error={Boolean(errors.telefone)}
+                            helperText={errors.telefone || 'Propostas serão enviadas para este número via WhatsApp'}
                             sx={{
                                 maxWidth: '950px', mb: 2, mx: 'auto',
                                 '& .MuiFormHelperText-root': { marginLeft: 0, color: '#666' }
@@ -286,54 +360,59 @@ function CadastroEntregadores() {
                             }}
                         />
 
-                        <Grid container spacing={4}>
-                            <FormControl sx={{ mt: -1, width: '460px' }} variant="outlined">
-                                <InputLabel>Senha</InputLabel>
-                                <OutlinedInput
-                                    name="senha"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={formData.senha}
-                                    onChange={handleChange}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={handleClickShowPassword}
-                                                onMouseDown={handleMouseDownPassword}
-                                                onMouseUp={handleMouseUpPassword}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Senha"
-                                    sx={{ height: "50px" }}
-                                />
-                            </FormControl>
-
-                            <FormControl sx={{ mt: -1, width: '460px' }} variant="outlined">
-                                <InputLabel>Confirmar Senha</InputLabel>
-                                <OutlinedInput
-                                    name="confirmacaoSenha"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={formData.confirmacaoSenha}
-                                    onChange={handleChange}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={handleClickShowPassword}
-                                                onMouseDown={handleMouseDownPassword}
-                                                onMouseUp={handleMouseUpPassword}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Confirmar Senha"
-                                    sx={{ height: "50px" }}
-                                />
-                            </FormControl>
+                        <Grid container spacing={2} sx={{ mt: -1 }}>
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth variant="outlined" size="small" sx={{width: '460px'}} error={!!errors.senha} required>
+                                    <InputLabel>Senha</InputLabel>
+                                    <OutlinedInput
+                                        name="senha"
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={formData.senha}
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    onMouseUp={handleMouseUpPassword}
+                                                    edge="end"
+                                                    aria-label="Mostrar senha"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                        label="Senha"
+                                    />
+                                    {errors.senha && <FormHelperText>{errors.senha}</FormHelperText>}
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <FormControl fullWidth variant="outlined" size="small" sx={{width: '460px'}} error={!!errors.confirmacaoSenha} required>
+                                    <InputLabel>Confirmar Senha</InputLabel>
+                                    <OutlinedInput
+                                        name="confirmacaoSenha"
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        value={formData.confirmacaoSenha}
+                                        onChange={handleChange}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={handleClickShowConfirmPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                    onMouseUp={handleMouseUpPassword}
+                                                    edge="end"
+                                                    aria-label="Mostrar confirmação de senha"
+                                                >
+                                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                        label="Confirmar Senha"
+                                    />
+                                    {errors.confirmacaoSenha && <FormHelperText>{errors.confirmacaoSenha}</FormHelperText>}
+                                </FormControl>
+                            </Grid>
                         </Grid>
                     </Grid>
 
@@ -351,6 +430,8 @@ function CadastroEntregadores() {
                                         fullWidth label="Rua" size="small"
                                         sx={{ width: "794px", mt: 2 }}
                                         name="rua" value={formData.rua} onChange={handleChange}
+                                        error={Boolean(errors.rua)}
+                                        helperText={errors.rua || ''}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -358,6 +439,8 @@ function CadastroEntregadores() {
                                         fullWidth label="Número" size="small"
                                         sx={{ width: "120px", mt: 2 }}
                                         name="numero" value={formData.numero} onChange={handleChange}
+                                        error={Boolean(errors.numero)}
+                                        helperText={errors.numero || ''}
                                     />
                                 </Grid>
                             </Grid>
@@ -370,6 +453,8 @@ function CadastroEntregadores() {
                                         fullWidth label="CEP" size="small"
                                         sx={{ width: "460px", mt: 1 }}
                                         name="cep" value={formData.cep} onChange={handleChange}
+                                        error={Boolean(errors.cep)}
+                                        helperText={errors.cep || ''}
                                     />
                                 </Grid>
                                 <Grid item xs={6}>
@@ -377,6 +462,8 @@ function CadastroEntregadores() {
                                         fullWidth label="Bairro" size="small"
                                         sx={{ width: "460px", mt: 1 }}
                                         name="bairro" value={formData.bairro} onChange={handleChange}
+                                        error={Boolean(errors.bairro)}
+                                        helperText={errors.bairro || ''}
                                     />
                                 </Grid>
                             </Grid>
@@ -385,7 +472,7 @@ function CadastroEntregadores() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={6}>
-                                    <FormControl fullWidth size="small" sx={{ width: "460px", mt: 1 }}>
+                                    <FormControl fullWidth size="small" sx={{ width: "460px", mt: 1 }} error={Boolean(errors.cidade)}>
                                         <InputLabel id="select-cidade-label">Cidade</InputLabel>
                                         <Select
                                             name="cidade"
@@ -395,6 +482,7 @@ function CadastroEntregadores() {
                                         >
                                             <MenuItem value="Garanhuns">Garanhuns</MenuItem>
                                         </Select>
+                                        {errors.cidade && <FormHelperText>{errors.cidade}</FormHelperText>}
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6}>
@@ -402,6 +490,8 @@ function CadastroEntregadores() {
                                         fullWidth label="Complemento" size="small"
                                         sx={{ width: "460px", mt: 1 }}
                                         name="complemento" value={formData.complemento} onChange={handleChange}
+                                        error={Boolean(errors.complemento)}
+                                        helperText={errors.complemento || ''}
                                     />
                                 </Grid>
                             </Grid>
@@ -453,52 +543,54 @@ function CadastroEntregadores() {
                             </FormControl>
                         </Grid>
 
-                        <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                        {(formData.tipoEntrega === 'Carro' || formData.tipoEntrega === 'Moto') && (
+                            <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
+                                <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
                                 Placa do Carro/Moto
-                            </Typography>
-                            <TextField
-                                fullWidth label="Placa" size="small"
-                                sx={{ width: "760px", mt: 1 }}
-                                name="placa" value={formData.placa} onChange={handleChange}
-                            />
-                        </Grid>
+                                </Typography>
+                                <TextField
+                                    fullWidth label="Placa" size="small"
+                                    sx={{ width: "760px", mt: 1 }}
+                                    name="placa" value={formData.placa} onChange={handleChange}
+                                    error={Boolean(errors.placa)}
+                                    helperText={errors.placa || ''}
+                                />
+                            </Grid>
+                        )}
 
-                        <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                        {formData.tipoEntrega === 'Bicicleta' && (
+                            <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
+                                <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
                                 Bicicleta Informações
-                            </Typography>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Typography>
+                                <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
                                 <RadioGroup
-                                    row
-                                    aria-labelledby="tipo-bicicleta-label"
-                                    name="tipoBicicleta"
+                                    row name="tipoBicicleta"
                                     value={formData.tipoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Bicicleta comum" control={<Radio />} label="Bicicleta comum" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Bicicleta elétrica" control={<Radio />} label="Bicicleta elétrica" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel value="Bicicleta comum" control={<Radio />} label="Bicicleta comum" sx={{ color: "#242424" }} />
+                                    <FormControlLabel value="Bicicleta elétrica" control={<Radio />} label="Bicicleta elétrica" sx={{ color: "#242424" }} />
                                 </RadioGroup>
-                            </Grid>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Grid>
+                                <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
                                 <RadioGroup
-                                    row
-                                    aria-labelledby="espaco-bicicleta-label"
-                                    name="espacoBicicleta"
+                                    row name="espacoBicicleta"
                                     value={formData.espacoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Pequena (Mochila)" control={<Radio />} label="Pequena (Mochila)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Média (Caixa/Cesta)" control={<Radio />} label="Média (Caixa/Cesta)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel value="Pequena (Mochila)" control={<Radio />} label="Pequena (Mochila)" sx={{ color: "#242424" }} />
+                                    <FormControlLabel value="Média (Caixa/Cesta)" control={<Radio />} label="Média (Caixa/Cesta)" sx={{ color: "#242424" }} />
                                 </RadioGroup>
+                                </Grid>
                             </Grid>
+                        )}
                         </Grid>
-                    </Grid>
 
-                    <CampoEntregador 
-                        perfilImg={perfilPreview} 
-                        cnhImg={cnhPreview} 
-                        onFileChange={handleFileChange} 
+                    <CampoEntregador
+                        onFileChange={handleFileChange}
+                        errors={errors}
+                        resetKey={resetKey}
                     />
 
                     <Grid container justifyContent="center" sx={{ mt: 6 }}>
@@ -508,10 +600,27 @@ function CadastroEntregadores() {
                                 label="Não Sou Robô"
                                 sx={{ color: "#000", ml: -40 }}
                             />
+                            {errors.captcha && (
+                                <Typography color="error" variant="caption" sx={{ display: 'block', mt: 1 }}>
+                                    {errors.captcha}
+                                </Typography>
+                            )}
                         </Box>
                     </Grid>
 
-                    <BotaoCadastrar onCancel={handleCancel} />
+                    {statusMessage.text && (
+                        <Typography
+                            sx={{
+                                mt: 3,
+                                textAlign: 'center',
+                                color: statusMessage.type === 'success' ? 'success.main' : 'error.main'
+                            }}
+                        >
+                            {statusMessage.text}
+                        </Typography>
+                    )}
+
+                    <BotaoCadastrar onCancel={handleCancel} loading={isSubmitting} disabled={isSubmitting} />
                 </form>
             </Box>
         </Box>
