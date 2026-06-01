@@ -18,12 +18,10 @@ export const usuarioSchema = z.object({
         cidade: z.string().min(1, 'Este campo é obrigatório'),
         complemento: z.string().min(1, 'Este campo é obrigatório')
     }),
-    fotoPerfil: z.string().optional(),
-    fotoRg: z.string().optional(),
-    comprovanteResidencial: z.string().optional(),
-    captcha: z.boolean().refine((valor) => valor === true, {
-        message: 'Confirme que você não é um robô!'
-    })
+    fotoPerfil: z.string().nullable().optional(),
+    fotoRg: z.string().nullable().optional(),
+    comprovanteResidencial: z.string().nullable().optional(),
+    captcha: z.union([z.boolean(), z.string()])
 }).refine((dados) => dados.senha === dados.confirmacaoSenha, {
     message: 'As senhas não coincidem',
     path: ['confirmacaoSenha']

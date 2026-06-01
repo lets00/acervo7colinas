@@ -21,8 +21,9 @@ import LivrosSalvos from "./pages/jsx/LivrosSalvos.jsx";
 import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
 import FuncionariosSalvos from "./pages/jsx/FuncionariosSalvos.jsx";
 import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
+import EditarLivros from "./pages/jsx/EditarLivros.jsx";
 
-//RadioButton do material
+
 const theme = createTheme();
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
             <Route path="/acervo" element={<NossoAcervo />} />
             <Route path="/funcionarios-salvos" element={<FuncionariosSalvos />} />
             <Route path="/entregadores-salvos" element={<EntregadoresSalvos />} />
+            <Route path="/editar-livro/:id" element={<EditarLivros />} />
           </Routes>
 
         </Container>
