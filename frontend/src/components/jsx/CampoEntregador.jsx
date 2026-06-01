@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React from "react"; 
-=======
 import React, { useState, useEffect, useCallback } from "react"; 
->>>>>>> ee620314ccae4a7c4885e740a8abcc52bc3b24a6
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -23,11 +19,6 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-<<<<<<< HEAD
-
-
-function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
-=======
 function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
     const [perfilPreview, setPerfilPreview] = useState(null);
     const [cnhPreview, setCnhPreview] = useState(null);
@@ -56,19 +47,19 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
         } else if (tipo === 'cnhFoto') {
             setCnhPreview(url);
         }
-        onFileChange(file, tipo);
-    }, [onFileChange])
 
->>>>>>> ee620314ccae4a7c4885e740a8abcc52bc3b24a6
+        onFileChange(file, tipo);
+    }, [onFileChange]);
+
     return (
         <>
-            <Grid container justifyContent="center" >
+            <Grid container justifyContent="center">
                 <Box className="boxTituloPerfil">
                     <Typography className="textoTituloPerfil" sx={{ ml: 32 }}>
                         Foto de Perfil
                     </Typography>
                 </Box>
-                <Box className="boxTituloCNH" >
+                <Box className="boxTituloCNH">
                     <Typography className="textoTituloCNH" sx={{ ml: 16 }}>
                         Foto da CNH
                     </Typography>
@@ -77,12 +68,9 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
 
             <Grid item xs={12} md={6}>
                 <Grid container spacing={5} justifyContent="center">
-<<<<<<< HEAD
-=======
 
->>>>>>> ee620314ccae4a7c4885e740a8abcc52bc3b24a6
                     <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoPerfil" >
+                        <Typography className="textoCard textoPerfil">
                             Selecionar Foto
                         </Typography>
                         <Box 
@@ -95,6 +83,7 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
                         <Button
                             component="label"
                             variant="contained"
+                            tabIndex={-1}
                             disableElevation
                             className="botaoPerfil"
                             startIcon={<CloudUploadIcon />}
@@ -102,7 +91,7 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
                             SELECIONAR FOTO
                             <VisuallyHiddenInput
                                 type="file"
-                               onChange={(event) => handleFileChange(event, 'perfilFoto')}
+                                onChange={(event) => handleFileChange(event, 'perfilFoto')}
                                 accept="image/*"
                             />
                         </Button>
@@ -114,7 +103,7 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
                     </Box>
 
                     <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoCNH" >
+                        <Typography className="textoCard textoCNH">
                             Selecionar Foto da CNH
                         </Typography>
                         <Box 
@@ -127,6 +116,7 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
                         <Button
                             component="label"
                             variant="contained"
+                            tabIndex={-1}
                             disableElevation
                             className="botaoCNH"
                             startIcon={<CloudUploadIcon />}
@@ -144,6 +134,7 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
                             </Typography>
                         )}
                     </Box>
+
                 </Grid>
             </Grid>
         </>

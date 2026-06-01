@@ -16,7 +16,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-function CampoFuncionario({ onFileChange = () => {}, error = false, resetKey }) {
+function CampoFuncionario({ onFileChange = () => {}, errors = {}, resetKey }) {
   const [perfilPreview, setPerfilPreview] = useState(null);
 
   useEffect(() => {
@@ -27,90 +27,54 @@ function CampoFuncionario({ onFileChange = () => {}, error = false, resetKey }) 
     return () => { if (perfilPreview) URL.revokeObjectURL(perfilPreview); };
   }, [perfilPreview]);
 
-  const handleFileChange = useCallback((event) => {
+  const handleFileChange = useCallback((event, tipo) => {
     const file = event.target.files[0];
-<<<<<<< HEAD
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPerfilImg(reader.result); 
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  
-    return (
-        <>
-            <Grid container justifyContent="center" sx={{mt:3}}>
-                <Box  className="foto-barra" >
-                    <Typography className='foto-texto' sx={{ml: 65}}>
-                        Foto de Perfil
-                    </Typography>
-                </Box>
-            </Grid> 
-            <Grid item xs={12} md={6}>
-                <Grid container spacing={5} justifyContent="center">
-                    <Box className="foto-box" sx={{mt:1}} >
-                            <Typography variant="h6" sx={{ color: "#666", fontWeight: "300", ml:20, mt:5}}>
-                                Selecionar Foto
-                            </Typography>
-                            <Box component="img" src={PerfilCadastros} alt="Perfil" className='foto-img' />
-                            <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                disableElevation
-                                className="botaoPerfilUm "
-                                startIcon={<CloudUploadIcon />}
-                            >
-                                SELECIONAR FOTO
-                                <VisuallyHiddenInput
-                                type="file"
-                                onChange={handleFileChange}  
-                                accept="image/*"
-                                />
-                            </Button>
-                    </Box>
-                </Grid>
-            </Grid>
-     </>
-    );
-=======
     if (!file) return;
+
     const url = URL.createObjectURL(file);
-    setPerfilPreview(url);
-    onFileChange(file);
+
+    if (tipo === 'perfil') setPerfilPreview(url);
+    onFileChange(file, tipo);
   }, [onFileChange]);
 
   return (
     <>
-      <Grid container justifyContent="center">
-        <Box sx={{ mt: 2 }}>
-          <Typography sx={{ ml: 32, fontWeight: 700 }}>Foto de Perfil</Typography>
-        </Box>
-      </Grid>
+      <Grid container justifyContent="center" sx={{mt:-6}}>
+        <Box className="foto-barra" >
 
+        </Box>
+      </Grid> 
       <Grid item xs={12} md={6}>
         <Grid container spacing={5} justifyContent="center">
-          <Box className="card" sx={{ mt: 1 }}>
-            <Typography className="textoCard textoPerfil">Selecionar Foto</Typography>
-            <Box component="img" src={perfilPreview || PerfilCadastros} alt="Perfil" className="imgPerfil" sx={{ objectFit: 'cover' }} />
-            <Button component="label" variant="contained" disableElevation className="botaoPerfil" startIcon={<CloudUploadIcon />}>
-              SELECIONAR FOTO
-              <VisuallyHiddenInput type="file" onChange={handleFileChange} accept="image/*" />
-            </Button>
-            {error && (
-              <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                Foto de perfil 
+          <Box className="card" sx={{ mt: 2 }}>
+              <Typography className="textoCard textoPerfil" sx={{ ml: 85 }}>
+                  Selecionar Foto
               </Typography>
-            )}
+              
+              <Box component="img" src={perfilPreview || PerfilCadastros} alt="Perfil" className="imgPerfil" />
+
+              <Button 
+                  component="label" 
+                  variant="contained" 
+                  tabIndex={-1} 
+                  disableElevation 
+                  className="botaoPerfil" 
+                  startIcon={<CloudUploadIcon />}
+              >
+                  SELECIONAR FOTO
+                  <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'perfil')} accept="image/*" />
+              </Button>
+              
+              {errors.perfil && (
+                  <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
+                      {errors.perfil}
+                  </Typography>
+              )}
           </Box>
         </Grid>
       </Grid>
     </>
   );
->>>>>>> ee620314ccae4a7c4885e740a8abcc52bc3b24a6
-}
+} 
 
 export default CampoFuncionario;
