@@ -7,9 +7,9 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../css/Login.css";
 import Header from "../../components/jsx/HeaderLogin";
-import StackBooks     from "../../assets/StackBooks.png";
-import PinkBook       from "../../assets/PinkBook.png";
-import Books          from "../../assets/Books.png";
+import StackBooks from "../../assets/StackBooks.png";
+import PinkBook from "../../assets/PinkBook.png";
+import Books from "../../assets/Books.png";
 import OpenOrangeBook from "../../assets/OpenOrangeBook.png";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -20,21 +20,21 @@ const label = { slotProps: { input: { "aria-label": "Checkbox demo" } } };
 
 const theme = createTheme({
   palette: {
-    primary:    { main: "#CCD3F8" },
+    primary: { main: "#CCD3F8" },
     background: { default: "#CCD3F8" },
   },
 });
 
 export default function Login() {
-  const [email, setEmail]               = useState('');
-  const [senha, setSenha]               = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading]           = useState(false);
-  const [erro, setErro]                 = useState('');
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  const handleClickShowPassword  = () => setShowPassword((s) => !s);
-  const handleMouseDownPassword  = (e) => e.preventDefault();
+  const handleClickShowPassword = () => setShowPassword((s) => !s);
+  const handleMouseDownPassword = (e) => e.preventDefault();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -75,10 +75,10 @@ export default function Login() {
           <Header />
         </Box>
 
-        <Box component="img" src={StackBooks}     alt="StackBooks"     className="img-livros"        />
-        <Box component="img" src={PinkBook}       alt="PinkBook"       className="img-livros-Dois"   />
-        <Box component="img" src={OpenOrangeBook} alt="OpenOrangeBook" className="img-livros-Tres"   />
-        <Box component="img" src={Books}          alt="Books"          className="img-livros-Quatro" />
+        <Box component="img" src={StackBooks} alt="StackBooks" className="img-livros" />
+        <Box component="img" src={PinkBook} alt="PinkBook" className="img-livros-Dois" />
+        <Box component="img" src={OpenOrangeBook} alt="OpenOrangeBook" className="img-livros-Tres" />
+        <Box component="img" src={Books} alt="Books" className="img-livros-Quatro" />
 
         <Box className="center-content">
           <Box className="glass" sx={{ width: 850, minHeight: 400, mt: -90 }}>
@@ -139,9 +139,9 @@ export default function Login() {
                   Esqueceu a senha?
                 </Typography>
               </Box>
-              <Box className="botoes" sx={{mt:3}}> 
-                <Button  className="btn-cadastrar" sx={{color:"#ffff", width: "750px"}} >
-                     Entrar
+              <Box className="botoes" sx={{ mt: 3 }}>
+                <Button className="btn-cadastrar" sx={{ color: "#ffff", width: "750px" }} >
+                  Entrar
                 </Button>
               </Box>
 

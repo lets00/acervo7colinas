@@ -6,7 +6,7 @@ export async function login(req, res) {
     const { email, senha } = req.body;
 
     try {
-        const usuario = await Usuario.findOne({ where: { email }});
+        const usuario = await Usuario.findOne({ where: { email } });
 
         if (!usuario) {
             return res.status(500).json({
@@ -17,7 +17,7 @@ export async function login(req, res) {
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
         if (!senhaValida) {
-            return res.status(400).json ({
+            return res.status(400).json({
                 mensagem: "Senha inválida"
             });
         }
@@ -25,7 +25,7 @@ export async function login(req, res) {
         const token = jwt.sign(
             { email: usuario.email },
             "segredo",
-            { expiresIn: "1h"}
+            { expiresIn: "1h" }
         );
 
         return res.json({
