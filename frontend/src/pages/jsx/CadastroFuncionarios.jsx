@@ -45,39 +45,47 @@ function CadastroFuncionarios() {
         e.preventDefault();
  
         if (formData.senha !== formData.confirmacaoSenha) {
-            alert("As senhas não conferem!");
-            return;
-        }
- 
+        alert("As senhas não conferem!");
+        return;
+    }
+
         if (!formData.captcha) {
             alert("Por favor, confirme que você não é um robô!");
             return;
         }
 
-        if (!formData.nomeCompleto || !formData.cpf || !formData.matricula || !formData.cargo || !formData.setor || !formData.email || !formData.telefone) {
+        if (
+            !formData.nomeCompleto ||
+            !formData.cpf ||
+            !formData.matricula ||
+            !formData.cargo ||
+            !formData.setor ||
+            !formData.email ||
+            !formData.telefone
+        ) {
             alert("Por favor, preencha todos os campos obrigatórios.");
             return;
         }
- 
+
         const dados = {
-        nomeCompleto: formData.nomeCompleto,
-        cpf: formData.cpf,
-        matricula: formData.matricula,
-        cargo: formData.cargo,
-        setor: formData.setor,
-        email: formData.email,
-        telefone: formData.telefone,
-        tipoAcesso: formData.tipoAcesso,
-        disponibilidade: formData.disponibilidade,
-        senha: formData.senha,
-        confirmacaoSenha: formData.confirmacaoSenha,
-        captcha: formData.captcha
-    };
+            nomeCompleto: formData.nomeCompleto,
+            cpf: formData.cpf,
+            matricula: formData.matricula,
+            cargo: formData.cargo,
+            setor: formData.setor,
+            email: formData.email,
+            telefone: formData.telefone,
+            tipoAcesso: formData.tipoAcesso,
+            disponibilidade: formData.disponibilidade,
+            senha: formData.senha,
+            confirmacaoSenha: formData.confirmacaoSenha,
+            captcha: formData.captcha
+        };
  
         try {
             await api.post('/funcionarios', dados);
             alert("Funcionário cadastrado com sucesso!");
- 
+
             setFormData({
                 nomeCompleto: '',
                 cpf: '',
@@ -92,9 +100,9 @@ function CadastroFuncionarios() {
                 disponibilidade: 'Ativo',
                 captcha: false
             });
- 
+
             setShowPassword(false);
- 
+
         } catch (error) {
             console.error("Erro detalhado:", error);
             const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";

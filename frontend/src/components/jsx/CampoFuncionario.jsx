@@ -31,6 +31,7 @@ function CampoFuncionario() {
       reader.readAsDataURL(file);
     }
   };
+  
     return (
         <>
             <Grid container justifyContent="center" sx={{mt:3}}>

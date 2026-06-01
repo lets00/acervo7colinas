@@ -54,6 +54,17 @@ function CadastroEntregadores() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+    };
+    const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+    };
+
+    const handleMouseUpPassword = (event) => {
+        event.preventDefault();
+    };
+
     const handleFileChange = (event, tipo) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -127,8 +138,7 @@ function CadastroEntregadores() {
             setPerfilPreview(null);
             setCnhPreview(null);
         } catch (error) {
-            console.error(error);
-            alert("Erro ao cadastrar.");
+            console.error(error.response);
         }
     }
     return (
@@ -212,7 +222,7 @@ function CadastroEntregadores() {
                                         <DatePicker
                                             label="Data de Nascimento"
                                             views={['year', 'month', 'day']}
-                                            format="YYYY-MM-DD"
+                                            format="DD/MM/YYYY"
                                             sx={{ width: "460px" }}
                                             value={formData.dataNascimento}
                                             onChange={handleDateChange}

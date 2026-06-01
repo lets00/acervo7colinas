@@ -1,4 +1,4 @@
-import React from "react"; // Removido o useState, pois não será usado aqui
+import React from "react"; 
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -19,7 +19,8 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-// Componente agora recebe apenas o necessário via props
+
+
 function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
     return (
         <>
@@ -38,7 +39,6 @@ function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
 
             <Grid item xs={12} md={6}>
                 <Grid container spacing={5} justifyContent="center">
-                    {/* CARD PERFIL */}
                     <Box className="card" sx={{ mt: 1 }}>
                         <Typography className="textoCard textoPerfil" >
                             Selecionar Foto
