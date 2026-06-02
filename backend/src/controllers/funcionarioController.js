@@ -3,7 +3,18 @@ import { funcionarioSchema } from "../validators/funcionarioValidator.js";
 import bcrypt from 'bcrypt';
 
 export async function criarFuncionario(req,res) {
-    const resultado = funcionarioSchema.safeParse(req.body);
+    const fotoPerfil = req.file ? `/perfil/${req.file.filename}`: null;
+
+    const dadosParaValidar = {
+        ...req.body,
+        fotoPerfil
+    };
+
+    console.log("BODY FUNCIONARIO:", req.body);
+    console.log("SENHA:", req.body.senha);
+    console.log("CONFIRMAÇÃO::", req.body.confirmacaoSenha);
+
+    const resultado = funcionarioSchema.safeParse(dadosParaValidar);
 
     if(!resultado.success) {
         return res.status(400).json({

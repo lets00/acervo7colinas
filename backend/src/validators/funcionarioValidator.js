@@ -20,8 +20,8 @@ export const funcionarioSchema = z.object({
             message: 'Selecione uma disponibilidade válida!'
         })
     }),
-    fotoPerfil:z.string().optional(),
-    captcha: z.boolean().refine((valor) => valor === true, {
+    fotoPerfil:z.string().nullable().optional(),
+    captcha: z.union([z.boolean(), z.string()]).refine((valor) => valor === true || valor === 'true', {
         message: 'Confirme que você não é um robô!'
     })
 }).refine((dados) => dados.senha === dados.confirmacaoSenha, {

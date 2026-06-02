@@ -12,6 +12,8 @@ import api from "../../services/apis";
 
 function CadastroFuncionarios() {
     const [showPassword, setShowPassword] = useState(false);
+
+    const [fotoPerfil, setFotoPerfil] = useState(null);
  
     const [formData, setFormData] = useState({
         nomeCompleto: '',
@@ -59,23 +61,27 @@ function CadastroFuncionarios() {
             return;
         }
  
-        const dados = {
-        nomeCompleto: formData.nomeCompleto,
-        cpf: formData.cpf,
-        matricula: formData.matricula,
-        cargo: formData.cargo,
-        setor: formData.setor,
-        email: formData.email,
-        telefone: formData.telefone,
-        tipoAcesso: formData.tipoAcesso,
-        disponibilidade: formData.disponibilidade,
-        senha: formData.senha,
-        confirmacaoSenha: formData.confirmacaoSenha,
-        captcha: formData.captcha
-    };
- 
+        const formDataToSend = new FormData();
+
+        formDataToSend.append('nomeCompleto', formData.nomeCompleto);
+        formDataToSend.append('cpf', formData.cpf);
+        formDataToSend.append('matricula', formData.matricula);
+        formDataToSend.append('cargo', formData.cargo);
+        formDataToSend.append('setor', formData.setor);
+        formDataToSend.append('email', formData.email);
+        formDataToSend.append('telefone', formData.telefone);
+        formDataToSend.append('tipoAcesso', formData.tipoAcesso);
+        formDataToSend.append('disponibilidade', formData.disponibilidade);
+        formDataToSend.append('senha', formData.senha);
+        formDataToSend.append('confirmacaoSenha', formData.confirmacaoSenha);
+        formDataToSend.append('captcha', formData.captcha);
+
+        if (fotoPerfil) {
+            formDataToSend.append('fotoPerfil', fotoPerfil);
+        }
+
         try {
-            await api.post('/funcionarios', dados);
+            await api.post('/funcionarios', formDataToSend);
             alert("Funcionário cadastrado com sucesso!");
  
             setFormData({
@@ -99,6 +105,7 @@ function CadastroFuncionarios() {
             console.error("Erro detalhado:", error);
             const mensagem = error.response?.data?.message || "Erro ao conectar com o servidor.";
             alert(`Erro: ${mensagem}`);
+            console.log("ERRO DO BACKEND:", error.response?.data);
         }
     }
     return (
@@ -272,7 +279,11 @@ function CadastroFuncionarios() {
                                 </RadioGroup>
                         </FormControl>
                     </Grid>
-                    <CampoFuncionario/>
+                    <CampoFuncionario
+                        onFileChange={(file) => {
+                            setFotoPerfil(file);
+                        }}
+                    />
                     <Grid container justifyContent="center" sx={{mt:6}}>
                         <Box className="robot-box">
                                 <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} label="Não Sou Robô" sx={{color:"#000", ml:-40}} />
