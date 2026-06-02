@@ -54,6 +54,7 @@ const GENEROS = [
 
 function EditarLivros() {
   const { id } = useParams();
+  console.log("ID recebido:", id);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -81,7 +82,17 @@ function EditarLivros() {
         setFormData({
           ...dadosDoLivro,
           ano: dadosDoLivro.ano ? dayjs(String(dadosDoLivro.ano), "YYYY") : null,
-          quantidadeExemplares: dadosDoLivro.quantidadeExemplares ?? "",
+
+          genero: dadosDoLivro.genero ||
+                  dadosDoLivro.generos?.[0] ||
+                  "",
+
+          quantidadeExemplares:
+            dadosDoLivro.quantidadeExemplares ?? "",
+
+          autor: dadosDoLivro.autor || "",
+          editora: dadosDoLivro.editora || "",
+          descricao: dadosDoLivro.descricao || "",
         });
       } catch (error) {
         console.error("Erro ao buscar o livro:", error);
@@ -213,6 +224,7 @@ function EditarLivros() {
                 <TextField
                   required
                   fullWidth
+                  sx={{mt:2.5}}
                   label="ISBN"
                   variant="outlined"
                   name="isbn"
@@ -229,6 +241,7 @@ function EditarLivros() {
                     onChange={handleDateChange}
                     views={["year"]}
                     format="YYYY"
+                    sx={{mt:2.5}}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -240,19 +253,6 @@ function EditarLivros() {
                   />
                 </LocalizationProvider>
 
-                <TextField
-                  required
-                  fullWidth
-                  label="Quantidade de exemplares"
-                  type="number"
-                  name="quantidadeExemplares"
-                  inputProps={{ min: 0 }}
-                  value={formData.quantidadeExemplares}
-                  onChange={handleChange}
-                  error={!!errors.quantidadeExemplares}
-                  helperText={errors.quantidadeExemplares}
-                />
-
                 <FormControl required fullWidth error={!!errors.genero}>
                   <InputLabel>Gênero</InputLabel>
                   <Select
@@ -260,6 +260,7 @@ function EditarLivros() {
                     value={formData.genero}
                     onChange={handleChange}
                     input={<OutlinedInput label="Gênero" />}
+                    sx={{mt:2.5}}
                   >
                     {GENEROS.map((g) => (
                       <MenuItem key={g.value} value={g.value}>
@@ -268,7 +269,7 @@ function EditarLivros() {
                     ))}
                   </Select>
                   {errors.genero && (
-                    <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.5 }}>
+                    <Typography variant="caption" color="error" sx={{ mt: 2, ml: 1.5 }}>
                       {errors.genero}
                     </Typography>
                   )}
@@ -315,6 +316,18 @@ function EditarLivros() {
                 />
               </Box>
             </Grid>
+            <TextField
+                  required
+                  fullWidth
+                  label="Quantidade em Estoque"
+                  type="number"
+                  name="quantidadeExemplares"
+                  inputProps={{ min: 0 }}
+                  value={formData.quantidadeExemplares}
+                  onChange={handleChange}
+                  error={!!errors.quantidadeExemplares}
+                  helperText={errors.quantidadeExemplares}
+                />
           </Grid>
 
 

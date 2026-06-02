@@ -51,7 +51,7 @@ function App() {
             <Route path="/acervo" element={<NossoAcervo />} />
             <Route path="/funcionarios-salvos" element={<FuncionariosSalvos />} />
             <Route path="/entregadores-salvos" element={<EntregadoresSalvos />} />
-            <Route path="/editar-livro/:id" element={<EditarLivros />} />
+            <Route path="/livros/editar/:id" element={<EditarLivros />} />
           </Routes>
 
         </Container>

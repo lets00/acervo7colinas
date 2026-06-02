@@ -238,8 +238,13 @@ export default function LivrosSalvos() {
                                                                 variant="contained"
                                                                 size="small"
                                                                 startIcon={<EditIcon />}
-                                                                onClick={() => navigate(`/editar-livro/${row.id}`)}
-                                                                sx={{ ...actionBtnSx, bgcolor: "#37228B", color: "#fff", "&:hover": { bgcolor: "#2a1870"} }}
+                                                                onClick={() => navigate(`/livros/editar/${row.id}`)}
+                                                                sx={{
+                                                                    ...actionBtnSx,
+                                                                    bgcolor: "#37228B",
+                                                                    color: "#fff",
+                                                                    "&:hover": { bgcolor: "#2a1870" }
+                                                                }}
                                                             >
                                                                 EDITAR
                                                             </Button>
