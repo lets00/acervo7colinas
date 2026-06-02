@@ -474,9 +474,11 @@ function CadastroUsuarios() {
                     </Grid>
 
                     <CampoUsuario
-                        setFotoPerfil={setFotoPerfil}
-                        setFotoRg={setFotoRg}
-                        setComprovanteResidencial={setComprovanteResidencial}
+                        onFileChange={(file, tipo) => {
+                            if ( tipo === 'perfil') setFotoPerfil(file);
+                            if ( tipo === 'rg') setFotoRg(file);
+                            if ( tipo === 'residencia') setComprovanteResidencial(file);
+                        }}
                     />
 
                     <Grid container justifyContent="center" sx={{ mt: 5 }}>
