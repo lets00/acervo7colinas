@@ -131,6 +131,7 @@ export default function LivrosSalvos() {
                             variant="contained"
                              sx={{ width: "100%"}}
                             startIcon={<AddIcon />}
+                             onClick={() => navigate("/livros")}
                             sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
                         >
                             Adicionar novo livro
