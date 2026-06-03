@@ -5,7 +5,7 @@ import { entregadorSchema } from '../validators/entregadorValidator.js';
 export async function criarEntregador(req, res) {
 
     const fotoPerfil = req.files?.fotoPerfil?.[0]?`/cnh/${req.files.fotoPerfil[0].filename}`:null;
-    const fotoPerfil = req.files?.fotoCnh?.[0]?`/cnh/${req.files.fotoCnh[0].filename}`:null;
+    const fotoCnh = req.files?.fotoCnh?.[0]?`/cnh/${req.files.fotoCnh[0].filename}`:null;
 
     const dadosParaValidar = {
         ...req.body,
