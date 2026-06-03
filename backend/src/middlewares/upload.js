@@ -21,6 +21,9 @@ const storage = multer.diskStorage({
             cb(null, 'public/residencia');
         }
 
+        else if (file.fieldname === 'fotoCnh') {
+            cb(null, 'public/cnh');
+        }
     },
 
     filename: (req, file, cb) => {

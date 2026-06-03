@@ -48,21 +48,25 @@ function CadastroEntregadores() {
     const [showPassword, setShowPassword] = useState(false);
     const [perfilPreview, setPerfilPreview] = useState(null);
     const [cnhPreview, setCnhPreview] = useState(null);
+    const [perfilFile, setPerfilFile] = useState(null);
+    const [cnhFile, setCnhFile] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (event, tipo) => {
-        const file = event.target.files[0];
+    const handleFileChange = (file, tipo) => {
         if (!file) return;
 
         const previewUrl = URL.createObjectURL(file);
+
         if (tipo === 'perfilFoto') {
             setPerfilPreview(previewUrl);
+            setPerfilFile(file);
         } else if (tipo === 'cnhFoto') {
             setCnhPreview(previewUrl);
+            setCnhFile(file);
         }
     };
 
@@ -74,6 +78,10 @@ function CadastroEntregadores() {
         setFormData(prev => ({ ...prev, dataNascimento: newValue }));
     };
 
+    const handleClickShowPassword = () => setShowPassword(prev => !prev);
+    const handleMouseDownPassword = (e) => e.preventDefault();
+    const handleMouseUpPassword = (e) => e.preventDefault();
+
     const gerarMatricula = (cpf) => {
         const base = cpf ? cpf.replace(/\D/g, '') : '';
         return base ? `ENT-${base.slice(-6)}` : `ENT-${Date.now()}`;
@@ -83,6 +91,8 @@ function CadastroEntregadores() {
         setFormData(initialState);
         setPerfilPreview(null);
         setCnhPreview(null);
+        setPerfilFile(null);
+        setCnhFile(null);
     };
 
     async function handleSubmit(e) {
@@ -90,47 +100,61 @@ function CadastroEntregadores() {
         if (formData.senha !== formData.confirmacaoSenha) return alert("As senhas não conferem!");
         if (!formData.captcha) return alert("Confirme o captcha!");
 
-        const payload = {
-            nomeCompleto: formData.nomeCompleto,
-            cpf: formData.cpf,
-            rg: formData.rg,
-            sexo: formData.sexo,
-            dataNascimento: formData.dataNascimento ? dayjs(formData.dataNascimento).format('YYYY-MM-DD') : null,
-            matricula: gerarMatricula(formData.cpf),
-            cargo: 'Entregador',
-            setor: 'Entrega',
-            email: formData.email,
-            telefone: formData.telefone,
-            tipoAcesso: formData.tipoAcesso,
-            disponibilidade: formData.disponibilidade,
-            tipoEntrega: formData.tipoEntrega,
-            placa: formData.placa,
-            tipoBicicleta: formData.tipoBicicleta,
-            espacoBicicleta: formData.espacoBicicleta,
-            endereco: {
-                rua: formData.rua,
-                numero: formData.numero,
-                cep: formData.cep,
-                bairro: formData.bairro,
-                cidade: formData.cidade,
-                complemento: formData.complemento,
-            },
-            senha: formData.senha,
-            confirmacaoSenha: formData.confirmacaoSenha,
-            captcha: formData.captcha
-        };
+        const formDataToSend = new FormData();
+
+        formDataToSend.append('nomeCompleto', formData.nomeCompleto);
+        formDataToSend.append('cpf', formData.cpf);
+        formDataToSend.append('rg', formData.rg);
+        formDataToSend.append('sexo', formData.sexo);
+        formDataToSend.append(
+            'dataNascimento',
+            formData.dataNascimento
+                ? dayjs(formData.dataNascimento).format('DD/MM/YYYY')
+                : ''
+        );
+        formDataToSend.append('matricula', gerarMatricula(formData.cpf));
+        formDataToSend.append('cargo', 'Entregador');
+        formDataToSend.append('setor', 'Entrega');
+        formDataToSend.append('email', formData.email);
+        formDataToSend.append('telefone', formData.telefone);
+        formDataToSend.append('tipoAcesso', formData.tipoAcesso);
+        formDataToSend.append('disponibilidade', formData.disponibilidade);
+        formDataToSend.append('senha', formData.senha);
+        formDataToSend.append('confirmacaoSenha', formData.confirmacaoSenha);
+
+        formDataToSend.append('tipoVeiculo', formData.tipoEntrega);    
+        formDataToSend.append('tamanhoBolsa', formData.espacoBicicleta); 
+        formDataToSend.append('placa', formData.placa);
+        formDataToSend.append('tipoBicicleta', formData.tipoBicicleta);
+
+        formDataToSend.append('rua', formData.rua);
+        formDataToSend.append('numero', formData.numero);
+        formDataToSend.append('cep', formData.cep);
+        formDataToSend.append('bairro', formData.bairro);
+        formDataToSend.append('cidade', formData.cidade);
+        formDataToSend.append('complemento', formData.complemento);
+        formDataToSend.append('captcha', formData.captcha);
+
+        if (perfilFile) formDataToSend.append('fotoPerfil', perfilFile);
+        if (cnhFile) formDataToSend.append('fotoCnh', cnhFile);
 
         try {
-            await api.post('/funcionarios', payload);
+            await api.post('/entregadores', formDataToSend, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             alert("Sucesso!");
             setFormData(initialState);
             setPerfilPreview(null);
             setCnhPreview(null);
+            setPerfilFile(null);
+            setCnhFile(null);
         } catch (error) {
             console.error(error);
             alert("Erro ao cadastrar.");
+            console.log("ERRO DO BACKEND:", error.response?.data);
         }
     }
+
     return (
         <Box className="container">
             <Header />

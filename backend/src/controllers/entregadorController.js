@@ -3,7 +3,29 @@ import Entregador from '../models/Entregador.js';
 import { entregadorSchema } from '../validators/entregadorValidator.js';
 
 export async function criarEntregador(req, res) {
-    const resultado = entregadorSchema.safeParse(req.body);
+
+    const fotoPerfil = req.files?.fotoPerfil?.[0]?`/perfil/${req.files.fotoPerfil[0].filename}`:null;
+    const fotoCnh = req.files?.fotoCnh?.[0]?`/cnh/${req.files.fotoCnh[0].filename}`:null;
+
+    const dadosParaValidar = {
+        ...req.body,
+        endereco: {
+            rua: req.body.rua,
+            numero: req.body.numero,
+            cep: req.body.cep,
+            bairro: req.body.bairro,
+            cidade: req.body.cidade,
+            complemento: req.body.complemento
+        },
+        fotoPerfil,
+        fotoCnh
+    };
+
+    console.log("CAPTCHA: ", req.body.captcha);
+    console.log("TIPO CAPTCHA: ", typeof req.body.captcha);
+
+
+    const resultado = entregadorSchema.safeParse(dadosParaValidar);
 
     if (!resultado.success) {
         return res.status(400).json({

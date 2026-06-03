@@ -4,7 +4,11 @@ import { criarFuncionario, listarFuncionarios } from '../controllers/funcionario
 
 const router = express.Router();
 
-router.post('/', upload.single('fotoPerfil'), criarFuncionario);
+router.post(
+    '/', 
+    upload.single('fotoPerfil'), 
+    criarFuncionario
+);
 
 router.get('/', listarFuncionarios);
 
