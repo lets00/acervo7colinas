@@ -56,11 +56,11 @@ function CadastroEntregadores() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (event, tipo) => {
-        const file = event.target.files[0];
+    const handleFileChange = (file, tipo) => {
         if (!file) return;
 
         const previewUrl = URL.createObjectURL(file);
+
         if (tipo === 'perfilFoto') {
             setPerfilPreview(previewUrl);
             setPerfilFile(file);
@@ -127,12 +127,13 @@ function CadastroEntregadores() {
         formDataToSend.append('placa', formData.placa);
         formDataToSend.append('tipoBicicleta', formData.tipoBicicleta);
 
-        formDataToSend.append('endereco.rua', formData.rua);
-        formDataToSend.append('endereco.numero', formData.numero);
-        formDataToSend.append('endereco.cep', formData.cep);
-        formDataToSend.append('endereco.bairro', formData.bairro);
-        formDataToSend.append('endereco.cidade', formData.cidade);
-        formDataToSend.append('endereco.complemento', formData.complemento);
+        formDataToSend.append('rua', formData.rua);
+        formDataToSend.append('numero', formData.numero);
+        formDataToSend.append('cep', formData.cep);
+        formDataToSend.append('bairro', formData.bairro);
+        formDataToSend.append('cidade', formData.cidade);
+        formDataToSend.append('complemento', formData.complemento);
+        formDataToSend.append('captcha', formData.captcha);
 
         if (perfilFile) formDataToSend.append('fotoPerfil', perfilFile);
         if (cnhFile) formDataToSend.append('fotoCnh', cnhFile);
@@ -150,6 +151,7 @@ function CadastroEntregadores() {
         } catch (error) {
             console.error(error);
             alert("Erro ao cadastrar.");
+            console.log("ERRO DO BACKEND:", error.response?.data);
         }
     }
 
