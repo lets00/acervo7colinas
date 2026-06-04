@@ -156,7 +156,7 @@ function CadastroLivros() {
                                 required: true, 
                                 error: !!errors.ano,
                                 helperText: errors.ano && "Selecione o ano",
-                                sx: { width: '468px' } 
+                                sx: { width: '468px'} 
                               } 
                             }}
                           />

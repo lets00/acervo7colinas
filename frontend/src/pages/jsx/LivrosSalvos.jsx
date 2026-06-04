@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 
@@ -33,25 +34,8 @@ import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { deepOrange, green } from '@mui/material/colors';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import {useNavigate} from "react-router-dom";
 
-
-/* ─────────────────────────────────────────
-   DADOS MOCKADOS
-───────────────────────────────────────── */
-const mockLivros = [
-    { id: "001",capa: "https://i.pinimg.com/736x/dc/28/b4/dc28b49e79cdcddabd62b6bfb34a416d.jpg" , titulo: "Dom Casmurro",                       autor: "Machado de Assis",         genero: "Romance",  ano: 1899 },
-    { id: "002",capa: "https://i.pinimg.com/736x/55/7c/cf/557ccf107bbdaff756cce2732c8c068a.jpg",  titulo: "Pequeno Príncipe",                    autor: "Antoine de Saint-Exupéry", genero: "Fantasia", ano: 1943 },
-    { id: "003",capa: "https://i.pinimg.com/736x/eb/6d/eb/eb6deba5caeb19c81559c21780a9c64e.jpg", titulo: "Extraordinário",                      autor: "R. J. Palacio",            genero: "Romance",  ano: 2017 },
-    { id: "004",capa: " https://i.pinimg.com/736x/c5/54/3a/c5543a2e387cc692b322a315f975e763.jpg", titulo: "Um Sopro de Vida",                    autor: "Clarice Lispector",        genero: "Romance",  ano: 1978 },
-    { id: "005", capa: "https://i.pinimg.com/736x/9d/be/d1/9dbed1bf78884f85b6be452b37d6603a.jpg", titulo: "1984",                                autor: "George Orwell",            genero: "Ficção",   ano: 1949 },
-    { id: "006",capa: "https://i.pinimg.com/736x/4b/09/98/4b09981418a482010e228d8dd7bad1d9.jpg", titulo: "O Hobbit",                            autor: "J.R.R. Tolkien",           genero: "Fantasia", ano: 1937 },
-    { id: "007",capa: "https://i.pinimg.com/1200x/f8/51/e2/f851e2d901b5d5a06fca3f283e07feef.jpg", titulo: "A Hora da Estrela",                   autor: "Clarice Lispector",        genero: "Romance",  ano: 1977 },
-    { id: "008",capa:"https://i.pinimg.com/1200x/a4/be/0c/a4be0c10c9825563670dae3a7d7d63ba.jpg", titulo: "Cem Anos de Solidão",                 autor: "García Márquez",           genero: "Romance",  ano: 1967 },
-    { id: "009",capa: "https://i.pinimg.com/1200x/af/24/f9/af24f9cf0942c17966cd15ab8bb73cf1.jpg", titulo: "Harry Potter e a Pedra Filosofal",    autor: "J.K. Rowling",             genero: "Fantasia", ano: 1997 },
-    { id: "010",capa: "https://i.pinimg.com/736x/ca/c0/13/cac013959360b44653abd276f9019a04.jpg", titulo: "Memórias Póstumas de Brás Cubas",     autor: "Machado de Assis",         genero: "Romance",  ano: 1881 },
-    { id: "011",capa: "https://i.pinimg.com/736x/5c/76/c6/5c76c649b6a05dfa401ceaaacbab18d1.jpg", titulo: "O Alquimista",                        autor: "Paulo Coelho",             genero: "Ficção",   ano: 1988 },
-    { id: "012",capa: "https://i.pinimg.com/736x/bf/92/70/bf927019db0d333afe76d676fa05b8c5.jpg", titulo: "A Revolução dos Bichos",              autor: "George Orwell",            genero: "Ficção",   ano: 1945 },
-];
 
 const GENERO_OPTIONS = [
     "Todos", "Ficção", "Ficção Científica", "Fantasia", "Aventura",
@@ -82,18 +66,51 @@ export default function LivrosSalvos() {
     const [busca, setBusca]               = useState("");
     const [page, setPage]                 = useState(1);
     const [rowsPerPage]                   = useState(5);
+    const [livros, setLivros] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-   
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        carregarLivros();
+    }, []);
+
+    const carregarLivros = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get("http://localhost:3000/livros");
+            setLivros(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar livros:", error);
+            alert("Erro ao carregar os livros da base de dados.");
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleExcluirLivro = async (id) => {
+        if (window.confirm(`Tem certeza que deseja excluir o livro com ID ${id}?`)) {
+            try {
+                await axios.delete(`http://localhost:3000/livros/${id}`);
+                alert("Livro excluído com sucesso!");
+                carregarLivros(); 
+            } catch (error) {
+                console.error("Erro ao excluir livro:", error);
+                alert("Não foi possível excluir o livro.");
+            }
+        }
+    };
+
     const filtrados = useMemo(() => {
-        return mockLivros.filter((l) => {
-            const matchGenero = generoFiltro === "Todos" || l.genero === generoFiltro;
-            const matchBusca  =
-                busca === "" ||
-                l.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-                l.autor.toLowerCase().includes(busca.toLowerCase());
-            return matchGenero && matchBusca;
+        return livros.filter((livro) => {
+            const matchesGenero = generoFiltro === "Todos" || livro.genero === generoFiltro;
+            
+            const matchesBusca = 
+                livro.titulo?.toLowerCase().includes(busca.toLowerCase()) ||
+                livro.autor?.toLowerCase().includes(busca.toLowerCase());
+
+            return matchesGenero && matchesBusca;
         });
-    }, [generoFiltro, busca]);
+    }, [livros, generoFiltro, busca]);
 
     const totalPages = Math.max(1, Math.ceil(filtrados.length / rowsPerPage));
     const paginados  = filtrados.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -220,6 +237,7 @@ export default function LivrosSalvos() {
                                                                 variant="contained"
                                                                 size="small"
                                                                 startIcon={<EditIcon />}
+                                                                onClick={() => navigate(`/editar-livro/${row.id}`)}
                                                                 sx={{ ...actionBtnSx, bgcolor: "#37228B", color: "#fff", "&:hover": { bgcolor: "#2a1870"} }}
                                                             >
                                                                 EDITAR
@@ -279,3 +297,4 @@ export default function LivrosSalvos() {
         </Box>
     );
 }
+

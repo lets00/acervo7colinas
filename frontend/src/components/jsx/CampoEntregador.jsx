@@ -1,4 +1,4 @@
-import React from "react"; // Removido o useState, pois não será usado aqui
+import React, { useState, useEffect, useCallback } from "react"; 
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -19,17 +19,47 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-// Componente agora recebe apenas o necessário via props
-function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
+function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
+    const [perfilPreview, setPerfilPreview] = useState(null);
+    const [cnhPreview, setCnhPreview] = useState(null);
+
+    useEffect(() => {
+        setPerfilPreview(null);
+        setCnhPreview(null);
+    }, [resetKey]);
+
+    useEffect(() => {
+        return () => { if (perfilPreview) URL.revokeObjectURL(perfilPreview); };
+    }, [perfilPreview]);
+ 
+    useEffect(() => {
+        return () => { if (cnhPreview) URL.revokeObjectURL(cnhPreview); };
+    }, [cnhPreview]);
+ 
+    const handleFileChange = useCallback((event, tipo) => {
+        const file = event.target.files[0];
+        if (!file) return;
+ 
+        const url = URL.createObjectURL(file);
+ 
+        if (tipo === 'perfilFoto') {
+            setPerfilPreview(url);
+        } else if (tipo === 'cnhFoto') {
+            setCnhPreview(url);
+        }
+
+        onFileChange(file, tipo);
+    }, [onFileChange]);
+
     return (
         <>
-            <Grid container justifyContent="center" >
+            <Grid container justifyContent="center">
                 <Box className="boxTituloPerfil">
                     <Typography className="textoTituloPerfil" sx={{ ml: 32 }}>
                         Foto de Perfil
                     </Typography>
                 </Box>
-                <Box className="boxTituloCNH" >
+                <Box className="boxTituloCNH">
                     <Typography className="textoTituloCNH" sx={{ ml: 16 }}>
                         Foto da CNH
                     </Typography>
@@ -38,20 +68,22 @@ function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
 
             <Grid item xs={12} md={6}>
                 <Grid container spacing={5} justifyContent="center">
-                    {/* CARD PERFIL */}
+
                     <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoPerfil" >
+                        <Typography className="textoCard textoPerfil">
                             Selecionar Foto
                         </Typography>
                         <Box 
                             component="img" 
-                            src={perfilImg || PerfilCadastros} 
+                            src={perfilPreview || PerfilCadastros} 
                             alt="Perfil" 
                             className="imgPerfil" 
+                            sx={{ objectFit: 'cover' }} 
                         />
                         <Button
                             component="label"
                             variant="contained"
+                            tabIndex={-1}
                             disableElevation
                             className="botaoPerfil"
                             startIcon={<CloudUploadIcon />}
@@ -59,26 +91,32 @@ function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
                             SELECIONAR FOTO
                             <VisuallyHiddenInput
                                 type="file"
-                                onChange={(event) => onFileChange(event, 'perfilFoto')}
+                                onChange={(event) => handleFileChange(event, 'perfilFoto')}
                                 accept="image/*"
                             />
                         </Button>
+                        {errors.perfilFoto && (
+                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
+                                {errors.perfilFoto}
+                            </Typography>
+                        )}
                     </Box>
 
-                    {/* CARD CNH */}
                     <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoCNH" >
+                        <Typography className="textoCard textoCNH">
                             Selecionar Foto da CNH
                         </Typography>
                         <Box 
                             component="img" 
-                            src={cnhImg || CNH} 
+                            src={cnhPreview || CNH} 
                             alt="CNH" 
                             className="imgCNH" 
+                            sx={{ objectFit: 'cover' }} 
                         />
                         <Button
                             component="label"
                             variant="contained"
+                            tabIndex={-1}
                             disableElevation
                             className="botaoCNH"
                             startIcon={<CloudUploadIcon />}
@@ -86,11 +124,17 @@ function CampoEntregador({ perfilImg, cnhImg, onFileChange = () => {} }) {
                             SELECIONAR FOTO
                             <VisuallyHiddenInput
                                 type="file"
-                                onChange={(event) => onFileChange(event, 'cnhFoto')}
+                                onChange={(event) => handleFileChange(event, 'cnhFoto')}
                                 accept="image/*"
                             />
                         </Button>
+                        {errors.cnhFoto && ( 
+                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
+                                {errors.cnhFoto}
+                            </Typography>
+                        )}
                     </Box>
+
                 </Grid>
             </Grid>
         </>

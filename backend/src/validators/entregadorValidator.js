@@ -23,9 +23,9 @@ export const entregadorSchema = z.object({
     placa: z.string().optional(),
     tipoBicicleta: z.string().optional(),
     tamanhoBolsa: z.string().optional(),
-    fotoPerfil: z.string().optional(),
-    fotoCnh: z.string().optional(),
-    captcha: z.boolean().refine((valor) => valor === true, {
+    fotoPerfil:z.string().nullable().optional(),
+    fotoCnh: z.string().nullable().optional(),
+    captcha: z.union([z.boolean(), z.string()]).refine((valor) => valor === true || valor === 'true', {
         message: 'Confirme que você não é um robô!'
     })
 }).refine((dados) => dados.senha === dados.confirmacaoSenha, {

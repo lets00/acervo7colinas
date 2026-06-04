@@ -3,7 +3,29 @@ import Entregador from '../models/Entregador.js';
 import { entregadorSchema } from '../validators/entregadorValidator.js';
 
 export async function criarEntregador(req, res) {
-    const resultado = entregadorSchema.safeParse(req.body);
+
+    const fotoPerfil = req.files?.fotoPerfil?.[0]?`/perfil/${req.files.fotoPerfil[0].filename}`:null;
+    const fotoCnh = req.files?.fotoCnh?.[0]?`/cnh/${req.files.fotoCnh[0].filename}`:null;
+
+    const dadosParaValidar = {
+        ...req.body,
+        endereco: {
+            rua: req.body.rua,
+            numero: req.body.numero,
+            cep: req.body.cep,
+            bairro: req.body.bairro,
+            cidade: req.body.cidade,
+            complemento: req.body.complemento
+        },
+        fotoPerfil,
+        fotoCnh
+    };
+
+    console.log("CAPTCHA: ", req.body.captcha);
+    console.log("TIPO CAPTCHA: ", typeof req.body.captcha);
+
+
+    const resultado = entregadorSchema.safeParse(dadosParaValidar);
 
     if (!resultado.success) {
         return res.status(400).json({
@@ -50,6 +72,30 @@ export async function criarEntregador(req, res) {
         });
 
     } catch (error) {
+
+        if (error.name === 'SequelizeUniqueConstraintError') {
+
+            const campo = error.errors[0].path;
+
+            if (campo === 'email') {
+                return res.status(400).json({
+                    mensagem: 'Este email já está cadastrado!'
+                });
+            }
+
+            if (campo === 'cpf') {
+                return res.status(400).json({
+                    mensagem: 'Este CPF já está cadastrado!'
+                });
+            }
+            
+            if (campo === 'placa') {
+                return res.status(400).json({
+                    mensagem: 'Esta placa já está cadastrada!'
+                });
+            }
+        }
+
         return res.status(500).json({
             mensagem: 'Erro ao cadastrar entregador!',
             erro: error.message

@@ -3,7 +3,18 @@ import { funcionarioSchema } from "../validators/funcionarioValidator.js";
 import bcrypt from 'bcrypt';
 
 export async function criarFuncionario(req,res) {
-    const resultado = funcionarioSchema.safeParse(req.body);
+    const fotoPerfil = req.file ? `/perfil/${req.file.filename}`: null;
+
+    const dadosParaValidar = {
+        ...req.body,
+        fotoPerfil
+    };
+
+    console.log("BODY FUNCIONARIO:", req.body);
+    console.log("SENHA:", req.body.senha);
+    console.log("CONFIRMAÇÃO::", req.body.confirmacaoSenha);
+
+    const resultado = funcionarioSchema.safeParse(dadosParaValidar);
 
     if(!resultado.success) {
         return res.status(400).json({
@@ -35,6 +46,29 @@ export async function criarFuncionario(req,res) {
             funcionario: novoFuncionario
         });
     } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+
+            const campo = error.errors[0].path;
+
+            if (campo === 'email') {
+                return res.status(400).json({
+                    mensagem: 'Este email já está cadastrado!'
+                });
+            }
+
+            if (campo === 'cpf') {
+                return res.status(400).json({
+                    mensagem: 'Este CPF já está cadastrado!'
+                });
+            }
+            
+            if (campo === 'matricula') {
+                return res.status(400).json({
+                    mensagem: 'Esta matrícula já está cadastrada!'
+                });
+            }
+        }     
+        
         return res.status(500).json({
             mensagem: 'Erro ao cadastrar o funcionário!',
             erro: error.message

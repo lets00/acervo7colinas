@@ -165,6 +165,12 @@ export async function criarLivro(req, res) {
             livro: novoLivro
         });
     } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({
+                mensagem: 'Já existe um livro cadastrado com este ISBN!'
+            });
+        }
+
         return res.status(500).json({
             mensagem: 'Erro ao cadastrar livro!',
             erro: error.message
