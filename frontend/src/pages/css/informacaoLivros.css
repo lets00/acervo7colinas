@@ -136,7 +136,6 @@
     display: flex;
     gap: 28px;
     padding-bottom: 33px;
-    padding-top: 60px;
 
 }
 
@@ -163,4 +162,6 @@
 .exemplares-table th {
     text-align: center;
 }
-
+.container-footer {
+    margin-top: 40px;
+}

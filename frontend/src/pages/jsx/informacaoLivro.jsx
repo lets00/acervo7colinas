@@ -5,6 +5,8 @@ import SectionHeader from "../../components/jsx/SectionHeader";
 import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
+import Footer from "../../components/jsx/Footer";
+
 
 import iconInfo from "../../assets/info.png";
 import iconCalendario from "../../assets/calendario.png";
@@ -147,9 +149,7 @@ function InformacaoLivro() {
 
                         <div className="livro-generos">
                             <p>Gêneros:</p>
-                            {livro.generos?.map((g, index) => (
-                                <span key={index}>{g}</span>
-                            ))}
+                            <span>{livro.genero}</span>
                         </div>
 
                         <div className="descricao-container">
@@ -179,7 +179,6 @@ function InformacaoLivro() {
 
                 </div>
 
-                {/* 📚 EXEMPLARES */}
                 <SectionHeader title="Exemplares" />
 
                 <div className="exemplares-section">
@@ -227,6 +226,8 @@ function InformacaoLivro() {
                         />
                     ))}
                 </div>
+                <div className="container-footer"><Footer /> </div>
+                
 
             </Box>
         </Box>
