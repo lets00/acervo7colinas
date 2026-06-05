@@ -28,7 +28,7 @@ export async function login(req, res) {
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
         if (!senhaValida) {
-            return res.status(400).json ({
+            return res.status(400).json({
                 mensagem: "Senha inválida"
             });
         }

@@ -36,9 +36,11 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 
+import Footer from "../../components/jsx/Footer";
 import Header from "../../components/jsx/Header";
 import Girlreading from "../../assets/Girl-enjoying-reading.png"; // ajuste o caminho
 import "../css/MeusEmprestimos.css";
+
 
 /* ─────────────────────────────────────────
    DADOS MOCKADOS
@@ -325,6 +327,10 @@ export default function MeusEmprestimos() {
                     </div>
 
                 </div>
+                <div className="container-footer"><Footer /> </div>
+
+                
+
             </Box>
         </Box>
     );

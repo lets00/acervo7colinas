@@ -5,7 +5,7 @@ import BookCarrossel from "../../components/jsx/BookCarrossel";
 import SectionHeader from "../../components/jsx/SectionHeader";
 import Header from "../../components/jsx/Header";
 import debateImg from "../../assets/imagem_debate.png";
-
+import Footer from "../../components/jsx/Footer";
 
 // Tabela
 import Table from "@mui/material/Table";
@@ -58,10 +58,14 @@ function Home() {
         );
     }
 
+
     useEffect(() => {
-        fetch("http://localhost:3000/destaques")
+        fetch("http://localhost:3000/livros")
             .then(res => res.json())
-            .then(setDestaques);
+            .then(data => {
+            // Adapte conforme sua API retorna os dados
+            setDestaques(data);   // ou data.destaques, dependendo da resposta
+            });
 
         fetch("http://localhost:3000/novidades")
             .then(res => res.json())
@@ -149,6 +153,7 @@ function Home() {
                         <img src={debateImg} alt="Debate" />
                     </div>
                 </div>
+                <div className="container-footer"><Footer /> </div>
             </Box>
         </Box>
     );

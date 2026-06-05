@@ -30,9 +30,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <Container  maxWidth={false} sx={{ marginTop: '2rem' }}> 
-
-          
+        <Container maxWidth={false} sx={{ marginTop: '2rem' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />
@@ -56,7 +54,7 @@ function App() {
 
         </Container>
       </BrowserRouter>
-        
+
     </ThemeProvider>
   );
 }

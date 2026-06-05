@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -12,6 +12,9 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
+import Footer from "../../components/jsx/Footer";
+import { isAuthenticated } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
@@ -33,7 +36,7 @@ const progressData = [
 ];
 
 // Gráfico 1 — livros por mês (horizontal bar)
-const meses = ["Jan","Feb","Mar","Apr","May","Jun","July","Aug","Sep","Oct","Nov","Dec"];
+const meses = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const livrosPorMes = [3, 5, 2, 8, 6, 12, 9, 14, 11, 7, 18, 22];
 
 // Gráfico 2 — páginas por dia
@@ -51,11 +54,19 @@ const generos = [
 /* ─── componente ─── */
 
 export default function Dashboard() {
-    // menu kebab por card de progresso
-    const [anchorEls, setAnchorEls] = useState({});   
+    // teste de uso do login obrigatório com redirecionamento
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthenticated()) {
+            navigate("/login");
+        }
+    }, [navigate])
+
+    const [anchorEls, setAnchorEls] = useState({});
     const [destaques, setDestaques] = useState([]);
-    
-    
+
+
 
 
     const scroll = (ref, direction) => {
@@ -185,7 +196,7 @@ export default function Dashboard() {
                 </div>
 
 
-                {/* DESTAQUES */}                
+                {/* DESTAQUES */}
 
                 <SectionHeader title="Destaque" />
                 <BookCarousel books={destaques} />
@@ -193,7 +204,7 @@ export default function Dashboard() {
 
 
                 {/* VISÃO GERAL */}
-                <div style={{ marginBottom: "80px" }}>   
+                <div style={{ marginBottom: "40px" }}>
                     <SectionHeader title="Visão geral" />
                 </div>
 
@@ -250,6 +261,10 @@ export default function Dashboard() {
                         />
                     </div>
                 </div>
+                <div className="footer-container">
+                    <Footer />
+                </div>
+
             </Box>
         </Box>
     );

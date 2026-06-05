@@ -1,9 +1,14 @@
 import "../css/SectionHeader.css";
-function SectionHeader({ title, marginBottom = "-40px" }) {
+import { Divider } from "@mui/material";
+
+function SectionHeader({ title, marginBottom = "0px" }) {
     return (
-        <div className="section-header" style={{ marginBottom: marginBottom }}>
-            <h3>{title}</h3>
-        </div>
+        <>
+            <div className="section-header">
+                <h3>{title}</h3>
+            </div>
+            
+        </>
     );
 }
 

@@ -5,28 +5,19 @@
 .section-header {
     display: flex;
     align-items: center;
-
-    min-height: 50px;
-
-    padding: 
-        clamp(6px, 1.5vw, 6px) 
-        clamp(16px, 4vw, 30px);
-
-    background: #FFF;
-    border-bottom: 2px solid #F2A21E;
+    padding: clamp(6px, 1.5vw, 6px) 0;
+    background: transparent;
 }
 
 /* Título */
 .section-header h3 {
     margin: 0;
-
+    padding-left: 20px;
     font-family: "Inter", sans-serif;
-    font-size: clamp(18px, 3vw, 28px);
+    font-size: clamp(18px, 3vw, 25px);
     font-weight: 700;
     line-height: 1.2;
-
     color: #37228B;
-
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
