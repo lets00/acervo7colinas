@@ -131,6 +131,7 @@ export default function LivrosSalvos() {
                             variant="contained"
                              sx={{ width: "100%"}}
                             startIcon={<AddIcon />}
+                             onClick={() => navigate("/livros")}
                             sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
                         >
                             Adicionar novo livro
@@ -237,8 +238,13 @@ export default function LivrosSalvos() {
                                                                 variant="contained"
                                                                 size="small"
                                                                 startIcon={<EditIcon />}
-                                                                onClick={() => navigate(`/editar-livro/${row.id}`)}
-                                                                sx={{ ...actionBtnSx, bgcolor: "#37228B", color: "#fff", "&:hover": { bgcolor: "#2a1870"} }}
+                                                                onClick={() => navigate(`/livros/editar/${row.id}`)}
+                                                                sx={{
+                                                                    ...actionBtnSx,
+                                                                    bgcolor: "#37228B",
+                                                                    color: "#fff",
+                                                                    "&:hover": { bgcolor: "#2a1870" }
+                                                                }}
                                                             >
                                                                 EDITAR
                                                             </Button>

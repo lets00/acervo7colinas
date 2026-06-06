@@ -36,7 +36,7 @@ const progressData = [
 ];
 
 // Gráfico 1 — livros por mês (horizontal bar)
-const meses = ["Jan","Feb","Mar","Apr","May","Jun","July","Aug","Sep","Oct","Nov","Dec"];
+const meses = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const livrosPorMes = [3, 5, 2, 8, 6, 12, 9, 14, 11, 7, 18, 22];
 
 // Gráfico 2 — páginas por dia
@@ -63,10 +63,10 @@ export default function Dashboard() {
         }
     }, [navigate])
 
-    const [anchorEls, setAnchorEls] = useState({});   
+    const [anchorEls, setAnchorEls] = useState({});
     const [destaques, setDestaques] = useState([]);
-    
-    
+
+
 
 
     const scroll = (ref, direction) => {
@@ -196,7 +196,7 @@ export default function Dashboard() {
                 </div>
 
 
-                {/* DESTAQUES */}                
+                {/* DESTAQUES */}
 
                 <SectionHeader title="Destaque" />
                 <BookCarousel books={destaques} />
@@ -204,7 +204,7 @@ export default function Dashboard() {
 
 
                 {/* VISÃO GERAL */}
-                <div style={{ marginBottom: "40px" }}>   
+                <div style={{ marginBottom: "40px" }}>
                     <SectionHeader title="Visão geral" />
                 </div>
 
