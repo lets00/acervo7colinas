@@ -46,13 +46,8 @@ function CampoFuncionario({ onFileChange = () => {}, errors = {}, resetKey }) {
       </Grid> 
       <Grid item xs={12} md={6}>
         <Grid container spacing={5} justifyContent="center">
-          <Box className="barra" sx={{mt:8}}>
-            <Typography className="barra-texto" sx={{ ml: 65 }}>
-                Foto de Perfil
-            </Typography>
-        </Box>
 
-          <Box className="card" sx={{ mt: -7 }}>
+          <Box className="card" sx={{ mt: 2 }}>
               <Typography className="textoCard textoPerfil" sx={{ ml: 85 }}>
                   Selecionar Foto
               </Typography>
