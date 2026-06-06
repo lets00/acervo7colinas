@@ -9,11 +9,14 @@ import "../../pages/css/Funcionarios.css";
 import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import CampoFuncionario from "../../components/jsx/CampoFuncionario.jsx";
 import api from "../../services/apis";
+import { useNavigate } from "react-router-dom";
 
 function CadastroFuncionarios() {
     const [showPassword, setShowPassword] = useState(false);
 
-    const [fotoPerfil, setFotoPerfil] = useState(null);
+    const [fotoPerfil, setFotoPerfil] = useState(null);3
+
+    const navigate = useNavigate();
  
     const [formData, setFormData] = useState({
         nomeCompleto: '',
@@ -100,6 +103,8 @@ function CadastroFuncionarios() {
             });
  
             setShowPassword(false);
+
+            navigate("/login");
  
         } catch (error) {
             console.error("Erro detalhado:", error);
@@ -279,6 +284,11 @@ function CadastroFuncionarios() {
                                 </RadioGroup>
                         </FormControl>
                     </Grid>
+                    <Box className="barra" sx={{mt:4}}>
+                        <Typography className="barra-texto" sx={{ml:60}}>
+                            Colocar foto de perfil:
+                        </Typography>
+                    </Box>
                     <CampoFuncionario
                         onFileChange={(file) => {
                             setFotoPerfil(file);

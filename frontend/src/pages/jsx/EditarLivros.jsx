@@ -226,6 +226,7 @@ function EditarLivros() {
                   fullWidth
                   sx={{mt:2.5}}
                   label="ISBN"
+                  sx={{mt: 2.5}}
                   variant="outlined"
                   name="isbn"
                   value={formData.isbn}
@@ -238,6 +239,7 @@ function EditarLivros() {
                   <DatePicker
                     label="Ano"
                     value={formData.ano}
+                    sx={{mt: 2.5}}
                     onChange={handleDateChange}
                     views={["year"]}
                     format="YYYY"
@@ -257,6 +259,7 @@ function EditarLivros() {
                   <InputLabel>Gênero</InputLabel>
                   <Select
                     name="genero"
+                    sx={{mt: 2.5}}
                     value={formData.genero}
                     onChange={handleChange}
                     input={<OutlinedInput label="Gênero" />}
@@ -319,10 +322,12 @@ function EditarLivros() {
             <TextField
                   required
                   fullWidth
-                  label="Quantidade em Estoque"
+                  label="Quantidade de Estoque"
                   type="number"
                   name="quantidadeExemplares"
                   inputProps={{ min: 0 }}
+                  sx={{ width: "960px" }}
+
                   value={formData.quantidadeExemplares}
                   onChange={handleChange}
                   error={!!errors.quantidadeExemplares}

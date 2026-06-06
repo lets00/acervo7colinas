@@ -6,15 +6,20 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../css/Login.css";
-import Header from "../../components/jsx/HeaderLogin";
-import StackBooks from "../../assets/StackBooks.png";
-import PinkBook from "../../assets/PinkBook.png";
-import Books from "../../assets/Books.png";
+
+import HeaderLogin from "../../components/jsx/HeaderLogin";
+import StackBooks     from "../../assets/StackBooks.png";
+import PinkBook       from "../../assets/PinkBook.png";
+import Books          from "../../assets/Books.png";
+
 import OpenOrangeBook from "../../assets/OpenOrangeBook.png";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useNavigate } from "react-router-dom";
 import { saveToken, saveUsuario } from "../../utils/auth";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+
 
 const label = { slotProps: { input: { "aria-label": "Checkbox demo" } } };
 
@@ -26,12 +31,22 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [mostrarTipos, setMostrarTipos] = useState(false);
+  const [email, setEmail]               = useState('');
+  const [senha, setSenha]               = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleOpenMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   const handleClickShowPassword = () => setShowPassword((s) => !s);
   const handleMouseDownPassword = (e) => e.preventDefault();
@@ -49,6 +64,8 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.log("STATUS:", response.status);
+      console.log("RESPOSTA:", data);
 
       if (response.ok) {
         saveToken(data.token);
@@ -72,7 +89,7 @@ export default function Login() {
         className="container"
       >
         <Box className="header" sx={{ ml: -60 }}>
-          <Header />
+          <HeaderLogin />
         </Box>
 
         <Box component="img" src={StackBooks} alt="StackBooks" className="img-livros" />
@@ -81,7 +98,7 @@ export default function Login() {
         <Box component="img" src={Books} alt="Books" className="img-livros-Quatro" />
 
         <Box className="center-content">
-          <Box className="glass" sx={{ width: 850, minHeight: 400, mt: -90 }}>
+          <Box className="glass" sx={{ width: 900, minHeight: 600, mt: -90 }}>
 
             <Typography variant="h4" align="center" className="titulo" sx={{ mt: 5 }}>
               Bem Vindo!
@@ -139,21 +156,30 @@ export default function Login() {
                   Esqueceu a senha?
                 </Typography>
               </Box>
-              <Box className="botoes" sx={{ mt: 3 }}>
-                <Button className="btn-cadastrar" sx={{ color: "#ffff", width: "750px" }} >
-                  Entrar
+              <Box className="botoes" sx={{mt:3}}> 
+                  <Button
+                  type="submit"
+                  className="btn-cadastrar"
+                  sx={{ color:"#ffff", width: "750px" }}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={20} color="inherit" /> : "Entrar"}
                 </Button>
               </Box>
 
               <Grid className="linha-login">
                 <Typography className="texto-cadastro" sx={{ color: "#242424", mt: 4 }}>
-                  Já Tem Cadastro?
+                  Não Tem Cadastro?
                 </Typography>
               </Grid>
               <Grid>
-                <Typography className="texto-login" sx={{ color: "#312783", mt: 1 }}>
-                  Crie conta
+                <Typography
+                  variant="body2"
+                  onClick={() => navigate("/usuarios")}sx={{ cursor: "pointer", color: "#312783" }}
+                >
+                  Criar Conta
                 </Typography>
+                
               </Grid>
 
               <Box className="icones">

@@ -19,10 +19,12 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
-  const token   = getToken();    // não importado
-  const usuario = getUsuario();  // não importado
+  const token = getToken();
+  const usuario = getUsuario();
+  
+  // Verificar depois qual campo o backend retorna
+  const isAdmin = usuario?.role === "admin";
 
-  // Pega as iniciais do nome ou email
   const getIniciais = () => {
     if (usuario?.nomeCompleto) {
       return usuario.nomeCompleto
@@ -55,7 +57,35 @@ export default function Header() {
 
         <Typography component={Link} to="/"className="header-text">Inicio</Typography>
         <Typography component={Link} to="/acervo" className="header-text">Acervo</Typography>
+        {token && isAdmin && (
+          <>
+            <Typography
+              component={Link}
+              to="/cadastro-livros"
+              className="header-text"
+            >
+              Cadastrar Livro
+            </Typography>
 
+            <Typography
+              component={Link}
+              to="/livros-salvos"
+              className="header-text"
+            >
+              Livros Salvos
+            </Typography>
+          </>
+        )}
+
+        {token && !isAdmin && (
+          <Typography
+            component={Link}
+            to="/dashboard"
+            className="header-text"
+          >
+            Dashboard
+          </Typography>
+        )}
         <TextField
           size="small"
           className="header-input"
@@ -75,7 +105,6 @@ export default function Header() {
           <Stack direction="row" spacing={4} className="header-stack-row">
 
             {token ? (
-              // ✅ LOGADO: mostra avatar com iniciais (ou foto se tiver)
               <>
                 <Tooltip title={usuario?.nomeCompleto || usuario?.email || 'Perfil'}>
                   <IconButton onClick={handleAbrirMenu} sx={{ p: 0 }}>
@@ -97,7 +126,6 @@ export default function Header() {
                   </IconButton>
                 </Tooltip>
 
-                {/* Menu dropdown ao clicar no avatar */}
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
@@ -112,13 +140,12 @@ export default function Header() {
                 </Menu>
               </>
             ) : (
-              // ❌ NÃO LOGADO: mostra botões normais
               <>
                 <Chip
                   label="Criar Conta"
                   size="small"
                   className="header-chip-criar"
-                  onClick={() => navigate('/cadastro')}
+                  onClick={() => navigate('/usuarios')}
                 />
                 <Chip
                   label="Login"
