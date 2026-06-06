@@ -214,6 +214,7 @@ function EditarLivros() {
                   required
                   fullWidth
                   label="ISBN"
+                  sx={{mt: 2.5}}
                   variant="outlined"
                   name="isbn"
                   value={formData.isbn}
@@ -226,6 +227,7 @@ function EditarLivros() {
                   <DatePicker
                     label="Ano"
                     value={formData.ano}
+                    sx={{mt: 2.5}}
                     onChange={handleDateChange}
                     views={["year"]}
                     format="YYYY"
@@ -240,23 +242,11 @@ function EditarLivros() {
                   />
                 </LocalizationProvider>
 
-                <TextField
-                  required
-                  fullWidth
-                  label="Quantidade de exemplares"
-                  type="number"
-                  name="quantidadeExemplares"
-                  inputProps={{ min: 0 }}
-                  value={formData.quantidadeExemplares}
-                  onChange={handleChange}
-                  error={!!errors.quantidadeExemplares}
-                  helperText={errors.quantidadeExemplares}
-                />
-
                 <FormControl required fullWidth error={!!errors.genero}>
                   <InputLabel>Gênero</InputLabel>
                   <Select
                     name="genero"
+                    sx={{mt: 2.5}}
                     value={formData.genero}
                     onChange={handleChange}
                     input={<OutlinedInput label="Gênero" />}
@@ -315,6 +305,19 @@ function EditarLivros() {
                 />
               </Box>
             </Grid>
+            <TextField
+                  required
+                  fullWidth
+                  label="Quantidade de Estoque"
+                  type="number"
+                  name="quantidadeExemplares"
+                  inputProps={{ min: 0 }}
+                  sx={{ width: "960px" }}
+                  value={formData.quantidadeExemplares}
+                  onChange={handleChange}
+                  error={!!errors.quantidadeExemplares}
+                  helperText={errors.quantidadeExemplares}
+                />
           </Grid>
 
 

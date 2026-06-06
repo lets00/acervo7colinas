@@ -39,7 +39,7 @@ function CampoFuncionario({ onFileChange = () => {}, errors = {}, resetKey }) {
 
   return (
     <>
-      <Grid container justifyContent="center" sx={{mt:-6}}>
+      <Grid container justifyContent="center" sx={{mt:-2}}>
         <Box className="foto-barra" >
 
         </Box>

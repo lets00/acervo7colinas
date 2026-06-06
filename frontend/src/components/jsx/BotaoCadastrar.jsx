@@ -1,11 +1,13 @@
 import { Box, Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { useNavigate } from "react-router-dom";
 
 function BotaoCadastrar({
     onCancel = () => {},
     loading = false,
     disabled = false,
 }) {
+    const navigate = useNavigate();
     return (
         <>
             <Box className="botoes" sx={{ mt: 6 }}>
@@ -33,9 +35,9 @@ function BotaoCadastrar({
                 </Typography>
             </Grid>
             <Grid>
-                <Typography className="texto-login" sx={{ color: "#312783", mt: 1 }}>
+                <Button className="texto-login" onClick={() => navigate('/login')} sx={{ color: "#312783", mt: 1 }}>
                     Faça Login
-                </Typography>
+                </Button>
             </Grid>
             <Box className="icones">
                 <Button

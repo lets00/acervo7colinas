@@ -24,10 +24,13 @@ import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import "../css/Usuario.css";
 import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
 import api from "../../services/apis";
+import { useNavigate } from "react-router-dom";
 
 dayjs.locale('pt-br');
 
 function CadastroUsuarios() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         nomeCompleto: '',
         cpf: '',
@@ -166,6 +169,8 @@ function CadastroUsuarios() {
             setFotoPerfil(null);
             setFotoRg(null);
             setComprovanteResidencial(null);
+
+            navigate("/login");
 
         } catch (error) {
             console.error("Erro ao cadastrar:", error);
