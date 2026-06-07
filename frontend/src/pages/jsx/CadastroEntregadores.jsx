@@ -14,6 +14,7 @@ import BotaoCadastrar from '../../components/jsx/BotaoCadastrar.jsx';
 import api from "../../services/apis";
 import "../css/Entregadores.css";
 import CampoEntregador from "../../components/jsx/CampoEntregador.jsx";
+import { useNavigate } from "react-router-dom";
 
 dayjs.locale('pt-br');
 
@@ -51,6 +52,8 @@ function CadastroEntregadores() {
     const [perfilFile, setPerfilFile] = useState(null);
     const [cnhFile, setCnhFile] = useState(null);
 
+    const navigate = useNavigate();
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -148,6 +151,8 @@ function CadastroEntregadores() {
             setCnhPreview(null);
             setPerfilFile(null);
             setCnhFile(null);
+
+            navigate("/login");
         } catch (error) {
             console.error(error);
             alert("Erro ao cadastrar.");
@@ -467,46 +472,75 @@ function CadastroEntregadores() {
                             </FormControl>
                         </Grid>
 
-                        <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                        {formData.tipoEntrega !== "Bicicleta" && (
+                            <Grid className="container-retangulo-um" sx={{ mt: 3, alignItems: 'center', ml: 25 }}>
+                                <Typography sx={{ color: "#242424", mt: 3 }}>
                                 Placa do Carro/Moto
-                            </Typography>
-                            <TextField
-                                fullWidth label="Placa" size="small"
-                                sx={{ width: "760px", mt: 1 }}
-                                name="placa" value={formData.placa} onChange={handleChange}
-                            />
-                        </Grid>
+                                </Typography>
 
-                        <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
-                            <Typography sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif", mt: 3 }}>
+                                <TextField
+                                fullWidth
+                                label="Placa"
+                                size="small"
+                                sx={{ width: "760px", mt: 1 }}
+                                name="placa"
+                                value={formData.placa}
+                                onChange={handleChange}
+                                />
+                            </Grid>
+                            )}
+
+                        {formData.tipoEntrega === "Bicicleta" && (
+                            <Grid className="container-retangulo" sx={{ mt: 4, alignItems: 'center', ml: 55 }}>
+                                <Typography sx={{ color: "#242424", mt: 3 }}>
                                 Bicicleta Informações
-                            </Typography>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Typography>
+
+                                <Grid sx={{ mt: 2, display: 'flex' }}>
                                 <RadioGroup
                                     row
-                                    aria-labelledby="tipo-bicicleta-label"
                                     name="tipoBicicleta"
                                     value={formData.tipoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Bicicleta comum" control={<Radio />} label="Bicicleta comum" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Bicicleta elétrica" control={<Radio />} label="Bicicleta elétrica" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel
+                                    value="Bicicleta comum"
+                                    control={<Radio />}
+                                    label="Bicicleta comum"
+                                     sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }}
+                                    />
+                                    <FormControlLabel
+                                    value="Bicicleta elétrica"
+                                    control={<Radio />}
+                                    label="Bicicleta elétrica"
+                                     sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }}
+                                    />
                                 </RadioGroup>
-                            </Grid>
-                            <Grid sx={{ mt: 2, alignItems: 'center', display: 'flex' }}>
+                                </Grid>
+
+                                <Grid sx={{ mt: 2, display: 'flex' }}>
                                 <RadioGroup
                                     row
-                                    aria-labelledby="espaco-bicicleta-label"
                                     name="espacoBicicleta"
                                     value={formData.espacoBicicleta}
                                     onChange={handleChange}
                                 >
-                                    <FormControlLabel value="Pequena (Mochila)" control={<Radio />} label="Pequena (Mochila)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
-                                    <FormControlLabel value="Média (Caixa/Cesta)" control={<Radio />} label="Média (Caixa/Cesta)" sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }} />
+                                    <FormControlLabel
+                                    value="Pequena (Mochila)"
+                                    control={<Radio />}
+                                    label="Pequena (Mochila)"
+                                    sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }}
+                                    />
+                                    <FormControlLabel
+                                    value="Média (Caixa/Cesta)"
+                                    control={<Radio />}
+                                    label="Média (Caixa/Cesta)"
+                                    sx={{ color: "#242424", fontFamily: "'Roboto', sans-serif" }}
+                                    />
                                 </RadioGroup>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        )}
                     </Grid>
 
                     <CampoEntregador 

@@ -22,6 +22,7 @@ import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
 import FuncionariosSalvos from "./pages/jsx/FuncionariosSalvos.jsx";
 import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import EditarLivros from "./pages/jsx/EditarLivros.jsx";
+import UsuariosSalvos from "./pages/jsx/UsuariosSalvos.jsx";
 
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
