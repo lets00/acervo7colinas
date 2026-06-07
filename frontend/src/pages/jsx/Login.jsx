@@ -69,10 +69,10 @@ export default function Login() {
 
       if (response.ok) {
         saveToken(data.token);
-        saveUsuario({ email });
+        saveUsuario(data.usuario);
         navigate('/');
       } else {
-        setErro(data.mensagem || 'Erro ao fazer login.');
+        setErro(data.mensagem || 'Login ou senha incorreto');
       }
     } catch (err) {
       setErro('Erro da conexão com o servidor.');

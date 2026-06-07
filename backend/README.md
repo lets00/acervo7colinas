@@ -83,7 +83,7 @@ O sistema possui autenticação com bcrypt e JWT.
 
 Usuário de teste criado pelo seed:
 
-Email: usuario.teste@acervo7colinas.com.br  
+Email: usuario@acervo7colinas.com.br  
 Senha: 123456
 
 Rota:
@@ -93,7 +93,7 @@ POST /login
 Body:
 
 {
-  "email": "usuario.teste@acervo7colinas.com.br",
+  "email": "usuario@acervo7colinas.com.br",
   "senha": "123456"
 }
 

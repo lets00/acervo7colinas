@@ -17,9 +17,25 @@ export async function login(req, res) {
             });
         }
 
-        let usuario = await Usuario.findOne({ where: { email } }) || await Funcionario.findOne({ where: { email } }) || await Entregador.findOne({ where: { email } });
+        let tipo = "";
+        let usuario = await Usuario.findOne({ where: { email } });
+        
+        if (usuario) {
+            tipo = "usuario";
+        } else {
+            usuario = await Funcionario.findOne({ where: { email } });
+            if (usuario) {
+                // Mapear tipos do banco para os perfis das rotas
+                if (usuario.tipoAcesso === "Administrador") tipo = "admin";
+                else if (usuario.tipoAcesso === "Funcionário comum") tipo = "funcionario";
+                else tipo = "funcionario";
+            } else {
+                usuario = await Entregador.findOne({ where: { email } });
+                if (usuario) tipo = "entregador";
+            }
+        }
 
-        if (!Usuario) {
+        if (!usuario) {
             return res.status(401).json({
                 mensagem: 'Email não cadastrado!'
             });
@@ -37,21 +53,22 @@ export async function login(req, res) {
             { 
                 id: usuario.id,
                 email: usuario.email,
-                tipo
+                tipo: tipo
             },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || "segredo", // fallback to avoid crash if env is missing
             { expiresIn: "1h" }
         );
 
-        return res.json(200).json({
+        return res.status(200).json({
             mensagem: "Login realizado com sucesso!",
             token,
-            usuario
+            usuario,
+            tipo
         });
 
     } catch (error) {
         return res.status(500).json({
-            mensagem: "Erro ao realizar login!",
+            mensagem: "login ou senha incorreto",
             erro: error.message
         });
     }
