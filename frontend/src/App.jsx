@@ -24,6 +24,8 @@ import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import EditarLivros from "./pages/jsx/EditarLivros.jsx";
 
 
+import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
+
 const theme = createTheme();
 
 function App() {
@@ -32,24 +34,32 @@ function App() {
       <BrowserRouter>
         <Container maxWidth={false} sx={{ marginTop: '2rem' }}>
           <Routes>
+            {/* 🔓 Rotas Públicas */}
             <Route path="/" element={<Home />} />
-            <Route path="/livro/:id" element={<InformacaoLivro />} />
-            <Route path="/livros" element={<CadastroLivros />} />
-            <Route path="/entregadores" element={<CadastroEntregadores />} />
-            <Route path="/funcionarios" element={<CadastroFuncionarios />} />
-            <Route path="/usuarios" element={<CadastroUsuarios />} />
             <Route path="/login" element={<Login />} />
             <Route path="/esqueci-senha" element={<EsqueciSenha />} />
             <Route path="/enviado-email" element={<EnviadoEmail />} />
             <Route path="/gerar-senha" element={<GerarSenha />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
-            <Route path="/livros-salvos" element={<LivrosSalvos />} />
-            <Route path="/emprestimos" element={<MeusEmprestimos />} />
+            <Route path="/livro/:id" element={<InformacaoLivro />} />
+            <Route path="/usuarios" element={<CadastroUsuarios />} />
             <Route path="/acervo" element={<NossoAcervo />} />
-            <Route path="/funcionarios-salvos" element={<FuncionariosSalvos />} />
-            <Route path="/entregadores-salvos" element={<EntregadoresSalvos />} />
-            <Route path="/editar-livro/:id" element={<EditarLivros />} />
+
+            {/* 👤 Rotas do Usuário (e superiores) */}
+
+            <Route path="/emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario', 'entregador']}><Dashboard /></ProtectedRoute>} />
+
+            {/* 🔧 Rotas de Funcionário/Admin */}
+            <Route path="/livros" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroLivros /></ProtectedRoute>} />
+            <Route path="/editar-livro/:id" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EditarLivros /></ProtectedRoute>} />
+            <Route path="/livros-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><LivrosSalvos /></ProtectedRoute>} />
+            <Route path="/entregadores" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroEntregadores /></ProtectedRoute>} />
+            <Route path="/entregadores-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EntregadoresSalvos /></ProtectedRoute>} />
+
+            {/* 🔴 Rotas Exclusivas do Admin */}
+            <Route path="/funcionarios" element={<ProtectedRoute allowedRoles={['admin']}><CadastroFuncionarios /></ProtectedRoute>} />
+            <Route path="/funcionarios-salvos" element={<ProtectedRoute allowedRoles={['admin']}><FuncionariosSalvos /></ProtectedRoute>} />
           </Routes>
 
         </Container>
