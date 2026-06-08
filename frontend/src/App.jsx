@@ -53,7 +53,7 @@ function App() {
 
             {/* 🔧 Rotas de Funcionário/Admin */}
             <Route path="/livros" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroLivros /></ProtectedRoute>} />
-            <Route path="/editar-livro/:id" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EditarLivros /></ProtectedRoute>} />
+            <Route path="/livros/editar/:id" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EditarLivros /></ProtectedRoute>} />
             <Route path="/livros-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><LivrosSalvos /></ProtectedRoute>} />
             <Route path="/entregadores" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroEntregadores /></ProtectedRoute>} />
             <Route path="/entregadores-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EntregadoresSalvos /></ProtectedRoute>} />
