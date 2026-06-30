@@ -19,12 +19,18 @@ export default function Header() {
   const isAdmin = user?.role === 'admin';
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleOpenMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [anchorCriarConta, setAnchorCriarConta] = useState(null);
+
+  const abrirMenuCriarConta = (event) => {
+    setAnchorCriarConta(event.currentTarget);
   };
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
+  const fecharMenuCriarConta = () => {
+    setAnchorCriarConta(null);
+  };
+
+  const handleOpenMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handlePerfil = () => { 
@@ -75,8 +81,32 @@ export default function Header() {
               label="Criar Conta"
               size="small"
               className="header-chip-criar"
-              onClick={() => navigate("/usuarios")}sx={{ cursor: "pointer" }}
+              onClick={abrirMenuCriarConta}
+              sx={{ cursor: "pointer" }}
             />
+             <Menu
+              anchorEl={anchorCriarConta}
+              open={Boolean(anchorCriarConta)}
+              onClose={fecharMenuCriarConta}
+            >
+              <MenuItem
+                onClick={() => {
+                  navigate("/usuarios");
+                  fecharMenuCriarConta();
+                }}
+              >
+                Usuário
+              </MenuItem>
+
+              <MenuItem
+                onClick={() => {
+                  navigate("/entregadores");
+                  fecharMenuCriarConta();
+                }}
+              >
+                Entregador
+              </MenuItem>
+            </Menu>
           </Stack> 
         </Stack> 
           </Box> 

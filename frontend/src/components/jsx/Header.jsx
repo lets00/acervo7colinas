@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
 
+
 import {
   Typography, TextField, Box, Stack, Chip,
   InputAdornment, Divider, Avatar, Menu,
@@ -28,12 +29,32 @@ export default function Header() {
 
   const [anchorMenu, setAnchorMenu] = useState(null);
 
+  const [anchorCriarConta, setAnchorCriarConta] = useState(null);
+
+  const abrirMenuCriarConta = (event) => {
+    setAnchorCriarConta(event.currentTarget);
+  };
+
+  const fecharMenuCriarConta = () => {
+    setAnchorCriarConta(null);
+  };
+
   const abrirMenuHamburguer = (event) => {
     setAnchorMenu(event.currentTarget);
   };
 
   const fecharMenuHamburguer = () => {
     setAnchorMenu(null);
+  };
+
+  const [anchorUsuariosSalvos, setAnchorUsuariosSalvos] = useState(null);
+
+  const abrirMenuUsuariosSalvos = (event) => {
+  setAnchorUsuariosSalvos(event.currentTarget);
+  };
+
+  const fecharMenuUsuariosSalvos = () => {
+    setAnchorUsuariosSalvos(null);
   };
 
   const getIniciais = () => {
@@ -147,6 +168,52 @@ export default function Header() {
                       >
                         Livros Salvos
                       </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/funcionarios");
+                          fecharMenuHamburguer();
+                        }}
+                      >
+                        Cadastro Funcionários
+                      </MenuItem>
+                      <MenuItem onClick={abrirMenuUsuariosSalvos}>
+                        Usuarios Salvos
+                      </MenuItem>
+                      <Menu
+                        anchorEl={anchorUsuariosSalvos}
+                        open={Boolean(anchorUsuariosSalvos)}
+                        onClose={fecharMenuUsuariosSalvos}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/entragadores-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                           Entregadores Salvos
+                        </MenuItem>
+
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/usuarios-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                          Usuários Salvos
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/funcionarios-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                          Funcionários Salvos
+                        </MenuItem>
+                      </Menu>
                     </>
                   )}
 
@@ -177,8 +244,31 @@ export default function Header() {
                   label="Criar Conta"
                   size="small"
                   className="header-chip-criar"
-                  onClick={() => navigate('/usuarios')}
+                  onClick={abrirMenuCriarConta}
                 />
+                  <Menu
+                    anchorEl={anchorCriarConta}
+                    open={Boolean(anchorCriarConta)}
+                    onClose={fecharMenuCriarConta}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/usuarios");
+                        fecharMenuCriarConta();
+                      }}
+                    >
+                      Usuário
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/entregadores");
+                        fecharMenuCriarConta();
+                      }}
+                    >
+                      Entregador
+                    </MenuItem>
+                  </Menu>
                 <Chip
                   label="Login"
                   size="small"

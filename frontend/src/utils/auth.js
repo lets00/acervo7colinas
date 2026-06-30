@@ -32,3 +32,4 @@ export const getUsuario = () => {
 export const isLogged = isAuthenticated;
 export const getUser = getUsuario;
 export const clearSession = removeToken;
+export const logout = removeToken;
