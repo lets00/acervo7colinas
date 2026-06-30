@@ -20,9 +20,10 @@ import MeusEmprestimos from "./pages/jsx/MeusEmprestimos.jsx";
 import LivrosSalvos from "./pages/jsx/LivrosSalvos.jsx";
 import NossoAcervo from "./pages/jsx/NossoAcervo.jsx";
 import FuncionariosSalvos from "./pages/jsx/FuncionariosSalvos.jsx";
+import UsuariosSalvos from "./pages/jsx/UsuariosSalvos.jsx";
 import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import EditarLivros from "./pages/jsx/EditarLivros.jsx";
-import UsuariosSalvos from "./pages/jsx/UsuariosSalvos.jsx";
+import PerfilUsuario from "./pages/jsx/PerfilUsuario.jsx";
 
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
@@ -44,7 +45,11 @@ function App() {
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />
             <Route path="/usuarios" element={<CadastroUsuarios />} />
+            <Route path="/perfil" element={<PerfilUsuario />} />
             <Route path="/acervo" element={<NossoAcervo />} />
+            <Route path="/entregadores" element={<CadastroEntregadores />} />
+
+
 
             {/* 👤 Rotas do Usuário (e superiores) */}
 
@@ -55,12 +60,12 @@ function App() {
             <Route path="/livros" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroLivros /></ProtectedRoute>} />
             <Route path="/livros/editar/:id" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EditarLivros /></ProtectedRoute>} />
             <Route path="/livros-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><LivrosSalvos /></ProtectedRoute>} />
-            <Route path="/entregadores" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroEntregadores /></ProtectedRoute>} />
-            <Route path="/entregadores-salvos" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><EntregadoresSalvos /></ProtectedRoute>} />
 
             {/* 🔴 Rotas Exclusivas do Admin */}
             <Route path="/funcionarios" element={<ProtectedRoute allowedRoles={['admin']}><CadastroFuncionarios /></ProtectedRoute>} />
             <Route path="/funcionarios-salvos" element={<ProtectedRoute allowedRoles={['admin']}><FuncionariosSalvos /></ProtectedRoute>} />
+            <Route path="/entragadores-salvos" element={<ProtectedRoute allowedRoles={['admin']}><EntregadoresSalvos /></ProtectedRoute>} />
+            <Route path="/usuarios-salvos" element={<ProtectedRoute allowedRoles={['admin']}><UsuariosSalvos /></ProtectedRoute>} />
           </Routes>
 
         </Container>
