@@ -1,5 +1,4 @@
 import Exemplar from '../models/Exemplar.js';
-import { exemplarSchema } from '../validators/exemplarValidator.js';
 import { exemplarSchema, atualizarExemplarSchema } from '../validators/exemplarValidator.js';
 
 export async function criarExemplar(req, res) {

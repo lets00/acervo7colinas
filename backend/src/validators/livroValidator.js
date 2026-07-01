@@ -16,3 +16,5 @@ export const livroSchema = z.object({
     genero: z.string().min(1, 'Este campo é obrigatório!'),
     img: z.string().max(255).nullable().optional()
 });
+
+export const atualizarLivroSchema = livroSchema.partial();

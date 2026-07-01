@@ -22,6 +22,7 @@ app.listen(PORT, () => {
 
     console.log(`\n=== Livros ===`);
     console.log(`GET    http://localhost:${PORT}/livros`);
+    console.log(`GET    http://localhost:${PORT}/livros/:id`);
     console.log(`POST   http://localhost:${PORT}/livros`);
     console.log(`PATCH  http://localhost:${PORT}/livros/:id`);
     console.log(`DELETE http://localhost:${PORT}/livros/:id`);
