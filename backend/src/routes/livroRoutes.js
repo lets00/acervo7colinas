@@ -3,6 +3,8 @@ import { Router } from 'express';
 import upload from '../middlewares/upload.js';
 import {
     criarLivro,
+    atualizarLivro,
+    deletarLivro,
     buscarLivroPorId,
     listarExemplares,
     listarAvaliacoes,
@@ -15,6 +17,8 @@ const router = Router();
 router.post('/', upload.single('img'), criarLivro);
 
 router.get('/', listarLivros);
+router.patch('/:id', upload.single('img'), atualizarLivro);
+router.delete('/:id', deletarLivro);
 router.get('/:id', buscarLivroPorId);
 router.get('/:id/exemplares', listarExemplares);
 router.get('/:id/avaliacoes', listarAvaliacoes);

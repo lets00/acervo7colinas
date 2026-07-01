@@ -1,5 +1,4 @@
-// acervo7colinas\backend\src\controllers\livroController.js
-import { livroSchema } from '../validators/livroValidator.js';
+import { livroSchema, atualizarLivroSchema } from '../validators/livroValidator.js';
 import Livro from '../models/Livro.js';
 import Exemplar from '../models/Exemplar.js';
 
@@ -7,7 +6,7 @@ export async function buscarLivroPorId(req, res) {
     const { id } = req.params;
 
     try {
-        const livro = await Livro.findByPk(id); // ou Livro.findOne({ where: { id } })
+        const livro = await Livro.findByPk(id); 
 
         if (!livro) {
             return res.status(404).json({ mensagem: "Livro não encontrado" });
@@ -17,6 +16,69 @@ export async function buscarLivroPorId(req, res) {
     } catch (error) {
         return res.status(500).json({
             mensagem: "Erro ao buscar livro!",
+            erro: error.message
+        });
+    }
+}
+
+export async function atualizarLivro(req, res) {
+    const { id } = req.params;
+
+    const dados = {
+        ...req.body,
+        ...(req.body.ano && { ano: Number(req.body.ano) }),
+        ...(req.body.quantidadeExemplares && { quantidadeExemplares: Number(req.body.quantidadeExemplares) }),
+        ...(req.file && { img: `/capas/${req.file.filename}` })
+    };
+
+    const resultado = atualizarLivroSchema.safeParse(dados);
+
+    if (!resultado.success) {
+        return res.status(400).json({
+            mensagem: 'Dados inválidos!',
+            erros: resultado.error.issues
+        });
+    }
+
+    try {
+        const livro = await Livro.findByPk(id);
+
+        if (!livro) {
+            return res.status(404).json({ mensagem: "Livro não encontrado!" });
+        }
+
+        await livro.update(resultado.data);
+
+        return res.json({
+            mensagem: 'Livro atualizado com sucesso!',
+            livro
+        });
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar livro!',
+            erro: error.message
+        });
+    }
+}
+
+export async function deletarLivro(req, res) {
+    const { id } = req.params;
+
+    try {
+        const livro = await Livro.findByPk(id);
+
+        if (!livro) {
+            return res.status(404).json({ mensagem: "Livro não encontrado!" });
+        }
+
+        await livro.destroy();
+
+        return res.json({
+            mensagem: 'Livro deletado com sucesso!'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao deletar livro!',
             erro: error.message
         });
     }
