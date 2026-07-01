@@ -11,4 +11,5 @@ app.listen(PORT, () => {
     console.log(`Rota funcionários: http://localhost:${PORT}/funcionarios`);
     console.log(`Rota entregadores: http://localhost:${PORT}/entregadores`);
     console.log(`Rota livros: http://localhost:${PORT}/livros`);
+    console.log(`Rota exemplares: http://localhost:${PORT}/livros/:id/exemplares`);
 });

@@ -1,6 +1,7 @@
 // acervo7colinas\backend\src\controllers\livroController.js
 import { livroSchema } from '../validators/livroValidator.js';
 import Livro from '../models/Livro.js';
+import Exemplar from '../models/Exemplar.js';
 
 export async function buscarLivroPorId(req, res) {
     const { id } = req.params;
@@ -21,37 +22,31 @@ export async function buscarLivroPorId(req, res) {
     }
 }
 
-//"Exemplares"
-export function listarExemplares(req, res) {
+export async function listarExemplares(req, res) {
     const { id } = req.params;
 
-    const exemplaresPorLivro = {
-        1: [
-            {
-                id: 1008,
-                secao: "Informática",
-                disponivel: true
-            },
-            {
-                id: 1007,
-                secao: "Informática",
-                disponivel: false
-            },
-            {
-                id: 1006,
-                secao: "Informática",
-                disponivel: true
-            }
-        ]
-    };
+    try {
+        const livro = await Livro.findByPk(id);
 
-    const exemplares = exemplaresPorLivro[id];
+        if (!livro) {
+            return res.status(404).json({
+                mensagem: 'Livro não encontrado!'
+            });
+        }
 
-    if (!exemplares) {
-        return res.status(404).json({ mensagem: "Exemplares não encontrados para este livro" });
+        const exemplares = await Exemplar.findAll({
+            where: { id_livro: id },
+            attributes: ['id', 'id_livro', 'disponivel', 'data_aquisicao', 'secao']
+        });
+
+        return res.json(exemplares);
+
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao listar exemplares!',
+            erro: error.message
+        });
     }
-
-    res.json(exemplares);
 }
 
 // "Os leitores também gostaram"
