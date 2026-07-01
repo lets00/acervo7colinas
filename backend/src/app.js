@@ -7,6 +7,7 @@ import usuarioRoutes from './routes/usuarioRoutes.js';
 import funcionarioRoutes from './routes/funcionarioRoutes.js';
 import entregadorRoutes from './routes/entregadorRoutes.js';
 import loginRoutes from './routes/loginRoutes.js';
+import exemplarRoutes from './routes/exemplarRoutes.js';
 
 const app = express();
 
@@ -20,5 +21,5 @@ app.use('/usuarios', usuarioRoutes);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/entregadores', entregadorRoutes);
 app.use('/login', loginRoutes);
-
+app.use('/exemplares', exemplarRoutes);
 export default app;
