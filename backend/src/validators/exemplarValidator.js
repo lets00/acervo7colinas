@@ -8,3 +8,5 @@ export const exemplarSchema = z.object({
     data_aquisicao: z.string().optional(),
     secao: z.string().optional()
 });
+
+export const atualizarExemplarSchema = exemplarSchema.partial();
