@@ -1,5 +1,6 @@
 import Exemplar from '../models/Exemplar.js';
 import { exemplarSchema } from '../validators/exemplarValidator.js';
+import { exemplarSchema, atualizarExemplarSchema } from '../validators/exemplarValidator.js';
 
 export async function criarExemplar(req, res) {
     const resultado = exemplarSchema.safeParse(req.body);
@@ -53,7 +54,16 @@ export async function atualizarExemplar(req, res) {
             });
         }
 
-        await exemplar.update(req.body);
+        const resultado = atualizarExemplarSchema.safeParse(req.body);
+
+        if (!resultado.success) {
+            return res.status(400).json({
+                mensagem: 'Dados inválidos!',
+                erros: resultado.error.issues
+            });
+        }
+
+        await exemplar.update(resultado.data);
 
         return res.json({
             mensagem: 'Exemplar atualizado com sucesso!',

@@ -134,8 +134,6 @@ export function listarAvaliacoes(req, res) {
 
 export async function criarLivro(req, res) {
 
-    console.log(req.file);
-
     const dados = {
         ...req.body,
         ano: Number(req.body.ano),
