@@ -40,6 +40,16 @@ export default function Login() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [anchorCriarConta, setAnchorCriarConta] = useState(null);
+
+  const abrirMenuCriarConta = (event) => {
+    setAnchorCriarConta(event.currentTarget);
+  };
+
+  const fecharMenuCriarConta = () => {
+    setAnchorCriarConta(null);
+  };
+
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -70,16 +80,32 @@ export default function Login() {
       if (response.ok) {
         saveToken(data.token);
         saveUsuario(data.usuario);
-        navigate('/');
-      } else {
-        setErro(data.mensagem || 'Login ou senha incorreto');
+
+        // ─── SALVA O TIPO PARA O PERFIL MOCKADO ──────────────────────────────────
+        // Caso sua API retorne o campo dentro de 'usuario' (ex: data.usuario.tipo)
+        if (data.usuario && data.usuario.tipo) {
+          localStorage.setItem("usuarioTipo", data.usuario.tipo);
+        } else if (data.tipo) {
+          localStorage.setItem("usuarioTipo", data.tipo);
+        } else {
+          // Fallback caso a API ainda não envie o campo: tenta adivinhar pelo email
+          if (email.includes("admin")) localStorage.setItem("usuarioTipo", "admin");
+          else if (email.includes("carlos")) localStorage.setItem("usuarioTipo", "funcionario");
+          else if (email.includes("rafael")) localStorage.setItem("usuarioTipo", "entregador");
+          else localStorage.setItem("usuarioTipo", "usuario");
+        }
+        // ─────────────────────────────────────────────────────────────────────────
+
+          navigate('/');
+        } else {
+          setErro(data.mensagem || 'Login ou senha incorreto');
+        }
+      } catch (err) {
+        setErro('Erro da conexão com o servidor.');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setErro('Erro da conexão com o servidor.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
   return (
     <ThemeProvider theme={theme}>
@@ -173,13 +199,51 @@ export default function Login() {
                 </Typography>
               </Grid>
               <Grid>
-                <Typography
-                  variant="body2"
-                  onClick={() => navigate("/usuarios")}sx={{ cursor: "pointer", color: "#312783" }}
+                <Box
+                  onClick={abrirMenuCriarConta}
+                  sx={{
+                    cursor: "pointer",
+                    color: "#312783",
+                    display: "inline-block"
+                  }}
                 >
-                  Criar Conta
-                </Typography>
-                
+                  <Typography variant="body2">
+                    Criar Conta
+                  </Typography>
+                </Box>
+
+                <Menu
+                  anchorEl={anchorCriarConta}
+                  open={Boolean(anchorCriarConta)}
+                  onClose={fecharMenuCriarConta}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/usuarios");
+                      fecharMenuCriarConta();
+                    }}
+                  >
+                    Usuário
+                  </MenuItem>
+
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/entregadores");
+                      fecharMenuCriarConta();
+                    }}
+                  >
+                    Entregador
+                  </MenuItem>
+                </Menu>
+
               </Grid>
 
               <Box className="icones">

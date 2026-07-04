@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
 
+
 import {
   Typography, TextField, Box, Stack, Chip,
   InputAdornment, Divider, Avatar, Menu,
   MenuItem, IconButton, Tooltip,
 } from "@mui/material";
 import { useNavigate ,Link} from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import logo   from "../../assets/logo.png";
 import Search from "../../assets/Search.png";
@@ -21,9 +23,39 @@ export default function Header() {
 
   const token = getToken();
   const usuario = getUsuario();
-  
-  // Verificar depois qual campo o backend retorna
-  const isAdmin = usuario?.role === "admin";
+
+  const isAdmin =
+    usuario?.cargo?.toLowerCase() === "administrador";
+
+  const [anchorMenu, setAnchorMenu] = useState(null);
+
+  const [anchorCriarConta, setAnchorCriarConta] = useState(null);
+
+  const abrirMenuCriarConta = (event) => {
+    setAnchorCriarConta(event.currentTarget);
+  };
+
+  const fecharMenuCriarConta = () => {
+    setAnchorCriarConta(null);
+  };
+
+  const abrirMenuHamburguer = (event) => {
+    setAnchorMenu(event.currentTarget);
+  };
+
+  const fecharMenuHamburguer = () => {
+    setAnchorMenu(null);
+  };
+
+  const [anchorUsuariosSalvos, setAnchorUsuariosSalvos] = useState(null);
+
+  const abrirMenuUsuariosSalvos = (event) => {
+  setAnchorUsuariosSalvos(event.currentTarget);
+  };
+
+  const fecharMenuUsuariosSalvos = () => {
+    setAnchorUsuariosSalvos(null);
+  };
 
   const getIniciais = () => {
     if (usuario?.nomeCompleto) {
@@ -57,35 +89,7 @@ export default function Header() {
 
         <Typography component={Link} to="/"className="header-text">Inicio</Typography>
         <Typography component={Link} to="/acervo" className="header-text">Acervo</Typography>
-        {token && isAdmin && (
-          <>
-            <Typography
-              component={Link}
-              to="/cadastro-livros"
-              className="header-text"
-            >
-              Cadastrar Livro
-            </Typography>
-
-            <Typography
-              component={Link}
-              to="/livros-salvos"
-              className="header-text"
-            >
-              Livros Salvos
-            </Typography>
-          </>
-        )}
-
-        {token && !isAdmin && (
-          <Typography
-            component={Link}
-            to="/dashboard"
-            className="header-text"
-          >
-            Dashboard
-          </Typography>
-        )}
+        
         <TextField
           size="small"
           className="header-input"
@@ -106,8 +110,11 @@ export default function Header() {
 
             {token ? (
               <>
-                <Tooltip title={usuario?.nomeCompleto || usuario?.email || 'Perfil'}>
-                  <IconButton onClick={handleAbrirMenu} sx={{ p: 0 }}>
+                <Tooltip title={usuario?.nomeCompleto || usuario?.email || "Perfil"}>
+                  <IconButton
+                    onClick={() => navigate("/perfil")}
+                    sx={{ p: 0 }}
+                  >
                     <Avatar
                       alt={usuario?.nomeCompleto}
                       src={usuario?.fotoPerfil}
@@ -125,18 +132,110 @@ export default function Header() {
                     </Avatar>
                   </IconButton>
                 </Tooltip>
-
+                <IconButton onClick={abrirMenuHamburguer}>
+                  <MenuIcon />
+                </IconButton>
                 <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleFecharMenu}
-                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  anchorEl={anchorMenu}
+                  open={Boolean(anchorMenu)}
+                  onClose={fecharMenuHamburguer}
                 >
-                  <MenuItem onClick={() => { navigate('/perfil'); handleFecharMenu(); }}>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/perfil");
+                      fecharMenuHamburguer();
+                    }}
+                  >
                     Meu Perfil
                   </MenuItem>
-                  <MenuItem onClick={handleLogout}>Sair</MenuItem>
+
+                  {isAdmin && (
+                    <>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/livros");
+                          fecharMenuHamburguer();
+                        }}
+                      >
+                        Cadastrar Livro
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/livros-salvos");
+                          fecharMenuHamburguer();
+                        }}
+                      >
+                        Livros Salvos
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/funcionarios");
+                          fecharMenuHamburguer();
+                        }}
+                      >
+                        Cadastro Funcionários
+                      </MenuItem>
+                      <MenuItem onClick={abrirMenuUsuariosSalvos}>
+                        Usuarios Salvos
+                      </MenuItem>
+                      <Menu
+                        anchorEl={anchorUsuariosSalvos}
+                        open={Boolean(anchorUsuariosSalvos)}
+                        onClose={fecharMenuUsuariosSalvos}
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/entragadores-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                           Entregadores Salvos
+                        </MenuItem>
+
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/usuarios-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                          Usuários Salvos
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            navigate("/funcionarios-salvos");
+                            fecharMenuUsuariosSalvos();
+                            fecharMenuHamburguer();
+                          }}
+                        >
+                          Funcionários Salvos
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  )}
+
+                  {!isAdmin && (
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/dashboard");
+                        fecharMenuHamburguer();
+                      }}
+                    >
+                      Dashboard
+                    </MenuItem>
+                  )}
+
+                  <MenuItem
+                    onClick={() => {
+                      handleLogout();
+                      fecharMenuHamburguer();
+                    }}
+                  >
+                    Sair
+                  </MenuItem>
                 </Menu>
               </>
             ) : (
@@ -145,8 +244,31 @@ export default function Header() {
                   label="Criar Conta"
                   size="small"
                   className="header-chip-criar"
-                  onClick={() => navigate('/usuarios')}
+                  onClick={abrirMenuCriarConta}
                 />
+                  <Menu
+                    anchorEl={anchorCriarConta}
+                    open={Boolean(anchorCriarConta)}
+                    onClose={fecharMenuCriarConta}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/usuarios");
+                        fecharMenuCriarConta();
+                      }}
+                    >
+                      Usuário
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/entregadores");
+                        fecharMenuCriarConta();
+                      }}
+                    >
+                      Entregador
+                    </MenuItem>
+                  </Menu>
                 <Chip
                   label="Login"
                   size="small"

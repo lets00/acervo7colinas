@@ -3,6 +3,7 @@ import Funcionario from "../models/Funcionario.js";
 import Livro from "../models/Livro.js";
 import Usuario from "../models/Usuario.js";
 import Entregador from "../models/Entregador.js";
+import Exemplar from "../models/Exemplar.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {
@@ -244,6 +245,25 @@ async function seedDatabase() {
                 img: "/capas/os-miseraveis.jpg"
             }
         });
+
+        const livros = await Livro.findAll();
+
+        for (const livro of livros) {
+            const totalExistente = await Exemplar.count({
+                where: { id_livro: livro.id }
+            });
+
+            if (totalExistente === 0) {
+                for (let i = 1; i <= livro.quantidadeExemplares; i++) {
+                    await Exemplar.create({
+                        id_livro: livro.id,
+                        disponivel: i % 2 !== 0,
+                        data_aquisicao: new Date(),
+                        secao: livro.genero
+                    });
+                }
+            }
+        }
 
         console.log('Tabelas sincronizadas e banco populado com sucesso!');
     } catch (error) {

@@ -1,12 +1,12 @@
-// acervo7colinas\backend\src\controllers\livroController.js
-import { livroSchema } from '../validators/livroValidator.js';
+import { livroSchema, atualizarLivroSchema } from '../validators/livroValidator.js';
 import Livro from '../models/Livro.js';
+import Exemplar from '../models/Exemplar.js';
 
 export async function buscarLivroPorId(req, res) {
     const { id } = req.params;
 
     try {
-        const livro = await Livro.findByPk(id); // ou Livro.findOne({ where: { id } })
+        const livro = await Livro.findByPk(id); 
 
         if (!livro) {
             return res.status(404).json({ mensagem: "Livro não encontrado" });
@@ -21,37 +21,94 @@ export async function buscarLivroPorId(req, res) {
     }
 }
 
-//"Exemplares"
-export function listarExemplares(req, res) {
+export async function atualizarLivro(req, res) {
     const { id } = req.params;
 
-    const exemplaresPorLivro = {
-        1: [
-            {
-                id: 1008,
-                secao: "Informática",
-                disponivel: true
-            },
-            {
-                id: 1007,
-                secao: "Informática",
-                disponivel: false
-            },
-            {
-                id: 1006,
-                secao: "Informática",
-                disponivel: true
-            }
-        ]
+    const dados = {
+        ...req.body,
+        ...(req.body.ano && { ano: Number(req.body.ano) }),
+        ...(req.body.quantidadeExemplares && { quantidadeExemplares: Number(req.body.quantidadeExemplares) }),
+        ...(req.file && { img: `/capas/${req.file.filename}` })
     };
 
-    const exemplares = exemplaresPorLivro[id];
+    const resultado = atualizarLivroSchema.safeParse(dados);
 
-    if (!exemplares) {
-        return res.status(404).json({ mensagem: "Exemplares não encontrados para este livro" });
+    if (!resultado.success) {
+        return res.status(400).json({
+            mensagem: 'Dados inválidos!',
+            erros: resultado.error.issues
+        });
     }
 
-    res.json(exemplares);
+    try {
+        const livro = await Livro.findByPk(id);
+
+        if (!livro) {
+            return res.status(404).json({ mensagem: "Livro não encontrado!" });
+        }
+
+        await livro.update(resultado.data);
+
+        return res.json({
+            mensagem: 'Livro atualizado com sucesso!',
+            livro
+        });
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar livro!',
+            erro: error.message
+        });
+    }
+}
+
+export async function deletarLivro(req, res) {
+    const { id } = req.params;
+
+    try {
+        const livro = await Livro.findByPk(id);
+
+        if (!livro) {
+            return res.status(404).json({ mensagem: "Livro não encontrado!" });
+        }
+
+        await livro.destroy();
+
+        return res.json({
+            mensagem: 'Livro deletado com sucesso!'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao deletar livro!',
+            erro: error.message
+        });
+    }
+}
+
+export async function listarExemplares(req, res) {
+    const { id } = req.params;
+
+    try {
+        const livro = await Livro.findByPk(id);
+
+        if (!livro) {
+            return res.status(404).json({
+                mensagem: 'Livro não encontrado!'
+            });
+        }
+
+        const exemplares = await Exemplar.findAll({
+            where: { id_livro: id },
+            attributes: ['id', 'id_livro', 'disponivel', 'data_aquisicao', 'secao']
+        });
+
+        return res.json(exemplares);
+
+    } catch (error) {
+        return res.status(500).json({
+            mensagem: 'Erro ao listar exemplares!',
+            erro: error.message
+        });
+    }
 }
 
 // "Os leitores também gostaram"
@@ -138,8 +195,6 @@ export function listarAvaliacoes(req, res) {
 // cadastro de livros
 
 export async function criarLivro(req, res) {
-
-    console.log(req.file);
 
     const dados = {
         ...req.body,
