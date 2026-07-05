@@ -245,6 +245,80 @@ async function seedDatabase() {
                 img: "/capas/os-miseraveis.jpg"
             }
         });
+        await Livro.findOrCreate({
+            where: { isbn: "978-8550819853" },
+            defaults: {
+                titulo: "Fundamentos da arquitetura de software: uma abordagem de engenharia: 1",
+                autor: "Mark Richards, Neal Ford",
+                isbn: "9786555204605",
+                editora: "Alta Books",
+                ano: 2024,
+                descricao: "Fundamentos da Arquitetura de Software No mundo inteiro, pesquisas de salário colocam sistematicamente a arquitetura de software entre os dez melhores empregos, embora não exista nenhum guia real para ajudar os desenvolvedores a se tornarem arquitetos. Até agora. Este livro fornece a primeira visão geral completa de muitos aspectos da arquitetura de software. Aspirantes a arquitetos e os já praticantes examinarão da mesma forma as características e padrões da arquitetura, a determinação de componentes, as arquiteturas de diagramação, de apresentação, evolucionária e muitos outros tópicos. Mark Richards e Neal Ford, profissionais experientes que ensinam arquitetura de software profissionalmente há anos, focam os princípios da arquitetura que se aplicam a todas as camadas da tecnologia. Você explorará a arquitetura de software de um ponto de vista moderno, levando em conta todas as inovações da última década. Este livro examina: Padrão da arquitetura: a base técnica para muitas decisões de arquitetura. Componentes: identificação, acoplamento, coesão, particionamento e granularidade. Habilidades sociais: gestão eficiente da equipe, reuniões, negociação, apresentações etc. Modernidade: práticas de engenharia e abordagens operacionais que mudaram radicalmente nosúltimos anos. Arquitetura como disciplina de engenharia: resultados repetidos, métricas e avaliações concretas que acrescentam rigor à arquitetura de software.",
+                quantidadeExemplares: 4,
+                genero: "Tecnologia",
+                img: "/capas/fundamentos-de-arquitetura-de-software.jpg"
+            }
+        });
+
+        await Livro.findOrCreate({
+            where: { isbn: "978-1449373320" },
+            defaults: {
+                titulo: "Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems",
+                autor: "Martin Kleppmann",
+                isbn: "978-1449373320",
+                editora: "O'Reilly Media",
+                ano: 2017,
+                descricao: "Os dados estão no centro de muitos dos desafios do desenvolvimento de sistemas modernos. Questões como escalabilidade, consistência, confiabilidade, eficiência e manutenibilidade precisam ser resolvidas, enquanto uma enorme variedade de tecnologias, como bancos de dados relacionais, bancos NoSQL, processadores de fluxo e lote e sistemas de mensageria, tornam a escolha da arquitetura ideal ainda mais complexa. Neste guia prático e abrangente, Martin Kleppmann explora as vantagens e desvantagens das principais tecnologias de armazenamento e processamento de dados, apresentando os princípios fundamentais por trás dos sistemas distribuídos modernos. O livro ajuda engenheiros e arquitetos de software a tomar decisões mais bem fundamentadas, compreender os trade-offs entre consistência, escalabilidade, tolerância a falhas e complexidade, além de revelar a arquitetura de grandes serviços online e as pesquisas que influenciam os bancos de dados atuais.",
+                quantidadeExemplares: 3,
+                genero: "Tecnologia",
+                img: "/capas/designing-data-intensive.jpg"
+            }
+        });
+
+        await Livro.findOrCreate({
+            where: { isbn: "9788535236996" },
+            defaults: {
+                titulo: "Entendendo Algoritmos: Um Guia Ilustrado Para Programadores E Outros Curiosos",
+                autor: "Aditya Bhargava",
+                isbn: "9788535236996",
+                editora: "Novatec",
+                ano: 2017,
+                descricao: "Um guia ilustrado para programadores e outros curiosos. Um algoritmo nada mais é do que um procedimento passo a passo para a resolução de um problema. Os algoritmos que você mais utilizará como um programador já foram descobertos, testados e provados. Se você quer entendê-los, mas se recusa a estudar páginas e mais páginas de provas, este é o livro certo. Este guia cativante e completamente ilustrado torna simples aprender como utilizar os principais algoritmos nos seus programas. O livro Entendendo Algoritmos apresenta uma abordagem agradável para esse tópico essencial da ciência da computação. Nele, você aprenderá como aplicar algoritmos comuns nos problemas de programação enfrentados diariamente. Você começará com tarefas básicas como a ordenação e a pesquisa. Com a prática, você enfrentará problemas mais complexos, como a compressão de dados e a inteligência artificial. Cada exemplo é apresentado em detalhes e inclui diagramas e códigos completos em Python. Ao final deste livro, você terá dominado algoritmos amplamente aplicáveis e saberá quando e onde utilizá-los. O que este livro inclui A abordagem de algoritmos de pesquisa, ordenação e algoritmos gráficos Mais de 400 imagens com descrições detalhadas Comparações de desempenho entre algoritmos Exemplos de código em Python Este livro de fácil leitura e repleto de imagens é destinado a programadores autodidatas, engenheiros ou pessoas que gostariam de recordar o assunto.",
+                quantidadeExemplares: 5,
+                genero: "Tecnologia",
+                img: "/capas/algoritmos.jpg"
+            }
+        });
+
+        await Livro.findOrCreate({
+            where: { isbn: "978-8575224625" },
+            defaults: {
+                titulo: "Python Fluente",
+                autor: "Luciano Ramalho",
+                isbn: "978-8575224625",
+                editora: "Novatec",
+                ano: 2015,
+                descricao: "A simplicidade de Python permite que você se torne produtivo rapidamente, porém isso muitas vezes significa que você não estará usando tudo que ela tem a oferecer. Com este guia prático, você aprenderá a escrever um código Python eficiente e idiomático aproveitando seus melhores recursos – alguns deles, pouco conhecidos. O autor Luciano Ramalho apresenta os recursos essenciais da linguagem e bibliotecas de Python mostrando como você pode tornar o seu código mais conciso, mais rápido e mais legível ao mesmo tempo. Muitos programadores experientes tentam dobrar o Python para que ele se enquadre em padrões aprendidos com outras linguagens e jamais descobrem os recursos do Python que estão além de sua experiência. Com este livro, esses programadores Python aprenderão a ser totalmente proficientes em Python 3.Este livro inclui: O modelo de dados do Python: entenda como os métodos especiais são o segredo para o comportamento consistente dos objetos. Estruturas de dados: tire total proveito dos tipos embutidos e entenda a dualidade entre texto e bytes na era do Unicode. Funções como objetos: veja as funções Python como objetos de primeira classe e entenda como isso afeta alguns padrões de projeto populares. Técnicas de orientação a objetos: crie classes após dominar referências, mutabilidade, interfaces, sobrecarga de operadores e herança múltipla. Controle de fluxo: tire proveito de gerenciadores de contexto, geradores.",
+                quantidadeExemplares: 3,
+                genero: "Tecnologia",
+                img: "/capas/python-fluente.jpg"
+            }
+        });
+
+        await Livro.findOrCreate({
+            where: { isbn: "978-8577807000" },
+            defaults: {
+                titulo: "O Programador Pragmático",
+                autor: "Andrew Hunt, David Thomas",
+                isbn: "978-8577807000",
+                editora: "Bookman",
+                ano: 2010,
+                descricao: "O Programador Pragmático ilustra as melhores práticas e as principais armadilhas do desenvolvimento de software. Destinado a todos envolvidos com programação, de codificadores iniciantes a programadores experientes e gerentes responsáveis por projetos de software, apresenta lições simples que promovem rápidas melhorias na produtividade pessoal, precisão e satisfação profissional.",
+                quantidadeExemplares: 4,
+                genero: "Tecnologia",
+                img: "/capas/o-programador-pragmatico.jpg"
+            }
+        });
 
         const livros = await Livro.findAll();
 
