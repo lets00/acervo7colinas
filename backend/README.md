@@ -59,6 +59,112 @@ User: postgres
 Password: postgres123
 ```
 
+## Modelo do banco de dados
+
+```mermaid
+erDiagram
+    LIVROS ||--o{ EXEMPLARES : "possui"
+    USUARIOS ||--o{ QUERO_LER : "marca"
+    LIVROS ||--o{ QUERO_LER : "marcado-por"
+    USUARIOS ||--o{ PROGRESSO_LEITURA : "registra"
+    LIVROS ||--o{ PROGRESSO_LEITURA : "lido-por"
+
+    LIVROS {
+        int id PK
+        string titulo
+        string autor
+        string isbn UK
+        string editora
+        int ano
+        text descricao
+        int quantidadeExemplares
+        string genero
+        string img
+    }
+
+    EXEMPLARES {
+        int id PK
+        int id_livro FK
+        boolean disponivel
+        dateonly data_aquisicao
+        string secao
+    }
+
+    USUARIOS {
+        int id PK
+        string nomeCompleto
+        string cpf
+        string rg
+        string sexo
+        dateonly dataNascimento
+        string email
+        string telefone
+        string senha
+        string rua
+        string numero
+        string cep
+        string bairro
+        string cidade
+        string complemento
+        string fotoPerfil
+        string fotoRg
+        string comprovanteResidencial
+    }
+
+    FUNCIONARIOS {
+        int id PK
+        string nomeCompleto
+        string cpf
+        string matricula
+        string cargo
+        string setor
+        string email UK
+        string telefone
+        string senha
+        string tipoAcesso
+        string disponibilidade
+        string fotoPerfil
+    }
+
+    ENTREGADORES {
+        int id PK
+        string nomeCompleto
+        string cpf UK
+        string rg
+        string sexo
+        dateonly dataNascimento
+        string email UK
+        string telefone
+        string senha
+        string rua
+        string numero
+        string cep
+        string bairro
+        string cidade
+        string complemento
+        string tipoVeiculo
+        string disponibilidade
+        string placa
+        string tipoBicicleta
+        string tamanhoBolsa
+        string fotoPerfil
+        string fotoCnh
+    }
+
+    QUERO_LER {
+        uuid desejo_id PK
+        int user_id FK
+        int livro_id FK
+    }
+
+    PROGRESSO_LEITURA {
+        int user_id FK
+        int livro_id FK
+        int numero_de_paginas_lidas
+        date data
+    }
+```
+
 ## Rotas principais
 
 ```text
