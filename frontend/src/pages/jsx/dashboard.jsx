@@ -12,6 +12,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
+import AddReadingModal from "../../components/jsx/AddReadingModal";
 import Footer from "../../components/jsx/Footer";
 import { isAuthenticated } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
@@ -65,6 +66,7 @@ export default function Dashboard() {
 
     const [anchorEls, setAnchorEls] = useState({});
     const [destaques, setDestaques] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
 
 
 
@@ -94,6 +96,11 @@ export default function Dashboard() {
 
     const handleMenuClose = (id) => {
         setAnchorEls((prev) => ({ ...prev, [id]: null }));
+    };
+
+    const handleAddBook = (livro) => {
+        console.log("Livro adicionado:", livro);
+        setModalOpen(false);
     };
 
     return (
@@ -139,7 +146,7 @@ export default function Dashboard() {
                 <div className="section-header progress-custom">
                     <h3>Progresso de leitura</h3>
 
-                    <IconButton className="add-button">
+                    <IconButton className="add-button" onClick={() => setModalOpen(true)}>
                         <AddCircleIcon />
                     </IconButton>
                 </div>
@@ -266,6 +273,12 @@ export default function Dashboard() {
                 </div>
 
             </Box>
+
+            <AddReadingModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onAdd={handleAddBook}
+            />
         </Box>
     );
 }

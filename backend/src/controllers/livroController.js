@@ -1,4 +1,5 @@
 import { livroSchema, atualizarLivroSchema } from '../validators/livroValidator.js';
+import { Op } from 'sequelize';
 import Livro from '../models/Livro.js';
 import Exemplar from '../models/Exemplar.js';
 
@@ -235,7 +236,14 @@ export async function criarLivro(req, res) {
 
 export async function listarLivros(req, res) {
     try {
-        const livros = await Livro.findAll();
+        const { titulo } = req.query;
+
+        const where = {};
+        if (titulo && titulo.trim() !== "") {
+            where.titulo = { [Op.iLike]: `%${titulo.trim()}%` };
+        }
+
+        const livros = await Livro.findAll({ where });
 
         return res.json(livros);
     } catch (error) {
