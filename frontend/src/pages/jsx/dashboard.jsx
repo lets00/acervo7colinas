@@ -73,7 +73,7 @@ export default function Dashboard() {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [editValue, setEditValue] = useState(0);
-
+    const [loadingProgresso, setLoadingProgresso] = useState(true);
 
 
 
@@ -89,10 +89,21 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-        fetch("http://localhost:3000/destaques")
-            .then(res => res.json())
-            .then(setDestaques);
+        const userId = localStorage.getItem("user_id");
+        if (!userId) {
+            console.error("Usuário não autenticado");
+            setLoadingProgresso(false); // sem isso, o loading fica travado pra sempre
+            return;
+        }
 
+        fetch(`http://localhost:3000/usuarios/progresso?user_id=${userId}`)
+            .then((res) => {
+                if (!res.ok) throw new Error("Falha ao buscar progresso");
+                return res.json();
+            })
+            .then(setProgressData)
+            .catch((err) => console.error(err))
+            .finally(() => setLoadingProgresso(false));
     }, []);
 
 
@@ -104,22 +115,37 @@ export default function Dashboard() {
         setAnchorEls((prev) => ({ ...prev, [id]: null }));
     };
 
-    const handleAddBook = (livro) => {
+    const handleAddBook = async (livro) => {
+        const userId = localStorage.getItem("user_id"); 
+
+        if (!userId) {
+            console.error("Usuário não autenticado");
+            return;
+        }
+
+        const res = await fetch("http://localhost:3000/usuarios/progresso", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: userId,
+                livro_id: livro.id,
+                numero_de_paginas: 0,
+            }),
+        });
+        const novo = await res.json(); //esperar debora, para saber quais dados vao retorna, para atualizar a lista de progresso com o novo livro
+
         setProgressData((prev) => [
             ...prev,
             {
-                // id único por card: evita chaves duplicadas quando o mesmo
-                // livro é adicionado mais de uma vez
-                id: typeof crypto !== "undefined" && crypto.randomUUID
-                    ? crypto.randomUUID()
-                    : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                id: novo.id ?? novo.progresso_id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
-                paginasLidas: 0,
+                paginasLidas: novo.numero_de_paginas_lidas ?? 0,
                 totalPaginas: Number(livro.paginas) || 0,
             },
         ]);
         setModalOpen(false);
     };
+        
 
     const handleEditOpen = (item) => {
         setEditingItem(item);
@@ -127,7 +153,17 @@ export default function Dashboard() {
         setEditDialogOpen(true);
     };
 
-    const handleEditSave = (novoValor) => {
+    const handleEditSave = async (novoValor) => {
+        await fetch("http://localhost:3000/usuarios/progresso", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: localStorage.getItem("user_id"),
+                livro_id: editingItem.livro_id,
+                numero_de_paginas: novoValor,
+            }),
+        });
+
         setProgressData((prev) =>
             prev.map((i) =>
                 String(i.id) === String(editingItem.id)
@@ -139,8 +175,11 @@ export default function Dashboard() {
         setEditingItem(null);
     };
 
-    const handleExcluir = (item) => {
-        // String() evita falha silenciosa em comparação "3" !== 3
+    const handleExcluir = async (item) => {
+        await fetch(`http://localhost:3000/usuarios/progresso/${item.id}`, {
+            method: "DELETE",
+        });
+
         setProgressData((prev) => prev.filter((i) => String(i.id) !== String(item.id)));
         setEditingItem(null);
     };
@@ -194,66 +233,68 @@ export default function Dashboard() {
                 </div>
 
                 <div className="progress-list">
-                    {progressData.length === 0 && (
+                    {loadingProgresso ? (
+                        <Typography sx={{ py: 2 }}>Carregando...</Typography>
+                    ) : progressData.length === 0 ? (
                         <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
                             Nenhuma leitura em andamento. Clique no botão + para adicionar um livro!
                         </Typography>
-                    )}
-                    {progressData.map((item) => {
-                        const percent =
-                            item.totalPaginas > 0
+                    ) : (
+                        progressData.map((item) => {
+                            const percent = item.totalPaginas > 0
                                 ? Math.round((item.paginasLidas / item.totalPaginas) * 100)
                                 : 0;
-                        return (
-                            <div className="progress-card" key={item.id}>
-                                <div className="progress-card-header">
-                                    <span className="progress-card-title">{item.titulo}</span>
-                                    <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                                        <span className="progress-card-percent">{percent}%</span>
-                                        <IconButton
-                                            className="progress-menu-btn"
-                                            size="medium"
-                                            onClick={(e) => handleMenuOpen(e, item.id)}
-                                            aria-label="opções"
-                                        >
-                                            <MoreVertIcon fontSize="small" />
-                                        </IconButton>
-                                        <Menu
-                                            anchorEl={anchorEls[item.id]}
-                                            open={Boolean(anchorEls[item.id])}
-                                            onClose={() => handleMenuClose(item.id)}
-                                            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                            transformOrigin={{ vertical: "top", horizontal: "right" }}
-                                        >
-                                            <MenuItem onClick={() => { handleMenuClose(item.id); handleEditOpen(item); }}>
-                                                Editar
-                                            </MenuItem>
-                                            <MenuItem onClick={() => { handleMenuClose(item.id); handleExcluir(item); }}>
-                                                Excluir
-                                            </MenuItem>
-                                        </Menu>
-                                    </Box>
-                                </div>
+                            return (
+                                <div className="progress-card" key={item.id}>
+                                    <div className="progress-card-header">
+                                        <span className="progress-card-title">{item.titulo}</span>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                            <span className="progress-card-percent">{percent}%</span>
+                                            <IconButton
+                                                className="progress-menu-btn"
+                                                size="medium"
+                                                onClick={(e) => handleMenuOpen(e, item.id)}
+                                                aria-label="opções"
+                                            >
+                                                <MoreVertIcon fontSize="small" />
+                                            </IconButton>
+                                            <Menu
+                                                anchorEl={anchorEls[item.id]}
+                                                open={Boolean(anchorEls[item.id])}
+                                                onClose={() => handleMenuClose(item.id)}
+                                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                                            >
+                                                <MenuItem onClick={() => { handleMenuClose(item.id); handleEditOpen(item); }}>
+                                                    Editar
+                                                </MenuItem>
+                                                <MenuItem onClick={() => { handleMenuClose(item.id); handleExcluir(item); }}>
+                                                    Excluir
+                                                </MenuItem>
+                                            </Menu>
+                                        </Box>
+                                    </div>
 
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={percent}
-                                    sx={{
-                                        height: 8,
-                                        borderRadius: 4,
-                                        bgcolor: "rgba(255,255,255,0.2)",
-                                        "& .MuiLinearProgress-bar": {
-                                            bgcolor: "#00A83F",
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={percent}
+                                        sx={{
+                                            height: 8,
                                             borderRadius: 4,
-                                        },
-                                    }}
-                                />
-                                <span className="progress-card-pages">
-                                    {item.paginasLidas} de {item.totalPaginas}
-                                </span>
-                            </div>
-                        );
-                    })}
+                                            bgcolor: "rgba(255,255,255,0.2)",
+                                            "& .MuiLinearProgress-bar": {
+                                                bgcolor: "#00A83F",
+                                                borderRadius: 4,
+                                            },
+                                        }}
+                                    />
+                                    <span className="progress-card-pages">
+                                        {item.paginasLidas} de {item.totalPaginas}
+                                    </span>
+                                </div>
+                            );
+                        })
+                    )}
                 </div>
 
 
