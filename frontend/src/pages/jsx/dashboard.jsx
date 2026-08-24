@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import LinearProgress from "@mui/material/LinearProgress";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -13,6 +14,7 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
 import AddReadingModal from "../../components/jsx/AddReadingModal";
+import EditProgressDialog from "../../components/jsx/EditProgressDialog";
 import Footer from "../../components/jsx/Footer";
 import { isAuthenticated } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +33,7 @@ const statsData = [
     { label: "Favoritos", value: 8 },
 ];
 
-const progressData = [
+const progressDataInicial = [
     { id: 1, titulo: "1984 – George Orwell", paginasLidas: 60, totalPaginas: 200 },
     { id: 2, titulo: "Cem Anos de Solidão – García Márquez", paginasLidas: 130, totalPaginas: 417 },
 ];
@@ -67,6 +69,10 @@ export default function Dashboard() {
     const [anchorEls, setAnchorEls] = useState({});
     const [destaques, setDestaques] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
+    const [progressData, setProgressData] = useState(progressDataInicial);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+    const [editValue, setEditValue] = useState(0);
 
 
 
@@ -99,8 +105,44 @@ export default function Dashboard() {
     };
 
     const handleAddBook = (livro) => {
-        console.log("Livro adicionado:", livro);
+        setProgressData((prev) => [
+            ...prev,
+            {
+                // id único por card: evita chaves duplicadas quando o mesmo
+                // livro é adicionado mais de uma vez
+                id: typeof crypto !== "undefined" && crypto.randomUUID
+                    ? crypto.randomUUID()
+                    : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                titulo: `${livro.titulo} – ${livro.autor}`,
+                paginasLidas: 0,
+                totalPaginas: Number(livro.paginas) || 0,
+            },
+        ]);
         setModalOpen(false);
+    };
+
+    const handleEditOpen = (item) => {
+        setEditingItem(item);
+        setEditValue(item.paginasLidas);
+        setEditDialogOpen(true);
+    };
+
+    const handleEditSave = (novoValor) => {
+        setProgressData((prev) =>
+            prev.map((i) =>
+                String(i.id) === String(editingItem.id)
+                    ? { ...i, paginasLidas: novoValor }
+                    : i
+            )
+        );
+        setEditDialogOpen(false);
+        setEditingItem(null);
+    };
+
+    const handleExcluir = (item) => {
+        // String() evita falha silenciosa em comparação "3" !== 3
+        setProgressData((prev) => prev.filter((i) => String(i.id) !== String(item.id)));
+        setEditingItem(null);
     };
 
     return (
@@ -152,8 +194,16 @@ export default function Dashboard() {
                 </div>
 
                 <div className="progress-list">
+                    {progressData.length === 0 && (
+                        <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                            Nenhuma leitura em andamento. Clique no botão + para adicionar um livro!
+                        </Typography>
+                    )}
                     {progressData.map((item) => {
-                        const percent = Math.round((item.paginasLidas / item.totalPaginas) * 100);
+                        const percent =
+                            item.totalPaginas > 0
+                                ? Math.round((item.paginasLidas / item.totalPaginas) * 100)
+                                : 0;
                         return (
                             <div className="progress-card" key={item.id}>
                                 <div className="progress-card-header">
@@ -175,8 +225,12 @@ export default function Dashboard() {
                                             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                             transformOrigin={{ vertical: "top", horizontal: "right" }}
                                         >
-                                            <MenuItem onClick={() => handleMenuClose(item.id)}>Editar</MenuItem>
-                                            <MenuItem onClick={() => handleMenuClose(item.id)}>Excluir</MenuItem>
+                                            <MenuItem onClick={() => { handleMenuClose(item.id); handleEditOpen(item); }}>
+                                                Editar
+                                            </MenuItem>
+                                            <MenuItem onClick={() => { handleMenuClose(item.id); handleExcluir(item); }}>
+                                                Excluir
+                                            </MenuItem>
                                         </Menu>
                                     </Box>
                                 </div>
@@ -278,6 +332,15 @@ export default function Dashboard() {
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onAdd={handleAddBook}
+            />
+
+            <EditProgressDialog
+                open={editDialogOpen}
+                item={editingItem}
+                value={editValue}
+                onChange={setEditValue}
+                onClose={() => setEditDialogOpen(false)}
+                onSave={handleEditSave}
             />
         </Box>
     );
