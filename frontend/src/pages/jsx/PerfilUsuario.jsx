@@ -4,7 +4,7 @@ import "../css/Perfil.css";
 import Footer from "../../components/jsx/Footer.jsx";
 import Header from "../../components/jsx/Header.jsx";
 
-// Seus dados mockados organizados por tipo
+// DADOS MOKADOS
 const MOCK_USUARIOS = {
   admin: {
     nome: "Fernanda Oliveira",
