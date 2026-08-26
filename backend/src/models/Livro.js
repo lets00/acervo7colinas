@@ -38,6 +38,14 @@ const Livro = sequelize.define('Livro', {
     img: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    quantidadePaginas: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    idioma: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'livros'
