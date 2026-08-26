@@ -139,7 +139,7 @@ function InformacaoLivro() {
 
                             <div className="meta-item">
                                 <img src={iconLivroAberto} alt="paginas" />
-                                <span>{livro.paginas} páginas</span>
+                                <span>{livro.quantidadePaginas} páginas</span>
                             </div>
 
                             <div className="meta-item">

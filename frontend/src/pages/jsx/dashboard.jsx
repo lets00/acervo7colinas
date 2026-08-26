@@ -115,7 +115,7 @@ export default function Dashboard() {
                     : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: 0,
-                totalPaginas: Number(livro.paginas) || 0,
+                totalPaginas: Number(livro.quantidadePaginas) || 0,
             },
         ]);
         setModalOpen(false);
