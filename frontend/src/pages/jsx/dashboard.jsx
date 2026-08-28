@@ -138,6 +138,7 @@ export default function Dashboard() {
             ...prev,
             {
                 id: novo.id ?? novo.progresso_id,
+                livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? 0,
                 totalPaginas: Number(livro.paginas) || 0,
@@ -373,6 +374,7 @@ export default function Dashboard() {
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onAdd={handleAddBook}
+                livrosEmProgresso={progressData}
             />
 
             <EditProgressDialog
