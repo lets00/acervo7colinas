@@ -301,8 +301,14 @@ export default function Dashboard() {
 
                 {/* DESTAQUES */}
 
-                <SectionHeader title="Destaque" />
-                <BookCarousel books={destaques} />
+                <SectionHeader title="Lista de futuras leituras" />
+                {destaques.length === 0 ? (
+                    <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                        Nenhum livro na lista de futuras leituras.
+                    </Typography>
+                ) : (
+                    <BookCarousel books={destaques} />
+                )}
 
 
 
