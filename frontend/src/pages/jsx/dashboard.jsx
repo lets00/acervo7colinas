@@ -310,6 +310,19 @@ export default function Dashboard() {
                     <BookCarousel books={destaques} />
                 )}
 
+                {/* historico de leituras */}
+
+                <SectionHeader title="Histórico" />
+                {destaques.length === 0 ? (
+                    <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                        Nenhum livro finalizado.
+                    </Typography>
+                ) : (
+                    <BookCarousel books={destaques} />
+                )}
+
+
+
 
 
                 {/* VISÃO GERAL */}
