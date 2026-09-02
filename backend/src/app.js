@@ -8,6 +8,7 @@ import funcionarioRoutes from './routes/funcionarioRoutes.js';
 import entregadorRoutes from './routes/entregadorRoutes.js';
 import loginRoutes from './routes/loginRoutes.js';
 import exemplarRoutes from './routes/exemplarRoutes.js';
+import desejoRoutes from './routes/desejoRoutes.js';
 
 const app = express();
 
@@ -22,4 +23,5 @@ app.use('/funcionarios', funcionarioRoutes);
 app.use('/entregadores', entregadorRoutes);
 app.use('/login', loginRoutes);
 app.use('/exemplares', exemplarRoutes);
+app.use('/usuario', desejoRoutes);
 export default app;

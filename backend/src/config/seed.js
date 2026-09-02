@@ -4,6 +4,7 @@ import Livro from "../models/Livro.js";
 import Usuario from "../models/Usuario.js";
 import Entregador from "../models/Entregador.js";
 import Exemplar from "../models/Exemplar.js";
+import Desejo from "../models/Desejo.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {
