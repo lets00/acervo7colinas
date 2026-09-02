@@ -267,7 +267,7 @@ async function seedDatabase() {
             }
         });
         await Livro.findOrCreate({
-            where: { isbn: "978-8550819853" },
+            where: { isbn: "9786555204605" },
             defaults: {
                 titulo: "Fundamentos da arquitetura de software: uma abordagem de engenharia: 1",
                 autor: "Mark Richards, Neal Ford",
