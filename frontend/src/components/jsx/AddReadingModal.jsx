@@ -33,7 +33,7 @@ export default function AddReadingModal({ open, onClose, onAdd, livrosEmProgress
             setOpcoes([]);
             setLivroSelecionado(null);
             setExpandido(false);
-            setPaginasLidas(0);
+            setPaginasLidas(0); 
         }
     }, [open]);
 

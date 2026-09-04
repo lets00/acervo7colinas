@@ -162,10 +162,11 @@ export default function Dashboard() {
     };
 
     const handleAddBook = async (livro, paginasLidas) => {
-        const userId = getUserId(); 
+         console.log("OBJETO LIVRO:", livro);
+        const userId = Number(getUserId());
 
-        if (!userId) {
-            console.error("Usuário não autenticado");
+        if (!Number.isInteger(userId) || userId <= 0) {
+            console.error("Usuário inválido:", userId);
             return;
         }
 
@@ -187,7 +188,7 @@ export default function Dashboard() {
                 livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? (Number(paginasLidas) || 0),
-                totalPaginas: novo.totalPaginas ?? (Number(livro.quantidadePaginas) || 0),
+                totalPaginas: Number(livro.quantidadePaginas) || Number(novo.totalPaginas) || 0,
                 data: novo.data,
             },
         ]);
@@ -206,9 +207,9 @@ export default function Dashboard() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                user_id: getUserId(),
-                livro_id: editingItem.livro_id,
-                numero_de_paginas: novoValor,
+                user_id: Number(getUserId()),
+                livro_id: Number(editingItem.livro_id),
+                numero_de_paginas: Number(novoValor),
             }),
         });
 

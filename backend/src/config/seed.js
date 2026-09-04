@@ -352,7 +352,33 @@ async function seedDatabase() {
             }
         });
 
+        const paginasPorIsbn = {
+            '9788550819341': 256,
+            '9788535914849': 416,
+            '9788532508126': 104,
+            '9788532530783': 208,
+            '9788520933838': 356,
+            '9788595081536': 240,
+            '9788580572261': 288,
+            '9788537813386': 208,
+            '9788595084742': 336,
+            '9788544001608': 1560,
+            '9786555204605': 432,
+            '978-1449373320': 590,
+            '9788535236996': 256,
+            '978-8575224625': 800,
+            '978-8577807000': 321
+        };
+
         const livros = await Livro.findAll();
+
+        for (const livro of livros) {
+            const quantidadePaginas = paginasPorIsbn[livro.isbn];
+
+            if (quantidadePaginas && livro.quantidadePaginas !== quantidadePaginas) {
+                await livro.update({ quantidadePaginas });
+            }
+        }
 
         for (const livro of livros) {
             const totalExistente = await Exemplar.count({
