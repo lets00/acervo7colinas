@@ -97,7 +97,6 @@ export default function Dashboard() {
     }, [progressData]);
 
 
-
     const scroll = (ref, direction) => {
         if (!ref.current) return;
 
@@ -152,7 +151,7 @@ export default function Dashboard() {
         setAnchorEls((prev) => ({ ...prev, [id]: null }));
     };
 
-    const handleAddBook = async (livro) => {
+    const handleAddBook = async (livro, paginasLidas) => {
         const userId = getUserId(); 
 
         if (!userId) {
@@ -166,7 +165,7 @@ export default function Dashboard() {
             body: JSON.stringify({
                 user_id: userId,
                 livro_id: livro.id,
-                numero_de_paginas: 0,
+                numero_de_paginas: Number(paginasLidas) || 0,
             }),
         });
         const novo = await res.json(); //esperar debora, para saber quais dados vao retorna, para atualizar a lista de progresso com o novo livro
@@ -177,8 +176,8 @@ export default function Dashboard() {
                 id: novo.id ?? novo.progresso_id,
                 livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
-                paginasLidas: novo.numero_de_paginas_lidas ?? 0,
-                totalPaginas: novo.totalPaginas ?? (Number(livro.quantidadePaginas) || 0),
+                paginasLidas: novo.numero_de_paginas_lidas ?? (Number(paginasLidas) || 0),
+                totalPaginas: Number(livro.paginas) || 0,
             },
         ]);
         setModalOpen(false);
