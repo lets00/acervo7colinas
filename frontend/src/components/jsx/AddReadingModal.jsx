@@ -202,7 +202,7 @@ export default function AddReadingModal({ open, onClose, onAdd, livrosEmProgress
 
                                 <Stack direction="row" flexWrap="wrap" gap="12px 24px">
                                     <MetaItem icon={<AutoStoriesIcon fontSize="small" />} text={livroSelecionado.editora} />
-                                    <MetaItem icon={<MenuBookIcon fontSize="small" />} text={livroSelecionado.paginas ? `${livroSelecionado.paginas} páginas` : "—"} />
+                                    <MetaItem icon={<MenuBookIcon fontSize="small" />} text={livroSelecionado.quantidadePaginas ? `${livroSelecionado.quantidadePaginas} páginas` : "—"} />
                                     <MetaItem icon={<CalendarMonthIcon fontSize="small" />} text={livroSelecionado.ano} />
                                     <MetaItem
                                         icon={<Box component="img" src={iconIsbn} alt="" width={18} height={18} />}

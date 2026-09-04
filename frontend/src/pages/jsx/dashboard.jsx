@@ -10,7 +10,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 // MUI X Charts
 import { BarChart } from "@mui/x-charts/BarChart";
-import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import BookCarousel from "../../components/jsx/BookCarrossel";
 import AddReadingModal from "../../components/jsx/AddReadingModal";
@@ -46,7 +45,10 @@ const livrosPorMes = [3, 5, 2, 8, 6, 12, 9, 14, 11, 7, 18, 22];
 const formataData = (d) => {
     if (!d) return null;
     if (typeof d === "string" && /^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0, 10);
-    return new Date(d).toISOString().slice(0, 10);
+    const dt = new Date(d);
+    const mes = String(dt.getMonth() + 1).padStart(2, "0");
+    const dia = String(dt.getDate()).padStart(2, "0");
+    return `${dt.getFullYear()}-${mes}-${dia}`;
 };
 
 // Gráfico 3 — gêneros (pizza)
@@ -79,7 +81,7 @@ export default function Dashboard() {
     const [loadingProgresso, setLoadingProgresso] = useState(true);
     const [desejos, setDesejos] = useState([]);
 
-    // Gráfico 2 — páginas lidas por dia (vindo do progresso real)
+    // Gráfico 2 — páginas lidas por dia (últimos 7 dias, vindo do progresso real)
     const paginasPorDiaDados = useMemo(() => {
         const porDia = {};
         progressData.forEach((item) => {
@@ -88,12 +90,20 @@ export default function Dashboard() {
             porDia[dia] = (porDia[dia] || 0) + (Number(item.paginasLidas) || 0);
         });
 
-        return Object.entries(porDia)
-            .sort((a, b) => (a[0] > b[0] ? 1 : -1))
-            .map(([dia, paginas]) => ({
-                dia: dia.slice(5), // MM-DD
-                paginas,
-            }));
+        const hoje = new Date();
+        const ultimos7 = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(hoje);
+            d.setDate(hoje.getDate() - i);
+            const chave = formataData(d);
+            ultimos7.push({
+                data: `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`,
+                paginas: porDia[chave] || 0,
+            });
+        }
+
+        const total = ultimos7.reduce((acc, d) => acc + d.paginas, 0);
+        return { dados: ultimos7, total };
     }, [progressData]);
 
 
@@ -177,7 +187,8 @@ export default function Dashboard() {
                 livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? (Number(paginasLidas) || 0),
-                totalPaginas: Number(livro.paginas) || 0,
+                totalPaginas: novo.totalPaginas ?? (Number(livro.quantidadePaginas) || 0),
+                data: novo.data,
             },
         ]);
         setModalOpen(false);
@@ -381,21 +392,44 @@ export default function Dashboard() {
                         />
                     </div>
 
-                    {/* Gráfico 2 — Páginas lidas por dia (linha) */}
+                    {/* Gráfico 2 — Páginas lidas por dia (barras, últimos 7 dias) */}
                     <div className="chart-card">
                         <p className="chart-card-title">Nº de páginas lidas por dia</p>
-                        {paginasPorDiaDados.length === 0 ? (
+                        {paginasPorDiaDados.total === 0 ? (
                             <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
                                 Nenhuma página lida registrada ainda.
                             </Typography>
                         ) : (
-                            <LineChart
-                                height={280}
-                                xAxis={[{ scaleType: "point", data: paginasPorDiaDados.map((d) => d.dia) }]}
-                                series={[{ data: paginasPorDiaDados.map((d) => d.paginas), label: "Páginas", color: "#c770f0", area: false }]}
-                                margin={{ left: 40, right: 16, top: 8, bottom: 28 }}
-                                slotProps={{ legend: { labelStyle: { fontSize: 11 } } }}
-                            />
+                            <>
+                                <Typography sx={{ fontSize: 28, fontWeight: 700, color: "#37228B" }}>
+                                    {paginasPorDiaDados.total} páginas
+                                </Typography>
+                                <Typography color="rgba(0,0,0,0.6)" sx={{ mb: 1, fontSize: 13 }}>
+                                    nos últimos 7 dias
+                                </Typography>
+                                <BarChart
+                                    dataset={paginasPorDiaDados.dados}
+                                    height={250}
+                                    xAxis={[
+                                        {
+                                            scaleType: "band",
+                                            dataKey: "data",
+                                            tickLabelStyle: { fontSize: 11 },
+                                        },
+                                    ]}
+                                    yAxis={[{ label: "Páginas", labelStyle: { fontSize: 11 } }]}
+                                    series={[
+                                        {
+                                            dataKey: "paginas",
+                                            label: "Páginas",
+                                            color: "#c770f0",
+                                            valueFormatter: (value) => `${value} páginas`,
+                                        },
+                                    ]}
+                                    margin={{ left: 40, right: 16, top: 8, bottom: 28 }}
+                                    slotProps={{ legend: { hidden: true } }}
+                                />
+                            </>
                         )}
                     </div>
 
