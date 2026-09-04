@@ -158,7 +158,7 @@ export default function Dashboard() {
                 livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? 0,
-                totalPaginas: Number(livro.paginas) || 0,
+                totalPaginas: novo.totalPaginas ?? (Number(livro.quantidadePaginas) || 0),
             },
         ]);
         setModalOpen(false);
