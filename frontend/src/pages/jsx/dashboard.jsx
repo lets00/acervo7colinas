@@ -16,7 +16,7 @@ import BookCarousel from "../../components/jsx/BookCarrossel";
 import AddReadingModal from "../../components/jsx/AddReadingModal";
 import EditProgressDialog from "../../components/jsx/EditProgressDialog";
 import Footer from "../../components/jsx/Footer";
-import { isAuthenticated } from "../../utils/auth";
+import { isAuthenticated, getUsuario } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/jsx/Header";
@@ -74,6 +74,7 @@ export default function Dashboard() {
     const [editingItem, setEditingItem] = useState(null);
     const [editValue, setEditValue] = useState(0);
     const [loadingProgresso, setLoadingProgresso] = useState(true);
+    const [desejos, setDesejos] = useState([]);
 
 
 
@@ -88,8 +89,11 @@ export default function Dashboard() {
         });
     };
 
+    const getUserId = () =>
+        localStorage.getItem("user_id") || getUsuario()?.id;
+
     useEffect(() => {
-        const userId = localStorage.getItem("user_id");
+        const userId = getUserId();
         if (!userId) {
             console.error("Usuário não autenticado");
             setLoadingProgresso(false); // sem isso, o loading fica travado pra sempre
@@ -106,6 +110,19 @@ export default function Dashboard() {
             .finally(() => setLoadingProgresso(false));
     }, []);
 
+    useEffect(() => {
+        const userId = getUserId();
+        if (!userId) return;
+
+        fetch(`http://localhost:3000/usuario/queroler?user_id=${userId}`)
+            .then((res) => {
+                if (!res.ok) throw new Error("Falha ao buscar lista de futuras leituras");
+                return res.json();
+            })
+            .then((items) => setDesejos(items.map((d) => d.Livro)))
+            .catch((err) => console.error(err));
+    }, []);
+
 
     const handleMenuOpen = (event, id) => {
         setAnchorEls((prev) => ({ ...prev, [id]: event.currentTarget }));
@@ -116,7 +133,7 @@ export default function Dashboard() {
     };
 
     const handleAddBook = async (livro) => {
-        const userId = localStorage.getItem("user_id"); 
+        const userId = getUserId(); 
 
         if (!userId) {
             console.error("Usuário não autenticado");
@@ -138,6 +155,7 @@ export default function Dashboard() {
             ...prev,
             {
                 id: novo.id ?? novo.progresso_id,
+                livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? 0,
                 totalPaginas: Number(livro.paginas) || 0,
@@ -158,7 +176,7 @@ export default function Dashboard() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                user_id: localStorage.getItem("user_id"),
+                user_id: getUserId(),
                 livro_id: editingItem.livro_id,
                 numero_de_paginas: novoValor,
             }),
@@ -300,8 +318,27 @@ export default function Dashboard() {
 
                 {/* DESTAQUES */}
 
-                <SectionHeader title="Destaque" />
-                <BookCarousel books={destaques} />
+                <SectionHeader title="Lista de futuras leituras" />
+                {desejos.length === 0 ? (
+                    <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                        Nenhum livro na lista de futuras leituras.
+                    </Typography>
+                ) : (
+                    <BookCarousel books={desejos} />
+                )}
+
+                {/* historico de leituras */}
+
+                <SectionHeader title="Histórico" />
+                {destaques.length === 0 ? (
+                    <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                        Nenhum livro finalizado.
+                    </Typography>
+                ) : (
+                    <BookCarousel books={destaques} />
+                )}
+
+
 
 
 
@@ -373,6 +410,7 @@ export default function Dashboard() {
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 onAdd={handleAddBook}
+                livrosEmProgresso={progressData}
             />
 
             <EditProgressDialog

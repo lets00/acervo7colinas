@@ -58,11 +58,16 @@
     gap: 10px;
 }
 
+.livro-avaliacao span {
+    color: #333;
+}
+
 .livro-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     align-items: center;
+    color: #333;
 }
 
 .meta-item {
@@ -70,6 +75,11 @@
     align-items: center;
     gap: 8px;
     font-size: 13px;
+    color: #333;
+}
+
+.meta-item span {
+    color: #333;
 }
 
 .meta-item img {
