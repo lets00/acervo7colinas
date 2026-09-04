@@ -8,6 +8,8 @@ import funcionarioRoutes from './routes/funcionarioRoutes.js';
 import entregadorRoutes from './routes/entregadorRoutes.js';
 import loginRoutes from './routes/loginRoutes.js';
 import exemplarRoutes from './routes/exemplarRoutes.js';
+import desejoRoutes from './routes/desejoRoutes.js';
+import progressoRoutes from './routes/progressoRoutes.js';
 
 const app = express();
 
@@ -22,4 +24,6 @@ app.use('/funcionarios', funcionarioRoutes);
 app.use('/entregadores', entregadorRoutes);
 app.use('/login', loginRoutes);
 app.use('/exemplares', exemplarRoutes);
+app.use('/usuario', desejoRoutes);
+app.use('/usuarios/progresso', progressoRoutes);
 export default app;

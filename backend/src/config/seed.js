@@ -4,6 +4,8 @@ import Livro from "../models/Livro.js";
 import Usuario from "../models/Usuario.js";
 import Entregador from "../models/Entregador.js";
 import Exemplar from "../models/Exemplar.js";
+import Desejo from "../models/Desejo.js";
+import Progresso from "../models/Progresso.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {
@@ -266,7 +268,7 @@ async function seedDatabase() {
             }
         });
         await Livro.findOrCreate({
-            where: { isbn: "978-8550819853" },
+            where: { isbn: "9786555204605" },
             defaults: {
                 titulo: "Fundamentos da arquitetura de software: uma abordagem de engenharia: 1",
                 autor: "Mark Richards, Neal Ford",

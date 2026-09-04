@@ -18,7 +18,7 @@ import iconIsbn from "../../assets/isbn.png";
 
 const isSameOption = (option, value) => option?.id === value?.id;
 
-export default function AddReadingModal({ open, onClose, onAdd }) {
+export default function AddReadingModal({ open, onClose, onAdd, livrosEmProgresso = [] }) {
     const [termo, setTermo] = useState("");
     const [opcoes, setOpcoes] = useState([]);
     const [carregando, setCarregando] = useState(false);
@@ -60,12 +60,18 @@ export default function AddReadingModal({ open, onClose, onAdd }) {
         }, 400);
 
         return () => clearTimeout(debounceRef.current);
-    }, [termo]);
+    }, [termo, livrosEmProgresso]);
 
     const handleSelecionar = (_, valor) => {
         setLivroSelecionado(valor);
         setExpandido(false);
     };
+
+    const jaEmProgresso = livroSelecionado
+        ? livrosEmProgresso.some(
+              (p) => String(p.livro_id ?? p.livroId ?? p.id) === String(livroSelecionado.id)
+          )
+        : false;
 
     return (
         <Dialog
@@ -240,21 +246,35 @@ export default function AddReadingModal({ open, onClose, onAdd }) {
             </DialogContent>
 
             {/* RODAPÉ */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", pb: "4px" }}>
-                <Button
-                    variant="contained"
-                    disabled={!livroSelecionado}
-                    onClick={() => onAdd(livroSelecionado)}
-                    sx={{
-                        bgcolor: "#37228b",
-                        textTransform: "uppercase",
-                        borderRadius: "10px",
-                        px: "32px",
-                        "&:hover": { bgcolor: "#312793" },
-                    }}
-                >
-                    Adicionar
-                </Button>
+            <Box sx={{ pb: "4px" }}>
+                {jaEmProgresso && (
+                    <Typography
+                        sx={{
+                            mb: "12px",
+                            color: "#b00020",
+                            fontWeight: 500,
+                            textAlign: "right",
+                        }}
+                    >
+                        Este livro já está em progresso de leitura.
+                    </Typography>
+                )}
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                        variant="contained"
+                        disabled={!livroSelecionado || jaEmProgresso}
+                        onClick={() => onAdd(livroSelecionado)}
+                        sx={{
+                            bgcolor: "#37228b",
+                            textTransform: "uppercase",
+                            borderRadius: "10px",
+                            px: "32px",
+                            "&:hover": { bgcolor: "#312793" },
+                        }}
+                    >
+                        Adicionar
+                    </Button>
+                </Box>
             </Box>
         </Dialog>
     );
