@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -42,9 +42,12 @@ const progressDataInicial = [
 const meses = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const livrosPorMes = [3, 5, 2, 8, 6, 12, 9, 14, 11, 7, 18, 22];
 
-// Gráfico 2 — páginas por dia
-const dias = Array.from({ length: 10 }, (_, i) => `${i + 1}`);
-const paginasPorDia = [10, 20, 30, 42, 55, 60, 70, 80, 90, 95];
+// Gráfico 2 — páginas por dia (dados reais do progresso de leitura)
+const formataData = (d) => {
+    if (!d) return null;
+    if (typeof d === "string" && /^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0, 10);
+    return new Date(d).toISOString().slice(0, 10);
+};
 
 // Gráfico 3 — gêneros (pizza)
 const generos = [
@@ -75,6 +78,23 @@ export default function Dashboard() {
     const [editValue, setEditValue] = useState(0);
     const [loadingProgresso, setLoadingProgresso] = useState(true);
     const [desejos, setDesejos] = useState([]);
+
+    // Gráfico 2 — páginas lidas por dia (vindo do progresso real)
+    const paginasPorDiaDados = useMemo(() => {
+        const porDia = {};
+        progressData.forEach((item) => {
+            const dia = item.data ? formataData(item.data) : null;
+            if (!dia) return;
+            porDia[dia] = (porDia[dia] || 0) + (Number(item.paginasLidas) || 0);
+        });
+
+        return Object.entries(porDia)
+            .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+            .map(([dia, paginas]) => ({
+                dia: dia.slice(5), // MM-DD
+                paginas,
+            }));
+    }, [progressData]);
 
 
 
@@ -158,7 +178,7 @@ export default function Dashboard() {
                 livro_id: livro.id,
                 titulo: `${livro.titulo} – ${livro.autor}`,
                 paginasLidas: novo.numero_de_paginas_lidas ?? 0,
-                totalPaginas: Number(livro.paginas) || 0,
+                totalPaginas: novo.totalPaginas ?? (Number(livro.quantidadePaginas) || 0),
             },
         ]);
         setModalOpen(false);
@@ -365,13 +385,19 @@ export default function Dashboard() {
                     {/* Gráfico 2 — Páginas lidas por dia (linha) */}
                     <div className="chart-card">
                         <p className="chart-card-title">Nº de páginas lidas por dia</p>
-                        <LineChart
-                            height={280}
-                            xAxis={[{ scaleType: "point", data: dias }]}
-                            series={[{ data: paginasPorDia, label: "Páginas", color: "#c770f0", area: false }]}
-                            margin={{ left: 40, right: 16, top: 8, bottom: 28 }}
-                            slotProps={{ legend: { labelStyle: { fontSize: 11 } } }}
-                        />
+                        {paginasPorDiaDados.length === 0 ? (
+                            <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                                Nenhuma página lida registrada ainda.
+                            </Typography>
+                        ) : (
+                            <LineChart
+                                height={280}
+                                xAxis={[{ scaleType: "point", data: paginasPorDiaDados.map((d) => d.dia) }]}
+                                series={[{ data: paginasPorDiaDados.map((d) => d.paginas), label: "Páginas", color: "#c770f0", area: false }]}
+                                margin={{ left: 40, right: 16, top: 8, bottom: 28 }}
+                                slotProps={{ legend: { labelStyle: { fontSize: 11 } } }}
+                            />
+                        )}
                     </div>
 
                     {/* Gráfico 3 — Gêneros mais lidos (pizza) */}
