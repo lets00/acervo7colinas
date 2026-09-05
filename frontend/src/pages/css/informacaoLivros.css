@@ -58,11 +58,16 @@
     gap: 10px;
 }
 
+.livro-avaliacao span {
+    color: #333;
+}
+
 .livro-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     align-items: center;
+    color: #333;
 }
 
 .meta-item {
@@ -70,6 +75,11 @@
     align-items: center;
     gap: 8px;
     font-size: 13px;
+    color: #333;
+}
+
+.meta-item span {
+    color: #333;
 }
 
 .meta-item img {
@@ -117,8 +127,19 @@
 
 .ver-mais-container :focus {
     outline: none;
-    box-shadow: 0 0 0 2px #37228B;
+    box-shadow: 0 0 0 2px #fefeff;
     border-radius: 4px;
+}
+
+.btn-ver-mais {
+    color: #37228B !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+}
+
+.btn-ver-mais:hover {
+    color: #37228B !important;
+    background-color: rgba(55, 34, 139, 0.08) !important;
 }
 
 .livro-descricao.aberta {

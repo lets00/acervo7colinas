@@ -129,9 +129,9 @@ export default function LivrosSalvos() {
                         <h1 className="livrossalvos-titulo">Livros Cadastrados</h1>
                         <Button
                             variant="contained"
-                             sx={{ width: "100%"}}
+                            sx={{ width: "100%"}}
                             startIcon={<AddIcon />}
-                             onClick={() => navigate("/livros")}
+                            onClick={() => navigate("/livros")}
                             sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
                         >
                             Adicionar novo livro
@@ -218,7 +218,7 @@ export default function LivrosSalvos() {
                                                 <TableCell>
                                                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                                                         <Avatar
-                                                            src={row.capa}
+                                                            src={row.img ? `http://localhost:3000${row.img}` : undefined}
                                                             alt={row.titulo}
                                                             variant="rounded"
                                                             sx={{ width: 36, height: 52, flexShrink: 0 }}

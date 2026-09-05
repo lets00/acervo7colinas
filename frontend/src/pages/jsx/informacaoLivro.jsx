@@ -36,7 +36,9 @@ function InformacaoLivro() {
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
+    const descricaoRef = useRef(null);
     const [expandido, setExpandido] = useState(false);
+    const [descricaoOverflow, setDescricaoOverflow] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:3000/livros/${id}`)
@@ -59,15 +61,21 @@ function InformacaoLivro() {
 
         fetch(`http://localhost:3000/livros/${id}/avaliacoes`)
             .then(res => res.json())
-            .then(data => setAvaliacoes(data))
+            .then(data => setAvaliacoes(Array.isArray(data) ? data : []))
             .catch(() => setAvaliacoes([]));
 
-        fetch(`http://localhost:3000/livros/${id}/relacionados`)
+        fetch(`http://localhost:3000/livros`)
             .then(res => res.json())
             .then(data => setRelacionados(data))
             .catch(() => setRelacionados([]));
 
     }, [id]);
+
+    useEffect(() => {
+        if (descricaoRef.current) {
+            setDescricaoOverflow(descricaoRef.current.scrollHeight > descricaoRef.current.clientHeight);
+        }
+    }, [livro]);
 
     const scrollLeft = (ref) => {
         ref.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -76,6 +84,10 @@ function InformacaoLivro() {
     const scrollRight = (ref) => {
         ref.current.scrollBy({ left: 300, behavior: "smooth" });
     };
+
+    const livrosRelacionados = relacionados.filter(
+        b => b.genero === livro?.genero && b.id !== livro?.id
+    );
 
     if (!livro) return <p>Carregando...</p>;
 
@@ -127,7 +139,7 @@ function InformacaoLivro() {
 
                             <div className="meta-item">
                                 <img src={iconLivroAberto} alt="paginas" />
-                                <span>{livro.paginas} páginas</span>
+                                <span>{livro.quantidadePaginas} páginas</span>
                             </div>
 
                             <div className="meta-item">
@@ -153,25 +165,28 @@ function InformacaoLivro() {
                         </div>
 
                         <div className="descricao-container">
-                            <p className={expandido ? "livro-descricao aberta" : "livro-descricao"}>
+                            <p ref={descricaoRef} className={expandido ? "livro-descricao aberta" : "livro-descricao"}>
                                 {livro.descricao}
                             </p>
 
-                            <div className="ver-mais-container">
-                                <Button
-                                    onClick={() => setExpandido(!expandido)}
-                                    endIcon={
-                                        <ExpandMoreIcon
-                                            style={{
-                                                transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
-                                                transition: "0.3s"
-                                            }}
-                                        />
-                                    }
-                                >
-                                    {expandido ? "Ver menos" : "Ver mais"}
-                                </Button>
-                            </div>
+                            {descricaoOverflow && (
+                                <div className="ver-mais-container">
+                                    <Button
+                                        className="btn-ver-mais"
+                                        onClick={() => setExpandido(!expandido)}
+                                        endIcon={
+                                            <ExpandMoreIcon
+                                                style={{
+                                                    transform: expandido ? "rotate(180deg)" : "rotate(0deg)",
+                                                    transition: "0.3s"
+                                                }}
+                                            />
+                                        }
+                                    >
+                                        {expandido ? "Ver menos" : "Ver mais"}
+                                    </Button>
+                                </div>
+                            )}
                         </div>
 
 
@@ -207,9 +222,14 @@ function InformacaoLivro() {
                     </TableContainer>
                 </div>
 
-                {/* relacionados */}                
                 <SectionHeader title="Os leitores também gostaram" />
-                <BookCarousel books={relacionados} />
+                {livrosRelacionados.length > 0 ? (
+                    <BookCarousel books={livrosRelacionados} />
+                ) : (
+                    <p style={{ textAlign: 'center', color: '#888', padding: '20px' }}>
+                        Nenhum outro livro deste gênero disponível.
+                    </p>
+                )}
 
                 <div style={{ height: "70px" }}>
                     <SectionHeader title="Avaliações e comentários" />

@@ -67,9 +67,9 @@ function Home() {
             setDestaques(data);   // ou data.destaques, dependendo da resposta
             });
 
-        fetch("http://localhost:3000/novidades")
+        fetch("http://localhost:3000/livros")
             .then(res => res.json())
-            .then(setNovidades);
+            .then(data => setNovidades(data.toReversed().slice(0, 7)));
 
         fetch("http://localhost:3000/agendas")
             .then(res => res.json())
