@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"; 
 import { Box, Button, Typography, styled } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import LivroCadastro from "../../assets/livroCadastro.jpeg"; 
+import LivroCadastro from "../../assets/LivroCadastro.jpeg"; 
 import '../../pages/css/CadastroLivros.css';
 
 const VisuallyHiddenInput = styled('input')({
