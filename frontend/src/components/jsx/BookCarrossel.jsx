@@ -35,7 +35,7 @@ function BookCarrossel({ title, books }) {
                         <BookCard
                             key={book.id}
                             id={book.id}
-                            imagem={`http://localhost:3000${book.img}`}
+                            imagem={book.img ? `http://localhost:3000${book.img}` : ""}
                             titulo={book.titulo}
                             avaliacao={book.avaliacao}
                         />
