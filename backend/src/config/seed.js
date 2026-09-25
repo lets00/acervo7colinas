@@ -5,6 +5,7 @@ import Usuario from "../models/Usuario.js";
 import Entregador from "../models/Entregador.js";
 import Exemplar from "../models/Exemplar.js";
 import Desejo from "../models/Desejo.js";
+import Emprestimo from "../models/Emprestimo.js";
 import Progresso from "../models/Progresso.js";
 import bcrypt from "bcrypt";
 
@@ -395,6 +396,85 @@ async function seedDatabase() {
                     });
                 }
             }
+        }
+
+        //Seed da lista Quero Ler
+        const usuarioDesejos = await Usuario.findOne({
+            where: { email: "usuario@acervo7colinas.com.br"}
+        });
+
+        if (usuarioDesejos) {
+            const livrosDesejados = await Livro.findAll({
+                limit: 6,
+                order: [["id", "ASC"]]
+            });
+
+            for (const livro of livrosDesejados) {
+                await Desejo.findOrCreate({
+                    where: {
+                        user_id: usuarioDesejos.id,
+                        livro_id: livro.id
+                    }
+                });
+            }
+            console.log("Seed de desejos concluído: 6 livros associados ao usuário.")
+        }
+
+        //Seed de progresso de leitura
+        const usuarioProgresso = await Usuario.findOne({
+            where: { email: "usuario@acervo7colinas.com.br"}
+        });
+
+        if (usuarioProgresso) {
+            const livrosProgresso = await Livro.findAll({
+                limit: 3,
+                order: [["id", "ASC"]]
+            });
+
+            const paginasLidas = [50, 100, 150];
+
+            for (let i = 0; i < livrosProgresso.length; i++) {
+                const livro = livrosProgresso[i];
+
+                await Progresso.findOrCreate({
+                    where: {
+                        user_id: usuarioProgresso.id,
+                        livro_id: livro.id
+                    },
+                    defaults: {
+                        numero_de_paginas_lidas: paginasLidas[i],
+                        data: new Date().toISOString().split("T")[0]
+                    }
+                });
+            }
+            console.log("Seed de progresso concluído: 3 progressos associados ao usuário.")
+        }
+
+        // Seed de empréstimos
+        const usuarioEmprestimos = await Usuario.findOne({
+            where: { email: "usuario@acervo7colinas.com.br" }
+        });
+
+        if (usuarioEmprestimos) {
+            const livrosEmprestados = await Livro.findAll({
+                limit: 2,
+                order: [["id", "ASC"]]
+            });
+
+            for (const livro of livrosEmprestados) {
+                await Emprestimo.findOrCreate({
+                    where: {
+                        user_id: usuarioEmprestimos.id,
+                        livro_id: livro.id
+                    },
+                    defaults: {
+                        data_emprestimo: new Date().toISOString().split("T")[0],
+                        data_entrega: null,
+                        is_devolvido: false
+                    }
+                });
+            }
+            console.log("Seed de empréstimos concluído: 2 empréstimos associados ao usuário.");
         }
 
         console.log('Tabelas sincronizadas e banco populado com sucesso!');
