@@ -25,6 +25,7 @@ function CadastroLivros() {
     isbn: "",
     ano: null,
     quantidadeExemplares: "",
+    quantidadePaginas: "",
     genero: "",
     autor: "",
     editora: "",
@@ -37,7 +38,7 @@ function CadastroLivros() {
     const { name, value } = event.target;
 
     if (name === 'descricao' && value.length > DESCRICAO_MAX) return;
-    if (name === 'quantidadeExemplares' && value !== "" && Number(value) < 0) return;
+    if ((name === 'quantidadeExemplares' || name === 'quantidadePaginas') && value !== "" && Number(value) < 0) return;
 
     setFormData(prev => ({ ...prev, [name]: value }));
 
@@ -57,6 +58,7 @@ function CadastroLivros() {
     if (!formData.isbn.trim()) novoErros.isbn = true;
     if (!formData.ano) novoErros.ano = true;
     if (!formData.quantidadeExemplares || Number(formData.quantidadeExemplares) < 1) novoErros.quantidadeExemplares = true;
+    if (!formData.quantidadePaginas || Number(formData.quantidadePaginas) < 1) novoErros.quantidadePaginas = true;
     if (!formData.genero) novoErros.genero = true;
     if (!formData.autor.trim()) novoErros.autor = true;
     if (!formData.editora.trim()) novoErros.editora = true;
@@ -68,7 +70,7 @@ function CadastroLivros() {
 
   const handleCancel = () => {
     setFormData({ 
-      titulo: "", isbn: "", ano: null, quantidadeExemplares: "", 
+      titulo: "", isbn: "", ano: null, quantidadeExemplares: "", quantidadePaginas: "",
       genero: "", autor: "", editora: "", descricao: "" 
     });
     setImagemLivro(null);
@@ -88,6 +90,7 @@ function CadastroLivros() {
     dataToSend.append("isbn", formData.isbn);
     dataToSend.append("ano", formData.ano ? String(formData.ano.year()) : "");
     dataToSend.append("quantidadeExemplares", formData.quantidadeExemplares);
+    dataToSend.append("quantidadePaginas", formData.quantidadePaginas);
     dataToSend.append("genero", formData.genero);
     dataToSend.append("autor", formData.autor);
     dataToSend.append("editora", formData.editora);
@@ -163,6 +166,8 @@ function CadastroLivros() {
                       </LocalizationProvider>
 
                       <TextField required fullWidth label="Quantidade de exemplares" error={!!errors.quantidadeExemplares} helperText={errors.quantidadeExemplares && "Quantidade de exemplares é obrigatória"}  type="number" sx={{ width: '468px' } } name="quantidadeExemplares" value={formData.quantidadeExemplares} onChange={handleChange}/>
+
+                      <TextField required fullWidth label="Quantidade de páginas" error={!!errors.quantidadePaginas} helperText={errors.quantidadePaginas && "Quantidade de páginas é obrigatória"} type="number" inputProps={{ min: 1 }} sx={{ width: '468px' }} name="quantidadePaginas" value={formData.quantidadePaginas} onChange={handleChange}/>
 
                       <FormControl required fullWidth sx={{ width: '468px' } } error={!!errors.genero} >
                         <InputLabel>Gênero</InputLabel>

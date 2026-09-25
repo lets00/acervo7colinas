@@ -62,6 +62,7 @@ function EditarLivros() {
     isbn: "",
     ano: null,
     quantidadeExemplares: "",
+    quantidadePaginas: "",
     genero: "",
     autor: "",
     editora: "",
@@ -89,6 +90,9 @@ function EditarLivros() {
 
           quantidadeExemplares:
             dadosDoLivro.quantidadeExemplares ?? "",
+
+          quantidadePaginas:
+            dadosDoLivro.quantidadePaginas ?? "",
 
           autor: dadosDoLivro.autor || "",
           editora: dadosDoLivro.editora || "",
@@ -127,6 +131,8 @@ function EditarLivros() {
     if (!formData.ano || !dayjs(formData.ano).isValid()) novosErros.ano = "Ano é obrigatório.";
     if (formData.quantidadeExemplares === "" || formData.quantidadeExemplares < 0)
       novosErros.quantidadeExemplares = "Quantidade inválida.";
+    if (formData.quantidadePaginas === "" || Number(formData.quantidadePaginas) < 1)
+      novosErros.quantidadePaginas = "Quantidade de páginas inválida.";
     if (!formData.genero) novosErros.genero = "Gênero é obrigatório.";
     if (!formData.autor.trim()) novosErros.autor = "Autor é obrigatório.";
     if (!formData.editora.trim()) novosErros.editora = "Editora é obrigatória.";
@@ -148,9 +154,10 @@ function EditarLivros() {
         ...formData,
         ano: formData.ano ? Number(formData.ano.format("YYYY")) : null,
         quantidadeExemplares: Number(formData.quantidadeExemplares),
+        quantidadePaginas: Number(formData.quantidadePaginas),
       };
 
-      await axios.put(`${API_URL}/livros/${id}`, dadosParaEnviar);
+      await axios.patch(`${API_URL}/livros/${id}`, dadosParaEnviar);
       setSnackbar({ open: true, message: "Livro atualizado com sucesso!", severity: "success" });
       setTimeout(() => navigate("/livros"), 1500);
     } catch (error) {
@@ -221,29 +228,29 @@ function EditarLivros() {
                   sx={{width: "468px"}}
                 />
 
-                <TextField
+               <TextField
                   required
                   fullWidth
-                  sx={{mt:2.5}}
                   label="ISBN"
-                  sx={{mt: 2.5}}
                   variant="outlined"
                   name="isbn"
                   value={formData.isbn}
                   onChange={handleChange}
                   error={!!errors.isbn}
                   helperText={errors.isbn}
+                  sx={{ mt: 0.5 }}
                 />
-
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="pt-br"
+                >
                   <DatePicker
                     label="Ano"
                     value={formData.ano}
-                    sx={{mt: 2.5}}
                     onChange={handleDateChange}
                     views={["year"]}
                     format="YYYY"
-                    sx={{mt:2.5}}
+                    sx={{ mt: 0.5 }}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -255,15 +262,21 @@ function EditarLivros() {
                   />
                 </LocalizationProvider>
 
-                <FormControl required fullWidth error={!!errors.genero}>
+                <FormControl
+                  required
+                  fullWidth
+                  error={!!errors.genero}
+                  sx={{ mt: 0.5 }}
+                >
                   <InputLabel>Gênero</InputLabel>
+
                   <Select
                     name="genero"
-                    sx={{mt: 2.5}}
                     value={formData.genero}
                     onChange={handleChange}
-                    input={<OutlinedInput label="Gênero" />}
-                    sx={{mt:2.5}}
+                    input={
+                      <OutlinedInput label="Gênero" />
+                    }
                   >
                     {GENEROS.map((g) => (
                       <MenuItem key={g.value} value={g.value}>
@@ -305,6 +318,7 @@ function EditarLivros() {
                   onChange={handleChange}
                   error={!!errors.editora}
                   helperText={errors.editora}
+                  sx={{ mt: 0.5 }}
                 />
 
                 <TextField
@@ -332,6 +346,19 @@ function EditarLivros() {
                   onChange={handleChange}
                   error={!!errors.quantidadeExemplares}
                   helperText={errors.quantidadeExemplares}
+                />
+            <TextField
+                  required
+                  fullWidth
+                  label="Quantidade de páginas"
+                  type="number"
+                  name="quantidadePaginas"
+                  inputProps={{ min: 1 }}
+                  sx={{ width: "960px" }}
+                  value={formData.quantidadePaginas}
+                  onChange={handleChange}
+                  error={!!errors.quantidadePaginas}
+                  helperText={errors.quantidadePaginas}
                 />
           </Grid>
 

@@ -4,6 +4,7 @@ import "../css/Perfil.css";
 import Footer from "../../components/jsx/Footer.jsx";
 import Header from "../../components/jsx/Header.jsx";
 
+
 // DADOS MOKADOS PARA TESTE, CASO NÃO TENHA NADA NO LOCALSTORAGE
 const MOCK_USUARIOS = {
   admin: {

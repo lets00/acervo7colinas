@@ -80,6 +80,7 @@ export default function Login() {
       if (response.ok) {
         saveToken(data.token);
         saveUsuario(data.usuario);
+        localStorage.setItem("user_id", data.usuario.id);
 
         // ─── SALVA O TIPO PARA O PERFIL MOCKADO ──────────────────────────────────
         // Caso sua API retorne o campo dentro de 'usuario' (ex: data.usuario.tipo)
