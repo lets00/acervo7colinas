@@ -24,6 +24,7 @@ import UsuariosSalvos from "./pages/jsx/UsuariosSalvos.jsx";
 import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import EditarLivros from "./pages/jsx/EditarLivros.jsx";
 import PerfilUsuario from "./pages/jsx/PerfilUsuario.jsx";
+import SolicitacaoListaEmprestimo from "./pages/jsx/SolicitacaoListaEmprestimo.jsx";
 
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
@@ -44,6 +45,7 @@ function App() {
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />
+            <Route path="/emprestimo" element={<SolicitacaoListaEmprestimo />} />
             <Route path="/usuarios" element={<CadastroUsuarios />} />
             <Route path="/perfil" element={<PerfilUsuario />} />
             <Route path="/acervo" element={<NossoAcervo />} />
