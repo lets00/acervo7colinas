@@ -161,7 +161,7 @@ function SolicitacaoListaEmprestimo() {
                                     <Stack
                                         key={livro.id}
                                         direction="row"
-                                        alignItems="center"
+                                        alignItems="flex-start"
                                         spacing={{ xs: 1.5, md: 2 }}
                                         className="sol-item"
                                     >
@@ -171,6 +171,7 @@ function SolicitacaoListaEmprestimo() {
                                             onChange={() => toggleLivro(livro.id)}
                                             sx={{
                                                 color: "#37228B",
+                                                mt: "6px",
                                                 "&.Mui-checked": { color: "#37228B" },
                                                 "&.Mui-disabled": { color: "#c9c9c9" },
                                             }}
@@ -179,18 +180,23 @@ function SolicitacaoListaEmprestimo() {
                                         <Box component="img" src={coverSrc(livro)} alt={livro.titulo} className="sol-capa" />
 
                                         <Box className="sol-info" sx={{ flex: 1, minWidth: 0 }}>
-                                            <Typography className="sol-livro-titulo">{livro.titulo}</Typography>
+                                            <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1}>
+                                                <Typography className="sol-livro-titulo">{livro.titulo}</Typography>
+                                                <Button className="sol-remover" onClick={() => removerLivro(livro.id)}>
+                                                    REMOVER
+                                                </Button>
+                                            </Stack>
+
                                             <Typography className="sol-livro-autor">{livro.autor}</Typography>
-                                            <Typography className="sol-livro-genero">{livro.genero}</Typography>
+
+                                            <Typography className="sol-livro-genero">
+                                                Gêneros: <span className="sol-genero-link">{livro.genero}</span>
+                                            </Typography>
+
+                                            <span className={`sol-etiqueta ${livro.disponivel ? "disponivel" : "indisponivel"}`}>
+                                                {livro.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
+                                            </span>
                                         </Box>
-
-                                        <span className={`sol-etiqueta ${livro.disponivel ? "disponivel" : "indisponivel"}`}>
-                                            {livro.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
-                                        </span>
-
-                                        <Button className="sol-remover" onClick={() => removerLivro(livro.id)}>
-                                            REMOVER
-                                        </Button>
                                     </Stack>
                                 );
                             })}
