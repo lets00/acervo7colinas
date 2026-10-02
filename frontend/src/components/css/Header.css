@@ -46,6 +46,12 @@
   width: 18px !important;
   height: 16px !important;
 }
+
+.header-emprestimo-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
 .header-stack {
   display: flex;
   align-items: center;
