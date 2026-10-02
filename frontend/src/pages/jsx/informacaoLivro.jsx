@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
 import SectionHeader from "../../components/jsx/SectionHeader";
@@ -30,9 +30,12 @@ import Rating from "@mui/material/Rating";
 
 function InformacaoLivro() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const destaquesRef = useRef(null);
 
     const [livro, setLivro] = useState(null);
+    const [favorito, setFavorito] = useState(false);
+    const emprestimosAtivos = 0;
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
@@ -114,12 +117,30 @@ function InformacaoLivro() {
                             className="livro-capa"
                         />
 
-                        <Button
-                            variant="contained"
-                            className="btn-prateleira"
-                        >
-                            ADICIONAR À PRATELEIRA
-                        </Button>
+                        <div className="botoes-livro">
+                            <Button
+                                variant="outlined"
+                                className="btn-favorito"
+                                onClick={() => setFavorito(!favorito)}
+                            >
+                                {favorito
+                                    ? "Remover dos favoritos"
+                                    : "Adicionar aos favoritos"}
+                            </Button>
+
+                            <Button
+                                variant="contained"
+                                className="btn-emprestimo"
+                                disabled={emprestimosAtivos >= 3}
+                                onClick={() =>
+                                    navigate("/emprestimo", {
+                                        state: { livro }
+                                    })
+                                }
+                            >
+                                Pedir emprestado
+                            </Button>
+                        </div>
                     </div>
 
                     <div className="livro-detalhes">
