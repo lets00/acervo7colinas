@@ -11,6 +11,7 @@ import Divider from "@mui/material/Divider";
 
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
+import { useEmprestimo } from "../../context/EmprestimoContext";
 import "../css/SolicitacaoListaEmprestimo.css";
 
 // Capas locais usadas nos dados de teste (acesso direto à página)
@@ -50,6 +51,11 @@ function SolicitacaoListaEmprestimo() {
     });
     const [carregando, setCarregando] = useState(true);
     const [selecionados, setSelecionados] = useState([]);
+    const { setLivros: setLivrosGlobal } = useEmprestimo();
+
+    useEffect(() => {
+        setLivrosGlobal(livros);
+    }, [livros, setLivrosGlobal]);
 
     useEffect(() => {
         let ativo = true;

@@ -28,12 +28,14 @@ import SolicitacaoListaEmprestimo from "./pages/jsx/SolicitacaoListaEmprestimo.j
 
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
+import { EmprestimoProvider } from "./context/EmprestimoContext.jsx";
 
 const theme = createTheme();
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <EmprestimoProvider>
       <BrowserRouter>
         <Container maxWidth={false} sx={{ marginTop: '2rem' }}>
           <Routes>
@@ -72,6 +74,7 @@ function App() {
 
         </Container>
       </BrowserRouter>
+      </EmprestimoProvider>
 
     </ThemeProvider>
   );
