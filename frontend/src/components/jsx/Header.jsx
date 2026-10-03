@@ -116,7 +116,7 @@ export default function Header() {
               <>
                 <Tooltip title="Minha solicitação de empréstimo">
                   <IconButton
-                    onClick={() => navigate("/emprestimo")}
+                    onClick={() => navigate("/solicitacao-emprestimo")}
                     sx={{ p: 0.5 }}
                   >
                     <Badge badgeContent={quantidadeEmprestimo} color="error" max={99}>

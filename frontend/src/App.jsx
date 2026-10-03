@@ -47,7 +47,7 @@ function App() {
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />
-            <Route path="/emprestimo" element={<SolicitacaoListaEmprestimo />} />
+            <Route path="/solicitacao-emprestimo" element={<SolicitacaoListaEmprestimo />} />
             <Route path="/usuarios" element={<CadastroUsuarios />} />
             <Route path="/perfil" element={<PerfilUsuario />} />
             <Route path="/acervo" element={<NossoAcervo />} />
@@ -57,7 +57,7 @@ function App() {
 
             {/* 👤 Rotas do Usuário (e superiores) */}
 
-            <Route path="/emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
+            <Route path="/meus-emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario', 'entregador']}><Dashboard /></ProtectedRoute>} />
 
             {/* 🔧 Rotas de Funcionário/Admin */}

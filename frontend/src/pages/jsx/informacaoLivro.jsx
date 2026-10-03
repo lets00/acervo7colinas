@@ -133,7 +133,7 @@ function InformacaoLivro() {
                                 className="btn-emprestimo"
                                 disabled={emprestimosAtivos >= 3}
                                 onClick={() =>
-                                    navigate("/emprestimo", {
+                                    navigate("/solicitacao-emprestimo", {
                                         state: { livro }
                                     })
                                 }
