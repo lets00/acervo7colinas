@@ -168,6 +168,15 @@ export default function Header() {
                     Meu Perfil
                   </MenuItem>
 
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/meus-emprestimos");
+                      fecharMenuHamburguer();
+                    }}
+                  >
+                    Meus Empréstimos
+                  </MenuItem>
+
                   {isAdmin && (
                     <>
                       <MenuItem
