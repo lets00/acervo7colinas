@@ -5,7 +5,7 @@ import { getToken, getUsuario, removeToken } from "../../utils/auth";
 import {
   Typography, TextField, Box, Stack, Chip,
   InputAdornment, Divider, Avatar, Menu,
-  MenuItem, IconButton, Tooltip,
+  MenuItem, IconButton, Tooltip, Badge,
 } from "@mui/material";
 import { useNavigate ,Link} from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -13,6 +13,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import logo   from "../../assets/logo.png";
 import Search from "../../assets/Search.png";
 import Perfil from "../../assets/Perfil.png";
+import iconEmprestimo from "../../assets/header/emprestimos-livros-selecionado.png";
+import { useEmprestimo } from "../../context/EmprestimoContext";
 import "../css/Header.css";
 
 
@@ -23,6 +25,8 @@ export default function Header() {
 
   const token = getToken();
   const usuario = getUsuario();
+  const { livros: livrosEmprestimo } = useEmprestimo();
+  const quantidadeEmprestimo = livrosEmprestimo.length;
 
   const isAdmin =
     usuario?.cargo?.toLowerCase() === "administrador";
@@ -110,6 +114,21 @@ export default function Header() {
 
             {token ? (
               <>
+                <Tooltip title="Minha solicitação de empréstimo">
+                  <IconButton
+                    onClick={() => navigate("/emprestimo")}
+                    sx={{ p: 0.5 }}
+                  >
+                    <Badge badgeContent={quantidadeEmprestimo} color="error" max={99}>
+                      <img
+                        src={iconEmprestimo}
+                        alt="Solicitação de empréstimo"
+                        className="header-emprestimo-icon"
+                      />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+
                 <Tooltip title={usuario?.nomeCompleto || usuario?.email || "Perfil"}>
                   <IconButton
                     onClick={() => navigate("/perfil")}
