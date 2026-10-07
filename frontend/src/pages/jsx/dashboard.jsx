@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 import Header from "../../components/jsx/Header";
 import SectionHeader from "../../components/jsx/SectionHeader";
-import "../css/Dashboard.css";
+import "../css/Dashboard.css";''
 
 
 const formataData = (d) => {
@@ -48,6 +48,13 @@ export default function Dashboard() {
     const [anchorEls, setAnchorEls] = useState({});
     const [livrosPorMesData, setLivrosPorMesData] = useState({ meses: [], valores: [] });
     const [generosData, setGenerosData] = useState([]);
+    const [erroLivrosPorMes, setErroLivrosPorMes] = useState(null);
+    const [erroGeneros, setErroGeneros] = useState(null);
+    const [carregandoGraficos, setCarregandoGraficos] = useState({
+        livrosPorMes: true,
+        generos: true,
+    });
+    const [atualizacaoGeneros, setAtualizacaoGeneros] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [progressData, setProgressData] = useState([]);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -131,7 +138,13 @@ export default function Dashboard() {
     }, []);
     useEffect(() => {
         const userId = getUserId();
-        if (!userId) return;
+        if (!userId) {
+            const mensagem = "Usuário não identificado.";
+            setErroLivrosPorMes(mensagem);
+            setErroGeneros(mensagem);
+            setCarregandoGraficos({ livrosPorMes: false, generos: false });
+            return;
+        }
 
         fetch(`http://localhost:3000/usuarios/livros-por-mes?user_id=${userId}`)
             .then((res) => {
@@ -143,13 +156,44 @@ export default function Dashboard() {
 
                 return res.json();
             })
-            .then((data) =>
+            .then((data) => {
+                if (
+                    !Array.isArray(data) ||
+                    data.some(
+                        (item) =>
+                            !item ||
+                            typeof item.mes !== "string" ||
+                            typeof item.quantidade !== "number" ||
+                            !Number.isFinite(item.quantidade)
+                    )
+                ) {
+                    throw new Error("Formato inválido ao buscar livros por mês.");
+                }
+
                 setLivrosPorMesData({
-                    meses: data.map((d) => d.mes),
-                    valores: data.map((d) => d.quantidade),
-                })
-            )
-            .catch((err) => console.error(err));
+                    meses: data.map((item) => item.mes),
+                    valores: data.map((item) => item.quantidade),
+                });
+            })
+            .catch((err) => setErroLivrosPorMes(err.message))
+            .finally(() =>
+                setCarregandoGraficos((atual) => ({
+                    ...atual,
+                    livrosPorMes: false,
+                }))
+            );
+    }, []);
+
+    useEffect(() => {
+        const userId = getUserId();
+        if (!userId) {
+            setErroGeneros("Usuário não identificado.");
+            setCarregandoGraficos((atual) => ({ ...atual, generos: false }));
+            return;
+        }
+
+        setErroGeneros(null);
+        setCarregandoGraficos((atual) => ({ ...atual, generos: true }));
 
         fetch(`http://localhost:3000/usuarios/generos?user_id=${userId}`)
             .then((res) => {
@@ -161,9 +205,36 @@ export default function Dashboard() {
 
                 return res.json();
             })
-            .then(setGenerosData)
-            .catch((err) => console.error(err));
-    }, []);
+            .then((data) => {
+                if (
+                    !Array.isArray(data) ||
+                    data.some(
+                        (item) =>
+                            !item ||
+                            typeof item.genero !== "string" ||
+                            typeof item.quantidade !== "number" ||
+                            !Number.isFinite(item.quantidade)
+                    )
+                ) {
+                    throw new Error("Formato inválido ao buscar gêneros.");
+                }
+
+                setGenerosData(
+                    data.map((item, index) => ({
+                        id: index,
+                        label: item.genero,
+                        value: item.quantidade,
+                    }))
+                );
+            })
+            .catch((err) => setErroGeneros(err.message))
+            .finally(() =>
+                setCarregandoGraficos((atual) => ({
+                    ...atual,
+                    generos: false,
+                }))
+            );
+    }, [atualizacaoGeneros]);
 
     const handleMenuOpen = (event, id) => {
         setAnchorEls((prev) => ({ ...prev, [id]: event.currentTarget }));
@@ -202,6 +273,7 @@ export default function Dashboard() {
                     ? prev.map((item) => String(item.livro_id) === String(novo.livro_id) ? novo : item)
                     : [...prev, novo];
             });
+            setAtualizacaoGeneros((atual) => atual + 1);
             setModalOpen(false);
         } catch (err) {
             setErroOperacao(err.message);
@@ -237,6 +309,7 @@ export default function Dashboard() {
                         : i
                 )
             );
+            setAtualizacaoGeneros((atual) => atual + 1);
             setEditDialogOpen(false);
             setEditingItem(null);
         } catch (err) {
@@ -254,6 +327,7 @@ export default function Dashboard() {
             if (!res.ok) throw new Error(mensagemErroApi(res.status, "o progresso"));
 
             setProgressData((prev) => prev.filter((i) => String(i.id) !== String(item.id)));
+            setAtualizacaoGeneros((atual) => atual + 1);
             setEditingItem(null);
         } catch (err) {
             setErroOperacao(err.message);
@@ -391,7 +465,15 @@ export default function Dashboard() {
                             Nº de livros lidos por mês
                         </p>
 
-                        {livrosPorMesData.meses.length === 0 ? (
+                        {erroLivrosPorMes ? (
+                            <Typography color="error" sx={{ py: 2 }}>
+                                {erroLivrosPorMes}
+                            </Typography>
+                        ) : carregandoGraficos.livrosPorMes ? (
+                            <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                                Carregando livros por mês...
+                            </Typography>
+                        ) : !livrosPorMesData.valores.some((valor) => valor > 0) ? (
                             <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
                                 Nenhum dado de livros por mês disponível.
                             </Typography>
@@ -412,7 +494,7 @@ export default function Dashboard() {
                                         valueFormatter: (value) => `${value} livros`,
                                     },
                                 ]}
-                                height={250}
+                                height={300}
                                 margin={{
                                     left: 40,
                                     right: 16,
@@ -500,7 +582,15 @@ export default function Dashboard() {
                             Livros lidos por gênero
                         </p>
 
-                        {generosData.length === 0 ? (
+                        {erroGeneros ? (
+                            <Typography color="error" sx={{ py: 2 }}>
+                                {erroGeneros}
+                            </Typography>
+                        ) : carregandoGraficos.generos ? (
+                            <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
+                                Carregando gêneros...
+                            </Typography>
+                        ) : generosData.length === 0 ? (
                             <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
                                 Nenhum dado de gênero disponível.
                             </Typography>
@@ -508,16 +598,7 @@ export default function Dashboard() {
                             <PieChart
                                 series={[
                                     {
-                                        data: generosData.map((item, index) => ({
-                                            id: item.id ?? index,
-                                            value: Number(
-                                                item.value ?? item.quantidade ?? 0
-                                            ),
-                                            label:
-                                                item.label ??
-                                                item.genero ??
-                                                "Sem gênero",
-                                        })),
+                                        data: generosData,
                                     },
                                 ]}
                                 height={250}
