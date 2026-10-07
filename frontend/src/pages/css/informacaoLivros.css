@@ -3,6 +3,7 @@
 
 .livro-info-topo {
     display: flex;
+    gap: 48px;
     margin-top: 30px;
     margin-bottom: 40px;
     margin-left: 30px;
@@ -10,21 +11,60 @@
     align-items: flex-start;
 }
 
+.livro-capa-container {
+    flex: 0 0 263px;
+    width: 263px;
+}
+
 .livro-capa {
     width: 263px;
     height: 417px;
     border-radius: 10px;
-    gap: 49px;
 }
 
-.btn-prateleira {
+.botoes-livro {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 9px;
     width: 263px;
+    margin-top: 6px;
+}
+
+.btn-favorito,
+.btn-emprestimo {
+    flex: 1;
+    min-width: 0;
     height: 48px;
-    background-color: #2D72B8 !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
+    padding: 4px !important;
     border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
     text-transform: none !important;
+    white-space: normal !important;
+}
+
+.btn-favorito {
+    color: #2D72B8 !important;
+    border: 1px solid #2D72B8 !important;
+}
+
+.btn-favorito:hover {
+    background-color: rgba(45, 114, 184, 0.08) !important;
+}
+
+.btn-emprestimo {
+    background-color: #2D72B8 !important;
+}
+
+.btn-emprestimo:hover {
+    background-color: #245D96 !important;
+}
+
+.btn-emprestimo.Mui-disabled {
+    background-color: #BDBDBD !important;
+    color: #666 !important;
 }
 
 .livro-detalhes {
@@ -32,6 +72,8 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
+    flex: 1;
+    min-width: 0;
     max-width: 800px;
 }
 
@@ -185,4 +227,15 @@
 }
 .container-footer {
     margin-top: 40px;
+}
+
+@media (max-width: 900px) {
+    .livro-info-topo {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .livro-detalhes {
+        max-width: 100%;
+    }
 }
