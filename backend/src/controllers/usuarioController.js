@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import Usuario from '../models/Usuario.js';
+import Progresso from '../models/Progresso.js';
+import Livro from '../models/Livro.js';
 import { usuarioSchema } from "../validators/usuarioValidator.js";
 
 export async function criarUsuario(req, res) {
@@ -89,6 +91,111 @@ export async function listarUsuarios(req, res) {
         return res.status(500).json({
             mensagem: 'Erro ao listar usuários',
             erro: error.message
+        });
+    }
+}
+
+export async function listarGeneros(req, res) {
+    try {
+        const { user_id } = req.query;
+
+        if (!user_id) {
+            return res.status(400).json({
+                mensagem: 'O user_id é obrigatório!'
+            });
+        }
+
+        const progressos = await Progresso.findAll({
+            where: { user_id },
+            include: [
+                {
+                    model: Livro,
+                    attributes: ['genero']
+                }
+            ]
+        });
+
+        const generos = {};
+
+        progressos.forEach((progresso) => {
+            const genero = progresso.Livro?.genero;
+
+            if (genero) {
+                generos[genero] = (generos[genero] || 0) + 1;
+            }
+        });
+
+        const resultado = Object.entries(generos).map(
+            ([genero, quantidade]) => ({
+                genero,
+                quantidade
+            })
+        );
+
+        return res.status(200).json(resultado);
+    } catch (error) {
+        console.error('Erro ao listar gêneros:', error);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao listar gêneros!'
+        });
+    }
+}
+
+export async function listarLivrosPorMes(req, res) {
+    try {
+        const { user_id } = req.query;
+
+        if (!user_id) {
+            return res.status(400).json({
+                mensagem: 'O user_id é obrigatório!'
+            });
+        }
+
+        const progressos = await Progresso.findAll({
+            where: { user_id },
+            attributes: ['livro_id', 'data']
+        });
+
+        const meses = [
+            'Janeiro',
+            'Fevereiro',
+            'Março',
+            'Abril',
+            'Maio',
+            'Junho',
+            'Julho',
+            'Agosto',
+            'Setembro',
+            'Outubro',
+            'Novembro',
+            'Dezembro'
+        ];
+
+        const quantidadePorMes = Array(12).fill(0);
+
+        progressos.forEach((progresso) => {
+            if (progresso.data) {
+                const partesData = progresso.data.split('-');
+                const mes = Number(partesData[1]) - 1;
+
+                if (mes >= 0 && mes < 12) {
+                    quantidadePorMes[mes]++;
+                }
+            }
+        });
+
+        const resultado = meses.map((mes, indice) => ({
+            mes,
+            quantidade: quantidadePorMes[indice]
+        }));
+
+        return res.status(200).json(resultado);
+    } catch (error) {
+        console.error('Erro ao listar livros por mês:', error);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao listar livros por mês!'
         });
     }
 }
