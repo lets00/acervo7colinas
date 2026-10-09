@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // MUI
 import Box from "@mui/material/Box";
@@ -8,26 +9,17 @@ import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import Tooltip from "@mui/material/Tooltip";
 
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
 import { useEmprestimo } from "../../context/EmprestimoContext";
+import { getUsuario } from "../../utils/auth";
 import "../css/SolicitacaoListaEmprestimo.css";
 
-// Capas locais usadas nos dados de teste (acesso direto à página)
-import MaxtonHall from "../../assets/MaxtonHall.jpg";
-import SociedadeVampiros from "../../assets/SociedadeVampiros.jpg";
-import UmBeijo from "../../assets/UmBeijo.jpg";
-import UmPerfeitoCavalheiro from "../../assets/UmPerfeitoCavalheiro.jpg";
-import Vergonha from "../../assets/Vergonha.jpg";
-
-const MOCK_LIVROS = [
-    { id: 1, titulo: "Um Perfeito Cavalheiro", autor: "Lisa Kleypas", genero: "Romance", img: UmPerfeitoCavalheiro, disponivel: true },
-    { id: 2, titulo: "Um Beijo Inesquecível", autor: "Nicholas Sparks", genero: "Romance", img: UmBeijo, disponivel: true },
-    { id: 3, titulo: "Sociedade dos Vampiros", autor: "Richelle Mead", genero: "Fantasia", img: SociedadeVampiros, disponivel: false },
-    { id: 4, titulo: "Maxton Hall", autor: "Mona Kasten", genero: "Romance", img: MaxtonHall, disponivel: true },
-    { id: 5, titulo: "Vergonha", autor: "Tarryn Fisher", genero: "Thriller", img: Vergonha, disponivel: false },
-];
+const LIMITE_EMPRESTIMOS_ATIVOS = 3;
 
 function coverSrc(livro) {
     if (!livro?.img) return null;
@@ -38,71 +30,76 @@ function coverSrc(livro) {
 }
 
 function SolicitacaoListaEmprestimo() {
-    const { state } = useLocation();
-    const livroDaNavegacao = state?.livro;
-    const livroInicialId = livroDaNavegacao?.id ?? null;
-    const livroFallbackRef = useRef(livroDaNavegacao);
+    const navigate = useNavigate();
+    const { livros: carrinho, setLivros: setCarrinho, removerLivro: removerLivroCarrinho } = useEmprestimo();
 
-    const [livros, setLivros] = useState(() => {
-        if (livroDaNavegacao) {
-            return [{ ...livroDaNavegacao, disponivel: true }];
-        }
-        return MOCK_LIVROS;
-    });
+    const [livros, setLivros] = useState([]);
     const [carregando, setCarregando] = useState(true);
+    const [enviando, setEnviando] = useState(false);
     const [selecionados, setSelecionados] = useState([]);
-    const { setLivros: setLivrosGlobal } = useEmprestimo();
+    const [feedback, setFeedback] = useState(null);
+    const [emprestimosAtivosUsuario, setEmprestimosAtivosUsuario] = useState(0);
 
-    useEffect(() => {
-        setLivrosGlobal(livros);
-    }, [livros, setLivrosGlobal]);
+    const vagasRestantes = Math.max(0, LIMITE_EMPRESTIMOS_ATIVOS - emprestimosAtivosUsuario);
 
     useEffect(() => {
         let ativo = true;
 
         const carregar = async () => {
+            if (carrinho.length === 0) {
+                setLivros([]);
+                setSelecionados([]);
+                setCarregando(false);
+                return;
+            }
+
+            setCarregando(true);
+
             try {
-                const [livrosRes, exemplaresRes] = await Promise.all([
+                const userId = localStorage.getItem("user_id") || getUsuario()?.id;
+
+                const [livrosRes, exemplaresRes, emprestimosRes] = await Promise.all([
                     fetch("http://localhost:3000/livros"),
                     fetch("http://localhost:3000/exemplares"),
+                    userId
+                        ? fetch(`http://localhost:3000/emprestimos?user_id=${userId}`)
+                        : Promise.resolve(null),
                 ]);
 
                 if (!ativo) return;
 
                 const livrosApi = await livrosRes.json();
                 const exemplares = await exemplaresRes.json();
+                const emprestimosUsuario = emprestimosRes ? await emprestimosRes.json() : [];
 
-                const livrosComDisponibilidade = livrosApi.map(livro => ({
-                    ...livro,
-                    disponivel: exemplares.some(
-                        e => Number(e.id_livro) === Number(livro.id) && e.disponivel
-                    ),
-                }));
+                const totalAtivos = Array.isArray(emprestimosUsuario)
+                    ? emprestimosUsuario.filter(e => !e.is_devolvido).length
+                    : 0;
+                const vagas = Math.max(0, LIMITE_EMPRESTIMOS_ATIVOS - totalAtivos);
 
-                if (livroInicialId) {
-                    const naApi = livrosComDisponibilidade.find(
-                        l => Number(l.id) === Number(livroInicialId)
-                    );
-                    const base = naApi ?? livroFallbackRef.current;
+                const livrosAtualizados = carrinho.map(livroCarrinho => {
+                    const naApi = livrosApi.find(l => Number(l.id) === Number(livroCarrinho.id));
+                    const base = naApi ?? livroCarrinho;
 
-                    if (base) {
-                        setLivros([{
-                            ...base,
-                            id: base.id ?? livroInicialId,
-                            disponivel: naApi
-                                ? naApi.disponivel
-                                : exemplares.some(
-                                    e => Number(e.id_livro) === Number(base.id) && e.disponivel
-                                ),
-                        }]);
-                    } else {
-                        setLivros([]);
-                    }
-                } else {
-                    setLivros(livrosComDisponibilidade);
-                }
+                    return {
+                        ...base,
+                        disponivel: exemplares.some(
+                            e => Number(e.id_livro) === Number(base.id) && e.disponivel
+                        ),
+                    };
+                });
+
+                if (!ativo) return;
+
+                setEmprestimosAtivosUsuario(totalAtivos);
+                setLivros(livrosAtualizados);
+                setSelecionados(
+                    livrosAtualizados.filter(l => l.disponivel).map(l => l.id).slice(0, vagas)
+                );
             } catch {
                 if (!ativo) return;
+                setLivros(carrinho);
+                setSelecionados([]);
             } finally {
                 if (ativo) setCarregando(false);
             }
@@ -113,16 +110,18 @@ function SolicitacaoListaEmprestimo() {
         return () => {
             ativo = false;
         };
-    }, [livroInicialId]);
+    }, [carrinho]);
 
     const toggleLivro = (id) => {
-        setSelecionados(prev =>
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        );
+        setSelecionados(prev => {
+            if (prev.includes(id)) return prev.filter(x => x !== id);
+            if (prev.length >= vagasRestantes) return prev;
+            return [...prev, id];
+        });
     };
 
     const removerLivro = (id) => {
-        setLivros(prev => prev.filter(l => l.id !== id));
+        removerLivroCarrinho(id);
         setSelecionados(prev => prev.filter(x => x !== id));
     };
 
@@ -132,10 +131,33 @@ function SolicitacaoListaEmprestimo() {
         ? "1 livro selecionado"
         : `${quantidade} livros selecionados`;
 
-    const handleSolicitar = () => {
-        // TODO: enviar livrosSelecionados para o backend (endpoint de empréstimo ainda não existe).
-        // A solicitação NÃO deve ser marcada como concluída antes da resposta do servidor.
-        console.log("Solicitação preparada:", livrosSelecionados);
+    const handleSolicitar = async () => {
+        const userId = localStorage.getItem("user_id") || getUsuario()?.id;
+
+        if (!userId) {
+            setFeedback({ severidade: "error", mensagem: "Faça login para solicitar um empréstimo." });
+            return;
+        }
+
+        setEnviando(true);
+
+        try {
+            const { data } = await axios.post("http://localhost:3000/emprestimos", {
+                user_id: Number(userId),
+                livro_ids: livrosSelecionados.map(livro => Number(livro.id)),
+            });
+
+            setFeedback({ severidade: "success", mensagem: data.mensagem });
+            setSelecionados([]);
+            setCarrinho([]);
+        } catch (error) {
+            setFeedback({
+                severidade: "error",
+                mensagem: error.response?.data?.mensagem ?? "Não foi possível registrar a solicitação.",
+            });
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -152,6 +174,15 @@ function SolicitacaoListaEmprestimo() {
                         Confira os livros que você deseja pegar emprestados.
                     </Typography>
 
+                    {!carregando && (vagasRestantes < livros.length || emprestimosAtivosUsuario > 0) && (
+                        <Typography sx={{ fontSize: 13, color: "#888", mt: "4px" }}>
+                            {emprestimosAtivosUsuario > 0
+                                ? `Você já possui ${emprestimosAtivosUsuario} empréstimo(s) ativo(s) — `
+                                : ""}
+                            Você pode solicitar até {vagasRestantes} livro(s) por vez (limite de {LIMITE_EMPRESTIMOS_ATIVOS} empréstimos simultâneos).
+                        </Typography>
+                    )}
+
                     {carregando ? (
                         <Typography className="sol-vazio">Carregando...</Typography>
                     ) : livros.length === 0 ? (
@@ -162,6 +193,21 @@ function SolicitacaoListaEmprestimo() {
                         <Stack spacing={0} divider={<Divider orientation="horizontal" flexItem sx={{ borderColor: "#e5e5e5" }} />} className="sol-lista">
                             {livros.map(livro => {
                                 const marcado = selecionados.includes(livro.id);
+                                const bloqueadoPorLimite = livro.disponivel && !marcado && selecionados.length >= vagasRestantes;
+
+                                const checkbox = (
+                                    <Checkbox
+                                        checked={marcado}
+                                        disabled={!livro.disponivel || bloqueadoPorLimite}
+                                        onChange={() => toggleLivro(livro.id)}
+                                        sx={{
+                                            color: "#37228B",
+                                            mt: "6px",
+                                            "&.Mui-checked": { color: "#37228B" },
+                                            "&.Mui-disabled": { color: "#c9c9c9" },
+                                        }}
+                                    />
+                                );
 
                                 return (
                                     <Stack
@@ -171,17 +217,11 @@ function SolicitacaoListaEmprestimo() {
                                         spacing={{ xs: 1.5, md: 2 }}
                                         className="sol-item"
                                     >
-                                        <Checkbox
-                                            checked={marcado}
-                                            disabled={!livro.disponivel}
-                                            onChange={() => toggleLivro(livro.id)}
-                                            sx={{
-                                                color: "#37228B",
-                                                mt: "6px",
-                                                "&.Mui-checked": { color: "#37228B" },
-                                                "&.Mui-disabled": { color: "#c9c9c9" },
-                                            }}
-                                        />
+                                        {bloqueadoPorLimite ? (
+                                            <Tooltip title={`Limite de ${LIMITE_EMPRESTIMOS_ATIVOS} empréstimos simultâneos atingido. Desmarque outro livro para trocar.`}>
+                                                <span>{checkbox}</span>
+                                            </Tooltip>
+                                        ) : checkbox}
 
                                         <Box component="img" src={coverSrc(livro)} alt={livro.titulo} className="sol-capa" />
 
@@ -220,12 +260,35 @@ function SolicitacaoListaEmprestimo() {
                         <Button
                             variant="contained"
                             className="sol-botao"
-                            disabled={quantidade === 0}
+                            disabled={quantidade === 0 || quantidade > vagasRestantes || enviando}
                             onClick={handleSolicitar}
                         >
-                            SOLICITAR EMPRÉSTIMO
+                            {enviando ? "ENVIANDO..." : "SOLICITAR EMPRÉSTIMO"}
                         </Button>
                     </Box>
+
+                    <Snackbar
+                        open={Boolean(feedback)}
+                        autoHideDuration={6000}
+                        onClose={() => {
+                            const sucesso = feedback?.severidade === "success";
+                            setFeedback(null);
+                            if (sucesso) navigate("/meus-emprestimos");
+                        }}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    >
+                        <Alert
+                            severity={feedback?.severidade ?? "info"}
+                            variant="filled"
+                            onClose={() => {
+                                const sucesso = feedback?.severidade === "success";
+                                setFeedback(null);
+                                if (sucesso) navigate("/meus-emprestimos");
+                            }}
+                        >
+                            {feedback?.mensagem}
+                        </Alert>
+                    </Snackbar>
 
                 </Box>
 

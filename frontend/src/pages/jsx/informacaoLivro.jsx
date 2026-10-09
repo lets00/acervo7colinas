@@ -6,6 +6,7 @@ import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
+import { useEmprestimo } from "../../context/EmprestimoContext";
 
 
 import iconInfo from "../../assets/info.png";
@@ -32,10 +33,10 @@ function InformacaoLivro() {
     const { id } = useParams();
     const navigate = useNavigate();
     const destaquesRef = useRef(null);
+    const { adicionarLivro } = useEmprestimo();
 
     const [livro, setLivro] = useState(null);
     const [favorito, setFavorito] = useState(false);
-    const emprestimosAtivos = 0;
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
@@ -131,12 +132,10 @@ function InformacaoLivro() {
                             <Button
                                 variant="contained"
                                 className="btn-emprestimo"
-                                disabled={emprestimosAtivos >= 3}
-                                onClick={() =>
-                                    navigate("/solicitacao-emprestimo", {
-                                        state: { livro }
-                                    })
-                                }
+                                onClick={() => {
+                                    adicionarLivro(livro);
+                                    navigate("/solicitacao-emprestimo");
+                                }}
                             >
                                 Pedir emprestado
                             </Button>

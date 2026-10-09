@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import axios from "axios";
 
 // MUI — layout
 import Box from "@mui/material/Box";
@@ -35,31 +36,59 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import CloseIcon from "@mui/icons-material/Close";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-
 import Footer from "../../components/jsx/Footer";
 import Header from "../../components/jsx/Header";
 import Girlreading from "../../assets/Girl-enjoying-reading.png"; // ajuste o caminho
+import { getUsuario } from "../../utils/auth";
 import "../css/MeusEmprestimos.css";
 
 
 /* ─────────────────────────────────────────
-   DADOS MOCKADOS
+   HELPERS
 ───────────────────────────────────────── */
-const mockEmprestimos = [
-    { id: "PED-001", livro: "1984", autor: "George Orwell", dataPedido: "01/03/2026", devolucaoPrevista: "15/03/2026", status: "Solicitado" },
-    { id: "PED-002", livro: "A Hora da Estrela", autor: "Clarice Lispector", dataPedido: "05/03/2026", devolucaoPrevista: "19/03/2026", status: "Cancelado" },
-    { id: "PED-003", livro: "Harry Potter e a Pedra Filosofal", autor: "J.K. Rowling", dataPedido: "10/03/2026", devolucaoPrevista: "24/03/2026", status: "Ativo" },
-    { id: "PED-004", livro: "Memórias Póstumas de Brás Cubas", autor: "Machado de Assis", dataPedido: "12/02/2026", devolucaoPrevista: "26/02/2026", status: "Atrasado" },
-    { id: "PED-005", livro: "Uma Dobra no Tempo", autor: "Madeleine L'Engle", dataPedido: "20/01/2026", devolucaoPrevista: "03/02/2026", status: "Devolvido" },
-    { id: "PED-006", livro: "O Hobbit", autor: "J.R.R. Tolkien", dataPedido: "22/01/2026", devolucaoPrevista: "05/02/2026", status: "Devolvido" },
-    { id: "PED-007", livro: "Dom Casmurro", autor: "Machado de Assis", dataPedido: "14/03/2026", devolucaoPrevista: "28/03/2026", status: "Ativo" },
-    { id: "PED-008", livro: "Cem Anos de Solidão", autor: "García Márquez", dataPedido: "02/03/2026", devolucaoPrevista: "16/03/2026", status: "Atrasado" },
-];
+function dataDeHoje() {
+    const agora = new Date();
+    const mes = String(agora.getMonth() + 1).padStart(2, "0");
+    const dia = String(agora.getDate()).padStart(2, "0");
+    return `${agora.getFullYear()}-${mes}-${dia}`;
+}
+
+function somarDias(data, dias) {
+    const base = new Date(`${data}T00:00:00`);
+    base.setDate(base.getDate() + dias);
+    return `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, "0")}-${String(base.getDate()).padStart(2, "0")}`;
+}
+
+function formatarData(data) {
+    if (!data) return "—";
+    const [ano, mes, dia] = String(data).split("T")[0].split("-");
+    return `${dia}/${mes}/${ano}`;
+}
+
+function derivarStatus({ is_devolvido, data_entrega }) {
+    if (is_devolvido) return "Devolvido";
+    if (!data_entrega) return "Solicitado";
+    return data_entrega < dataDeHoje() ? "Atrasado" : "Ativo";
+}
+
+function paraLinha(emprestimo) {
+    return {
+        id: emprestimo.id,
+        codigo: `EMP-${String(emprestimo.id).slice(0, 8).toUpperCase()}`,
+        livro: emprestimo.Livro?.titulo ?? "Livro removido",
+        autor: emprestimo.Livro?.autor ?? "",
+        dataPedido: formatarData(emprestimo.data_emprestimo),
+        devolucaoPrevista: formatarData(emprestimo.data_entrega),
+        dataEntrega: emprestimo.data_entrega,
+        status: derivarStatus(emprestimo),
+    };
+}
 
 const STATUS_OPTIONS = ["Todos", "Solicitado", "Ativo", "Atrasado", "Cancelado", "Devolvido"];
 
+
 /* ─────────────────────────────────────────
-   HELPERS
+   HELPERS DE UI
 ───────────────────────────────────────── */
 function StatusBadge({ status }) {
     const cls = {
@@ -116,27 +145,58 @@ export default function MeusEmprestimos() {
     const [tipoFiltro, setTipoFiltro]     = useState("Todos");
     const [busca, setBusca]               = useState("");
 
+    const [emprestimos, setEmprestimos]   = useState([]);
+    const [carregando, setCarregando]     = useState(true);
+    const [erro, setErro]                 = useState("");
+    const [acaoPendente, setAcaoPendente] = useState(null);
+
     // TablePagination usa page baseado em 0
     const [page, setPage]               = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
+    const carregarEmprestimos = useCallback(async () => {
+        const userId = localStorage.getItem("user_id") || getUsuario()?.id;
+
+        if (!userId) {
+            setErro("Faça login para ver seus empréstimos.");
+            setCarregando(false);
+            return;
+        }
+
+        try {
+            setErro("");
+            const { data } = await axios.get("http://localhost:3000/emprestimos", {
+                params: { user_id: userId },
+            });
+            setEmprestimos(data.map(paraLinha));
+        } catch (error) {
+            setErro(error.response?.data?.mensagem ?? "Não foi possível carregar seus empréstimos.");
+        } finally {
+            setCarregando(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        carregarEmprestimos();
+    }, [carregarEmprestimos]);
+
     /* contagens para os cards */
     const counts = useMemo(() => ({
-        Ativos:      mockEmprestimos.filter(e => e.status === "Ativo").length,
-        Solicitados: mockEmprestimos.filter(e => e.status === "Solicitado").length,
-        Atrasados:   mockEmprestimos.filter(e => e.status === "Atrasado").length,
-        Devolvidos:  mockEmprestimos.filter(e => e.status === "Devolvido").length,
-        Cancelados:  mockEmprestimos.filter(e => e.status === "Cancelado").length,
-    }), []);
+        Ativos:      emprestimos.filter(e => e.status === "Ativo").length,
+        Solicitados: emprestimos.filter(e => e.status === "Solicitado").length,
+        Atrasados:   emprestimos.filter(e => e.status === "Atrasado").length,
+        Devolvidos:  emprestimos.filter(e => e.status === "Devolvido").length,
+        Cancelados:  emprestimos.filter(e => e.status === "Cancelado").length,
+    }), [emprestimos]);
 
     /* filtragem */
     const filtrados = useMemo(() => {
-        return mockEmprestimos.filter(e => {
+        return emprestimos.filter(e => {
             const matchStatus = statusFiltro === "Todos" || e.status === statusFiltro;
             const matchBusca  = e.livro.toLowerCase().includes(busca.toLowerCase());
             return matchStatus && matchBusca;
         });
-    }, [statusFiltro, busca]);
+    }, [emprestimos, statusFiltro, busca]);
 
     /* linhas da página atual */
     const paginados = filtrados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -149,6 +209,34 @@ export default function MeusEmprestimos() {
     };
 
     const handleFiltrar = () => setPage(0);
+
+    const handleCancelar = async (id) => {
+        if (!window.confirm("Tem certeza que deseja cancelar esta solicitação?")) return;
+
+        try {
+            setAcaoPendente(id);
+            await axios.delete(`http://localhost:3000/emprestimos/${id}`);
+            await carregarEmprestimos();
+        } catch (error) {
+            alert(error.response?.data?.mensagem ?? "Não foi possível cancelar a solicitação.");
+        } finally {
+            setAcaoPendente(null);
+        }
+    };
+
+    const handleRenovar = async (emprestimo) => {
+        try {
+            setAcaoPendente(emprestimo.id);
+            await axios.patch(`http://localhost:3000/emprestimos/${emprestimo.id}`, {
+                data_entrega: somarDias(emprestimo.dataEntrega ?? dataDeHoje(), 14),
+            });
+            await carregarEmprestimos();
+        } catch (error) {
+            alert(error.response?.data?.mensagem ?? "Não foi possível renovar o empréstimo.");
+        } finally {
+            setAcaoPendente(null);
+        }
+    };
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px" }}>
@@ -247,7 +335,19 @@ export default function MeusEmprestimos() {
 
                                 {/* CORPO */}
                                 <TableBody>
-                                    {paginados.length === 0 ? (
+                                    {carregando ? (
+                                        <TableRow>
+                                            <TableCell colSpan={6} align="center" sx={{ py: 4, color: "#888" }}>
+                                                Carregando empréstimos...
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : erro ? (
+                                        <TableRow>
+                                            <TableCell colSpan={6} align="center" sx={{ py: 4, color: "#c62828" }}>
+                                                {erro}
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : paginados.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={6} align="center" sx={{ py: 4, color: "#888" }}>
                                                 Nenhum empréstimo encontrado.
@@ -256,7 +356,7 @@ export default function MeusEmprestimos() {
                                     ) : (
                                         paginados.map((row) => (
                                             <TableRow key={row.id}>
-                                                <TableCell><em>{row.id}</em></TableCell>
+                                                <TableCell><em>{row.codigo}</em></TableCell>
 
                                                 <TableCell>
                                                     <div className="livro-cell">
@@ -279,20 +379,34 @@ export default function MeusEmprestimos() {
                                                     <div className="acoes-cell">
                                                         {row.status === "Solicitado" && (
                                                             <Tooltip title="Cancelar pedido">
-                                                                <Button variant="outlined" size="small" startIcon={<CloseIcon />} sx={actionBtnSx}>
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    startIcon={<CloseIcon />}
+                                                                    disabled={acaoPendente === row.id}
+                                                                    onClick={() => handleCancelar(row.id)}
+                                                                    sx={actionBtnSx}
+                                                                >
                                                                     Cancelar
                                                                 </Button>
                                                             </Tooltip>
                                                         )}
                                                         {row.status === "Atrasado" && (
                                                             <Tooltip title="Renovar empréstimo">
-                                                                <Button variant="outlined" size="small" startIcon={<AutorenewIcon />} sx={actionBtnSx}>
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    startIcon={<AutorenewIcon />}
+                                                                    disabled={acaoPendente === row.id}
+                                                                    onClick={() => handleRenovar(row)}
+                                                                    sx={actionBtnSx}
+                                                                >
                                                                     Renovar
                                                                 </Button>
                                                             </Tooltip>
                                                         )}
                                                         <Tooltip title="Ver detalhes">
-                                                            <Button variant="outlined" size="small" startIcon={<ZoomInIcon />} sx={actionBtnSx}>
+                                                            <Button variant="outlined" size="small" startIcon={<ZoomInIcon />} disabled sx={actionBtnSx}>
                                                                 Detalhes
                                                             </Button>
                                                         </Tooltip>
