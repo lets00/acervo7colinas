@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 // MUI
 import Box from "@mui/material/Box";
@@ -31,11 +31,12 @@ function coverSrc(livro) {
 
 function SolicitacaoListaEmprestimo() {
     const navigate = useNavigate();
-    const { livros: carrinho, setLivros: setCarrinho, removerLivro: removerLivroCarrinho } = useEmprestimo();
+    const { state: selecaoAnterior } = useLocation();
+    const { livros: carrinho, removerLivro: removerLivroCarrinho } = useEmprestimo();
 
     const [livros, setLivros] = useState([]);
     const [carregando, setCarregando] = useState(true);
-    const [enviando, setEnviando] = useState(false);
+
     const [selecionados, setSelecionados] = useState([]);
     const [feedback, setFeedback] = useState(null);
     const [emprestimosAtivosUsuario, setEmprestimosAtivosUsuario] = useState(0);
@@ -94,7 +95,9 @@ function SolicitacaoListaEmprestimo() {
                 setEmprestimosAtivosUsuario(totalAtivos);
                 setLivros(livrosAtualizados);
                 setSelecionados(
-                    livrosAtualizados.filter(l => l.disponivel).map(l => l.id).slice(0, vagas)
+                    livrosAtualizados.filter(l => l.disponivel && (
+                        !Array.isArray(selecaoAnterior?.livroIds) || selecaoAnterior.livroIds.map(Number).includes(Number(l.id))
+                    )).map(l => l.id).slice(0, vagas)
                 );
             } catch {
                 if (!ativo) return;
@@ -110,7 +113,7 @@ function SolicitacaoListaEmprestimo() {
         return () => {
             ativo = false;
         };
-    }, [carrinho]);
+    }, [carrinho, selecaoAnterior]);
 
     const toggleLivro = (id) => {
         setSelecionados(prev => {
@@ -131,35 +134,16 @@ function SolicitacaoListaEmprestimo() {
         ? "1 livro selecionado"
         : `${quantidade} livros selecionados`;
 
-    const handleSolicitar = async () => {
+    const handleSolicitar = () => {
         const userId = localStorage.getItem("user_id") || getUsuario()?.id;
-
         if (!userId) {
             setFeedback({ severidade: "error", mensagem: "Faça login para solicitar um empréstimo." });
             return;
         }
-
-        setEnviando(true);
-
-        try {
-            const { data } = await axios.post("http://localhost:3000/emprestimos", {
-                user_id: Number(userId),
-                livro_ids: livrosSelecionados.map(livro => Number(livro.id)),
-            });
-
-            setFeedback({ severidade: "success", mensagem: data.mensagem });
-            setSelecionados([]);
-            setCarrinho([]);
-        } catch (error) {
-            setFeedback({
-                severidade: "error",
-                mensagem: error.response?.data?.mensagem ?? "Não foi possível registrar a solicitação.",
-            });
-        } finally {
-            setEnviando(false);
-        }
+        navigate("/solicitacao-emprestimo/detalhes", {
+            state: { livroIds: livrosSelecionados.map(livro => Number(livro.id)), userId: String(userId) },
+        });
     };
-
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px" }}>
             <Header />
@@ -260,10 +244,10 @@ function SolicitacaoListaEmprestimo() {
                         <Button
                             variant="contained"
                             className="sol-botao"
-                            disabled={quantidade === 0 || quantidade > vagasRestantes || enviando}
+                            disabled={quantidade === 0 || quantidade > vagasRestantes}
                             onClick={handleSolicitar}
                         >
-                            {enviando ? "ENVIANDO..." : "SOLICITAR EMPRÉSTIMO"}
+                            SOLICITAR EMPRÉSTIMO
                         </Button>
                     </Box>
 
