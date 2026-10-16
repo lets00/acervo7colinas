@@ -1,3 +1,4 @@
+import PageContent from "./PageContent";
 import React, { useState } from "react";
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
 
@@ -87,7 +88,7 @@ export default function Header() {
 
     return (
     <Box className="header-container">
-      <Box className="header-content">
+      <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
 
         <img src={logo} alt="Logo" className="header-logo" />
 
@@ -308,7 +309,7 @@ export default function Header() {
 
           </Stack>
         </Stack>
-      </Box>
+      </PageContent>
       <Divider className="header-divider" />
     </Box>
   );

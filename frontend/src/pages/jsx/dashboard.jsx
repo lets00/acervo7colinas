@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -268,19 +269,12 @@ export default function Dashboard() {
                 alignItems: "center",
                 minHeight: "100vh",
                 bgcolor: "#fff",
-                mt: "-55px",
+                mt: 0,
             }}
         >
             <Header />
 
-            <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: "1440px",
-                    px: { xs: "16px", sm: "28px", md: "60px" },
-                    pb: "48px",
-                }}
-            >
+            <PageContent>
                 {/* SAUDAÇÃO */}
                 <h1 className="dashboard-greeting">Olá, {usuario?.nomeCompleto ?? "usuário"}</h1>
 
@@ -541,10 +535,9 @@ export default function Dashboard() {
                     </div>
 
                 </div>
-                <div className="footer-container">
-                    <Footer />
-                </div>
-            </Box>
+
+            </PageContent>
+            <Footer />
 
             <AddReadingModal
                 open={modalOpen}

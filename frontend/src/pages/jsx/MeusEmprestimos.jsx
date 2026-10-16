@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import axios from "axios";
 
@@ -239,10 +240,10 @@ export default function MeusEmprestimos() {
     };
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: 0 }}>
             <Header />
 
-            <Box sx={{ width: "100%", maxWidth: "1440px", px: { xs: "16px", sm: "28px", md: "60px" }, pb: "48px" }}>
+            <PageContent>
                 <div className="emprestimos-page">
 
                     {/* ── Topo ── */}
@@ -441,11 +442,12 @@ export default function MeusEmprestimos() {
                     </div>
 
                 </div>
-                <div className="container-footer"><Footer /> </div>
 
-                
 
-            </Box>
+
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

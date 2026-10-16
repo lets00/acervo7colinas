@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -145,10 +146,10 @@ function SolicitacaoListaEmprestimo() {
         });
     };
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: 0 }}>
             <Header />
 
-            <Box sx={{ width: "100%", maxWidth: "1214px", mx: "auto", px: { xs: 2, sm: 3, md: 0 }, pb: "48px" }}>
+            <PageContent>
                 <Box className="sol-page">
 
                     <Typography className="sol-cabecalho-titulo" component="h1">
@@ -276,8 +277,9 @@ function SolicitacaoListaEmprestimo() {
 
                 </Box>
 
-                <div className="container-footer"><Footer /></div>
-            </Box>
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

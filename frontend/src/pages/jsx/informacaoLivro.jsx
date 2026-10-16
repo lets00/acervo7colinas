@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
@@ -102,11 +103,11 @@ function InformacaoLivro() {
             alignItems: "center",
             minHeight: "100vh",
             bgcolor: "#fff",
-            marginTop: "-55px"
+            marginTop: 0
         }}>
 
             <Header />
-            <Box sx={{ width: "100%", maxWidth: "1250px", px: 2, marginLeft: "60px", marginRight: "60px" }}>
+            <PageContent>
 
                 {/* 🔥 TOPO DO LIVRO */}
                 <div className="livro-info-topo">
@@ -266,10 +267,11 @@ function InformacaoLivro() {
                         />
                     ))}
                 </div>
-                <div className="container-footer"><Footer /> </div>
-                
 
-            </Box>
+
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

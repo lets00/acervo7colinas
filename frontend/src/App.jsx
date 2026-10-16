@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createTheme, ThemeProvider, Container } from "@mui/material";
+import { createTheme, ThemeProvider, Box } from "@mui/material";
 
 import Home from "./pages/jsx/Home.jsx";
 import InformacaoLivro from "./pages/jsx/informacaoLivro.jsx";
@@ -38,7 +38,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <EmprestimoProvider>
       <BrowserRouter>
-        <Container maxWidth={false} sx={{ marginTop: '2rem' }}>
+        <Box className="app-layout">
           <Routes>
             {/* 🔓 Rotas Públicas */}
             <Route path="/" element={<Home />} />
@@ -74,7 +74,7 @@ function App() {
             <Route path="/usuarios-salvos" element={<ProtectedRoute allowedRoles={['admin']}><UsuariosSalvos /></ProtectedRoute>} />
           </Routes>
 
-        </Container>
+        </Box>
       </BrowserRouter>
       </EmprestimoProvider>
 

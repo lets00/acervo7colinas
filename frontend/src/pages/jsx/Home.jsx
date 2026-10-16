@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import "../css/Home.css";
@@ -35,7 +36,7 @@ function Home() {
             modules={[Pagination, Autoplay]}
             spaceBetween={10}
             slidesPerView={1}
-            pagination={{ clickable: true }} 
+            pagination={{ clickable: true }}
             autoplay={{ delay: 5000 }}
             speed={1500}
             loop={true}
@@ -84,30 +85,24 @@ function Home() {
                 alignItems: "center",
                 minHeight: "100vh",
                 bgcolor: "#fff",
-                mt: "-55px"
+                mt: 0
             }}
         >
             <Header />
 
-            <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: "1440px",
-                    px: { xs: "16px", md: "60px" }
-                }}
-            >
-                
+            <PageContent>
+
                 <div className="carousel-wrapper">
                     <Carousel imagens={imagens} />
                 </div>
-                {/* DESTAQUES */}                
+                {/* DESTAQUES */}
                 <SectionHeader title="Destaque" />
                 <BookCarrossel books={destaques} />
 
                 {/* NOVIDADES */}
                 <SectionHeader title="Novidades" />
                 <BookCarrossel books={novidades} ref={novidadesRef} />
-                
+
                 {/* AGENDA */}
                 <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
 
@@ -153,8 +148,9 @@ function Home() {
                         <img src={debateImg} alt="Debate" />
                     </div>
                 </div>
-                <div className="container-footer"><Footer /> </div>
-            </Box>
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

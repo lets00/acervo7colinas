@@ -3,11 +3,11 @@
     --detalhes-borda: #ccd3f8;
     color: #382c2c;
     background: #fff;
-    margin-top: -55px;
+    margin-top: 0;
     text-align: left;
 }
 .detalhes-solicitacao .MuiTypography-root { font-family: 'Inter', sans-serif; }
-.detalhes-main { max-width: 1362px; margin: 0 auto; padding: 56px 24px 96px; }
+
 .detalhes-main .detalhes-titulo { color: var(--detalhes-roxo); font-size: 36px; font-weight: 600; line-height: 1.25; }
 .detalhes-main .detalhes-subtitulo { font-size: 20px; margin-top: 8px; }
 .detalhes-secoes { margin: 40px 46px 0; display: flex; flex-direction: column; gap: 40px; }
@@ -63,7 +63,6 @@
     .detalhes-entregas .detalhes-opcao { padding: 18px; gap: 12px; }
 }
 @media (max-width: 600px) {
-    .detalhes-main { padding: 32px 12px 48px; }
     .detalhes-main .detalhes-titulo { font-size: 28px; }
     .detalhes-main .detalhes-subtitulo { font-size: 16px; }
     .detalhes-secoes { gap: 28px; margin-top: 28px; }
@@ -91,21 +90,6 @@
     .detalhes-endereco-dialog .MuiDialogTitle-root { font-size: 22px; }
     .detalhes-campos { grid-template-columns: 1fr; gap: 20px; }
     .detalhes-endereco-dialog .MuiDialogActions-root { flex-wrap: wrap; gap: 12px; }
-}
-
-/* Remove o espaçamento do contêiner global somente nesta rota. */
-#root:has(.detalhes-solicitacao) { width: 100%; max-width: none; padding: 0; }
-#root > .MuiContainer-root:has(> .detalhes-solicitacao) { padding: 0; margin-top: 0; }
-.detalhes-solicitacao { margin-top: 0; width: 100%; min-width: 0; }
-.detalhes-solicitacao .header-container { width: 100%; max-width: none; }
-.detalhes-solicitacao .header-content { max-width: 1377px; }
-.detalhes-solicitacao .footer-logo { width: 100%; }
-@media (max-width: 900px) {
-    .detalhes-solicitacao .header-content { flex-wrap: wrap; padding: 12px 16px; gap: 16px; }
-    .detalhes-solicitacao .header-input { width: 100%; order: 5; }
-    .detalhes-solicitacao .header-stack { margin-left: auto; }
-    .detalhes-solicitacao .header-stack-row { gap: 12px; }
-    .detalhes-solicitacao .header-stack-row > * { margin-left: 0; }
 }
 
 /* Escala visual equivalente a 90% de zoom, restrita a esta página. */

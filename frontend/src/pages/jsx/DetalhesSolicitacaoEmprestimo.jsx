@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -122,7 +123,7 @@ export default function DetalhesSolicitacaoEmprestimo() {
     return (
         <Box className="detalhes-solicitacao">
             <Header />
-            <Box component="main" className="detalhes-main">
+            <PageContent responsive className="detalhes-main" sx={{ pt: { xs: 4, md: 7 }, pb: { xs: 6, md: 12 } }}>
                 <Typography component="h1" className="detalhes-titulo">Detalhes da solicitação</Typography>
                 <Typography className="detalhes-subtitulo">Revise as informações do seu empréstimo antes de confirmar.</Typography>
                 {!livros.length ? (
@@ -235,7 +236,7 @@ export default function DetalhesSolicitacaoEmprestimo() {
                         </Stack>
                     </Box>
                 )}
-            </Box>
+            </PageContent>
             <Footer />
             <Dialog open={modalAberto} onClose={() => setModalAberto(false)} maxWidth={false} fullWidth
                 aria-labelledby="titulo-alterar-endereco" className="detalhes-endereco-dialog">
