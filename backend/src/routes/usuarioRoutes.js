@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { criarUsuario, listarUsuarios } from '../controllers/usuarioController.js';
+import { criarUsuario, listarUsuarios, listarGeneros, listarLivrosPorMes } from '../controllers/usuarioController.js';
 import upload from '../middlewares/upload.js';
 
 const router = Router();
@@ -15,5 +15,7 @@ router.post(
 );
 
 router.get('/', listarUsuarios);
+router.get('/generos', listarGeneros);
+router.get('/livros-por-mes', listarLivrosPorMes);
 
 export default router;
