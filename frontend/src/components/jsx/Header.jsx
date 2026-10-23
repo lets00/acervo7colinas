@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
+import { obterFotoPerfil } from "../../utils/fotoPerfil";
 
 
 import {
@@ -24,9 +25,34 @@ export default function Header() {
   const navigate = useNavigate();
 
   const token = getToken();
-  const usuario = getUsuario();
+  const [usuario, setUsuario] = useState(() => {
+    const dadosUsuario = getUsuario();
+    return dadosUsuario
+      ? {
+          ...dadosUsuario,
+          fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+        }
+      : null;
+  });
   const { livros: livrosEmprestimo } = useEmprestimo();
   const quantidadeEmprestimo = livrosEmprestimo.length;
+
+  useEffect(() => {
+    const atualizarUsuario = () => {
+      const dadosUsuario = getUsuario();
+      setUsuario(
+        dadosUsuario
+          ? {
+              ...dadosUsuario,
+              fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+            }
+          : null
+      );
+    };
+
+    window.addEventListener("usuario-atualizado", atualizarUsuario);
+    return () => window.removeEventListener("usuario-atualizado", atualizarUsuario);
+  }, []);
 
   const isAdmin =
     usuario?.cargo?.toLowerCase() === "administrador";

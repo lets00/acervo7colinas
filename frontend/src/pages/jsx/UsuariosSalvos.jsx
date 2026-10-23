@@ -28,11 +28,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import Header from "../../components/jsx/Header";
-import "../css/LivrosSalvos.css"; // Mantendo a folha de estilos padrão do primeiro código
+import "../css/LivrosSalvos.css"; 
 
-/* ─────────────────────────────────────────
-    CONSTANTES E ESTILOS COMPARTILHADOS
-───────────────────────────────────────── */
 const STATUS_OPTIONS = ["Todos", "Ativo", "Inativo", "Suspenso"];
 
 const selectSx = {
@@ -53,9 +50,7 @@ const actionBtnSx = {
 
 const AVATAR_COLORS = ["#F2A21E", "#00A83F", "#37228B", "#DB141F"];
 
-/* ─────────────────────────────────────────
-    HELPERS
-───────────────────────────────────────── */
+
 function getStatusColor(status) {
     switch (status) {
         case "Ativo": return { bgcolor: "#c5f0c9", color: "#2e7d32" };
@@ -78,9 +73,7 @@ function getAvatarColor(id) {
     return AVATAR_COLORS[id % AVATAR_COLORS.length];
 }
 
-/* ─────────────────────────────────────────
-    COMPONENTE PRINCIPAL
-───────────────────────────────────────── */
+
 export default function UsuariosSalvos() {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);

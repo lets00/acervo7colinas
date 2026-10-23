@@ -25,6 +25,7 @@ import "../css/Usuario.css";
 import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
 import api from "../../services/apis";
 import { useNavigate } from "react-router-dom";
+import { comprimirFotoPerfil, salvarFotoPerfil } from "../../utils/fotoPerfil";
 
 dayjs.locale('pt-br');
 
@@ -143,9 +144,23 @@ function CadastroUsuarios() {
         }
 
         try {
+            const fotoPerfilComprimida = fotoPerfil
+                ? await comprimirFotoPerfil(fotoPerfil)
+                : null;
+
             await api.post('/usuarios', formDataToSend);
 
-            alert("Usuário cadastrado com sucesso!");
+            let mensagemSucesso = "Usuário cadastrado com sucesso!";
+            if (fotoPerfilComprimida) {
+                try {
+                    salvarFotoPerfil(formData.email, fotoPerfilComprimida);
+                } catch (error) {
+                    console.error("Erro ao salvar foto do perfil:", error);
+                    mensagemSucesso += " Não foi possível guardar a foto neste navegador.";
+                }
+            }
+
+            alert(mensagemSucesso);
 
             setFormData({
                 nomeCompleto: '',
@@ -176,7 +191,9 @@ function CadastroUsuarios() {
             console.error("Erro ao cadastrar:", error);
             console.log("ERRO DO BACKEND:", error.response?.data);
 
-            const mensagem = error.response?.data?.mensagem || "Erro ao conectar com o servidor.";
+            const mensagem = error.response?.data?.mensagem
+                || (!error.response && error.message)
+                || "Erro ao conectar com o servidor.";
             alert(`Erro: ${mensagem}`);
         }
     }

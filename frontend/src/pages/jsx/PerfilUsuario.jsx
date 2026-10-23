@@ -3,35 +3,30 @@ import { Box, CircularProgress } from '@mui/material';
 import "../css/Perfil.css";
 import Footer from "../../components/jsx/Footer.jsx";
 import Header from "../../components/jsx/Header.jsx";
+import Grid from "@mui/material/Grid";
+import { getUsuario } from "../../utils/auth";
+import {
+  comprimirFotoPerfil,
+  obterFotoPerfil,
+  salvarFotoPerfil,
+} from "../../utils/fotoPerfil";
 
+const formatarEndereco = (usuario) => {
+  if (typeof usuario.endereco === "string") {
+    return usuario.endereco;
+  }
 
-// DADOS MOKADOS PARA TESTE, CASO NÃO TENHA NADA NO LOCALSTORAGE
-const MOCK_USUARIOS = {
-  admin: {
-    nome: "Fernanda Oliveira",
-    email: "fernanda@empresa.com",
-    telefone: "(81) 99999-0001",
-    infoEspecifica: "Nível: Administrador Geral | Setor: Diretoria",
-  },
-  funcionario: {
-    nome: "Carlos Mendes",
-    email: "carlos@empresa.com",
-    telefone: "(81) 99999-0002",
-    infoEspecifica: "Cargo: Atendente | Turno: Manhã",
-  },
-  entregador: {
-    nome: "Rafael Lima",
-    email: "rafael@empresa.com",
-    telefone: "(81) 99999-0003",
-    infoEspecifica: "Veículo: Motocicleta | CNH: Categoria A",
-  },
-  usuario: { // Mudado para 'usuario' para casar certinho com o seu login
-    nome: "Mariana Santos",
-    email: "mariana@email.com",
-    telefone: "(81) 99999-0004",
-    endereco: "Rua das Flores, 42 - Centro",
-    infoEspecifica: "Membro desde: 12/03/2023",
-  },
+  const endereco = usuario.endereco && typeof usuario.endereco === "object"
+    ? usuario.endereco
+    : usuario;
+
+  return [
+    [endereco.rua, endereco.numero].filter(Boolean).join(", "),
+    endereco.complemento,
+    endereco.bairro,
+    endereco.cidade,
+    endereco.cep ? `CEP: ${endereco.cep}` : "",
+  ].filter(Boolean).join(" - ");
 };
 
 export default function PerfilUsuario() {
@@ -46,48 +41,55 @@ export default function PerfilUsuario() {
     telefone: "",
     infoEspecifica: "",
     endereco: "",
-    foto: ""
+    fotoPerfil: ""
   });
   // guarda os dados antes de entrar em modo de edição, pra poder cancelar
   const [dadosOriginais, setDadosOriginais] = useState(null);
+  const [fotoComErro, setFotoComErro] = useState(false);
 
-  // ─── PEGA O USUÁRIO LOGADO AUTOMATICAMENTE ──────────────────────────────────
   useEffect(() => {
-    const tipoLogado = localStorage.getItem("usuarioTipo") || "usuario";
+    const tipoLogado =
+      localStorage.getItem("usuarioTipo") || "usuario";
+
     setTipoUsuario(tipoLogado);
 
-    const usuarioSalvoNoLogin = localStorage.getItem("usuario");
+    const usuario = getUsuario();
 
-    if (usuarioSalvoNoLogin) {
-      const usuarioObjeto = JSON.parse(usuarioSalvoNoLogin);
-
+    if (usuario) {
       setDados({
-        nome: usuarioObjeto.nome || MOCK_USUARIOS[tipoLogado].nome,
-        email: usuarioObjeto.email || MOCK_USUARIOS[tipoLogado].email,
-        telefone: usuarioObjeto.telefone || MOCK_USUARIOS[tipoLogado].telefone,
-        endereco: usuarioObjeto.endereco || MOCK_USUARIOS[tipoLogado].endereco || "",
-        foto: usuarioObjeto.foto || "",
-        infoEspecifica: MOCK_USUARIOS[tipoLogado].infoEspecifica
+        nome: usuario.nomeCompleto || usuario.nome || "",
+        email: usuario.email || "",
+        telefone: usuario.telefone || "",
+        endereco: formatarEndereco(usuario),
+        fotoPerfil: obterFotoPerfil(usuario.email) || usuario.fotoPerfil || "",
+        infoEspecifica: ""
       });
     } else {
-      setDados(MOCK_USUARIOS[tipoLogado] || MOCK_USUARIOS["usuario"]);
+      setDados({
+        nome: "",
+        email: "",
+        telefone: "",
+        endereco: "",
+        fotoPerfil: "",
+        infoEspecifica: ""
+      });
     }
   }, []);
 
-  const handleFotoChange = (e) => {
-    const arquivo = e.target.files[0];
+  const handleFotoChange = async (e) => {
+    const arquivo = e.target.files?.[0];
+    e.target.value = "";
 
-    if (arquivo) {
-      const leitor = new FileReader();
+    if (!arquivo) return;
 
-      leitor.onloadend = () => {
-        setDados((prev) => ({
-          ...prev,
-          foto: leitor.result,
-        }));
-      };
-
-      leitor.readAsDataURL(arquivo);
+    setFotoComErro(false);
+    try {
+      const fotoPerfil = await comprimirFotoPerfil(arquivo);
+      setDados((prev) => ({ ...prev, fotoPerfil }));
+      setErro("");
+    } catch (error) {
+      console.error("Erro ao processar foto do perfil:", error);
+      setErro(error.message || "Não foi possível carregar a imagem.");
     }
   };
 
@@ -97,8 +99,8 @@ export default function PerfilUsuario() {
   };
 
   const iniciarEdicao = () => {
-    // guarda um snapshot pra poder restaurar se cancelar
     setDadosOriginais(dados);
+    setFotoComErro(false);
     setErro("");
     setEditando(true);
   };
@@ -107,6 +109,7 @@ export default function PerfilUsuario() {
     if (dadosOriginais) {
       setDados(dadosOriginais);
     }
+    setFotoComErro(false);
     setErro("");
     setEditando(false);
   };
@@ -121,27 +124,39 @@ export default function PerfilUsuario() {
     setSalvando(true);
 
     try {
-      // Atualiza o objeto "usuario" do localStorage com os novos dados,
-      // mantendo o que já existia (ex: id, tipo) e sobrescrevendo o que mudou aqui.
       const usuarioSalvoNoLogin = localStorage.getItem("usuario");
       const usuarioAtual = usuarioSalvoNoLogin ? JSON.parse(usuarioSalvoNoLogin) : {};
 
       const usuarioAtualizado = {
         ...usuarioAtual,
-        nome: dados.nome,
+        nomeCompleto: dados.nome,
         email: dados.email,
         telefone: dados.telefone,
         endereco: dados.endereco,
-        foto: dados.foto,
+        fotoPerfil: dados.fotoPerfil,
       };
+      delete usuarioAtualizado.foto;
 
+      if (dados.fotoPerfil) {
+        salvarFotoPerfil(dados.email, dados.fotoPerfil);
+      }
       localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
+      window.dispatchEvent(new Event("usuario-atualizado"));
 
+      setDadosOriginais(dados);
       setEditando(false);
       alert("Perfil atualizado com sucesso!");
-    } catch (err) {
-      console.error("Erro ao salvar perfil:", err);
-      setErro("Não foi possível salvar agora. Tente novamente.");
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      const armazenamentoCheio =
+        error.name === "QuotaExceededError" ||
+        error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+        error.code === 22;
+      setErro(
+        armazenamentoCheio
+          ? "A foto é grande demais para ser guardada neste navegador. Escolha outra imagem."
+          : "Não foi possível salvar agora. Tente novamente."
+      );
     } finally {
       setSalvando(false);
     }
@@ -150,31 +165,32 @@ export default function PerfilUsuario() {
   return (
      <Box className="container">
         <Header />
-      <div className="container-perfil" sx={{mt:5}}>
+      <div className="container-perfil" size={{ xs: 12, sm: 6, md: 4 }}>
         <div className="conteudo-perfil">
 
           {/* BARRA LATERAL (SIDEBAR) */}
           <aside className="sidebar-perfil">
-            <div className="avatar-container">
-              {dados.foto ? (
-                <img
-                  src={dados.foto}
-                  alt="Foto de Perfil"
-                  className="avatar-img"
-                />
-              ) : (
-                <div className="avatar-placeholder">👤</div>
-              )}
+              <div className="avatar-container">
+                {dados.fotoPerfil && !fotoComErro ? (
+                  <img
+                    src={dados.fotoPerfil}
+                    alt="Foto de perfil"
+                    className="avatar-img"
+                    onError={() => setFotoComErro(true)}
+                  />
+                ) : (
+                  <div className="avatar-placeholder">👤</div>
+                )}
 
-              {editando && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFotoChange}
-                  className="input-foto"
-                />
-              )}
-            </div>
+                {editando && (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFotoChange}
+                    className="input-foto"
+                  />
+                )}
+              </div>
             <h2>{dados.nome}</h2>
             <span className={`badge-tipo ${tipoUsuario}`}>{tipoUsuario.toUpperCase()}</span>
 
@@ -203,14 +219,14 @@ export default function PerfilUsuario() {
 
           {/* ÁREA DOS DADOS */}
           <main className="dados-perfil">
-            <h3>Meus Dados (Logado como {tipoUsuario})</h3>
+            <h3>Meus Dados</h3>
 
             <div className="campo-grupo">
               <label>Nome Completo:</label>
               {editando ? (
                 <input type="text" name="nome" value={dados.nome} onChange={handleChange} />
               ) : (
-                <p>{dados.nome}</p>
+                <p>{dados.nome || "Não informado"}</p>
               )}
             </div>
 
@@ -219,7 +235,7 @@ export default function PerfilUsuario() {
               {editando ? (
                 <input type="email" name="email" value={dados.email} onChange={handleChange} />
               ) : (
-                <p>{dados.email}</p>
+                <p>{dados.email || "Não informado"}</p>
               )}
             </div>
 
@@ -228,7 +244,7 @@ export default function PerfilUsuario() {
               {editando ? (
                 <input type="text" name="telefone" value={dados.telefone} onChange={handleChange} />
               ) : (
-                <p>{dados.telefone}</p>
+                <p>{dados.telefone || "Não informado"}</p>
               )}
             </div>
             {tipoUsuario === "usuario" && (
@@ -243,16 +259,18 @@ export default function PerfilUsuario() {
                     onChange={handleChange}
                   />
                 ) : (
-                  <p>{dados.endereco}</p>
+                  <p>{dados.endereco || "Não informado"}</p>
                 )}
               </div>
             )}
 
             {/* INFORMAÇÕES EXCLUSIVAS DO SEU TIPO DE USUÁRIO */}
-            <div className="card-especifico">
-              <h4>Informações do Sistema</h4>
-              <p>{dados.infoEspecifica}</p>
-            </div>
+            {dados.infoEspecifica && (
+              <div className="card-especifico">
+                <h4>Informações do Sistema</h4>
+                <p>{dados.infoEspecifica}</p>
+              </div>
+            )}
           </main>
           <Footer/>
         </div>
