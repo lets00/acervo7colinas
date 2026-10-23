@@ -8,8 +8,8 @@
 }
 
 /* ===== CONTAINER ===== */
-.footer-container {
-    max-width: 1280px;
+.footer-inner {
+
 
     padding-bottom: 40px;
     padding-top: 0px;
@@ -26,6 +26,7 @@
 }
 
 .footer-logo {
+    width: 100%;
     max-width: 260px;
     height: auto;
     object-fit: contain;
@@ -140,8 +141,9 @@
     color: #fff !important;
     border: 1px solid #fff !important;
     border-radius: 999px !important;
-    padding: 10px 48px !important;
-    min-width: 200px;
+    padding: 10px 24px !important;
+    min-width: 0;
+    max-width: 100%;
     font-size: 15px !important;
     font-weight: 500 !important;
     text-transform: none !important;
@@ -175,7 +177,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-    .footer-container {
+    .footer-inner {
         padding: 0 24px 28px;
     }
 
@@ -198,3 +200,4 @@
         min-width: unset;
     }
 }
+.footer-root { flex-shrink: 0; text-align: left; }
