@@ -1,4 +1,6 @@
 
+import { obterFotoPerfil } from "./fotoPerfil";
+
 export const saveToken = (token) => {
     localStorage.setItem('token', token);
 };
@@ -14,7 +16,15 @@ export const getToken = () => localStorage.getItem('token');
 export const isAuthenticated = () => !!getToken();
 
 export const saveUsuario = (dados) => {
-    localStorage.setItem('usuario', JSON.stringify(dados));
+    const usuario = { ...dados };
+    delete usuario.foto;
+
+    const fotoPerfil = obterFotoPerfil(usuario.email) || usuario.fotoPerfil;
+    if (fotoPerfil) {
+        usuario.fotoPerfil = fotoPerfil;
+    }
+
+    localStorage.setItem('usuario', JSON.stringify(usuario));
 };
 
 export const getUsuario = () => {

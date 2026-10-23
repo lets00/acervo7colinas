@@ -27,8 +27,10 @@
 /* ── Cards de estatísticas ── */
 .emprestimos-stats {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 50px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    flex: 1;
+    min-width: 0;
+    gap: 16px;
     margin-top: 10px;
     margin-bottom: 10px;
     align-items: start;
@@ -309,4 +311,10 @@
         flex-direction: column;
         align-items: flex-start;
     }
+}
+.emprestimos-img {
+    width: 180px;
+    max-width: 100%;
+    height: auto;
+    flex-shrink: 0;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
+import PageContent from "./PageContent";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -24,10 +24,10 @@ const links = [
 export default function Footer() {
     return (
         <Box component="footer" className="footer-root">
-            <Container maxWidth={false} className="footer-container">
+            <PageContent responsive component="div" className="footer-inner" sx={{ pt: 0, pb: 5 }}>
                 <Grid container spacing={4} alignItems="flex-start" justifyContent="space-between">
                     {/* Logo + Redes Sociais */}
-                    <Grid item xs={12} sm={6} md={3} lg={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Box className="footer-logo-area">
                             <img src={logo} alt="Acervo Sete Colinas" className="footer-logo" />
                             <Box className="footer-social-wrapper">
@@ -45,7 +45,7 @@ export default function Footer() {
                     </Grid>
 
                     {/* Categorias */}
-                    <Grid item xs={6} sm={3} md={2}>
+                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
                         <Typography className="footer-section-title">Categorias</Typography>
                         <Box className="footer-links-list">
                             {categorias.map((cat) => (
@@ -57,7 +57,7 @@ export default function Footer() {
                     </Grid>
 
                     {/* Links */}
-                    <Grid item xs={6} sm={3} md={2}>
+                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
                         <Typography className="footer-section-title">Links</Typography>
                         <Box className="footer-links-list">
                             {links.map((link) => (
@@ -69,7 +69,7 @@ export default function Footer() {
                     </Grid>
 
                     {/* Contato e Endereço */}
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                         <Typography className="footer-section-title">Contato e endereço</Typography>
                         <Box className="footer-contact-item">
                             <PhoneIcon className="footer-contact-icon" />
@@ -82,7 +82,7 @@ export default function Footer() {
                     </Grid>
 
                     {/* CTA */}
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Box className="footer-cta-area">
                             <Typography className="footer-cta-text">
                                 Se tiver alguma dúvida, pode entrar em contato conosco.
@@ -93,7 +93,7 @@ export default function Footer() {
                         </Box>
                     </Grid>
                 </Grid>
-            </Container>
+            </PageContent>
 
             <Divider className="footer-divider" />
 

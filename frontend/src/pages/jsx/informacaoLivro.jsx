@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
@@ -6,6 +7,7 @@ import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
+import { useEmprestimo } from "../../context/EmprestimoContext";
 
 
 import iconInfo from "../../assets/info.png";
@@ -32,10 +34,10 @@ function InformacaoLivro() {
     const { id } = useParams();
     const navigate = useNavigate();
     const destaquesRef = useRef(null);
+    const { adicionarLivro } = useEmprestimo();
 
     const [livro, setLivro] = useState(null);
     const [favorito, setFavorito] = useState(false);
-    const emprestimosAtivos = 0;
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
@@ -101,11 +103,11 @@ function InformacaoLivro() {
             alignItems: "center",
             minHeight: "100vh",
             bgcolor: "#fff",
-            marginTop: "-55px"
+            marginTop: 0
         }}>
 
             <Header />
-            <Box sx={{ width: "100%", maxWidth: "1250px", px: 2, marginLeft: "60px", marginRight: "60px" }}>
+            <PageContent>
 
                 {/* 🔥 TOPO DO LIVRO */}
                 <div className="livro-info-topo">
@@ -131,12 +133,10 @@ function InformacaoLivro() {
                             <Button
                                 variant="contained"
                                 className="btn-emprestimo"
-                                disabled={emprestimosAtivos >= 3}
-                                onClick={() =>
-                                    navigate("/emprestimo", {
-                                        state: { livro }
-                                    })
-                                }
+                                onClick={() => {
+                                    adicionarLivro(livro);
+                                    navigate("/solicitacao-emprestimo");
+                                }}
                             >
                                 Pedir emprestado
                             </Button>
@@ -267,10 +267,11 @@ function InformacaoLivro() {
                         />
                     ))}
                 </div>
-                <div className="container-footer"><Footer /> </div>
-                
 
-            </Box>
+
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

@@ -1,0 +1,103 @@
+.detalhes-solicitacao {
+    --detalhes-roxo: #37228b;
+    --detalhes-borda: #ccd3f8;
+    color: #382c2c;
+    background: #fff;
+    margin-top: 0;
+    text-align: left;
+}
+.detalhes-solicitacao .MuiTypography-root { font-family: 'Inter', sans-serif; }
+
+.detalhes-main .detalhes-titulo { color: var(--detalhes-roxo); font-size: 36px; font-weight: 600; line-height: 1.25; }
+.detalhes-main .detalhes-subtitulo { font-size: 20px; margin-top: 8px; }
+.detalhes-secoes { margin: 40px 46px 0; display: flex; flex-direction: column; gap: 40px; }
+.detalhes-main .detalhes-secao-titulo { color: var(--detalhes-roxo); font-size: 24px; font-weight: 600; margin-bottom: 16px; }
+.detalhes-livro { padding: 19px 0 19px 76px; gap: 37px; }
+.detalhes-capa { width: 116px; height: 185px; object-fit: cover; border-radius: 10px; box-shadow: 0 4px 4px #0004; flex-shrink: 0; }
+.detalhes-sem-capa { display: grid; place-items: center; background: #f3f3f3; color: #666; }
+.detalhes-livro-info { padding-top: 16px; min-width: 0; }
+.detalhes-livro-info h3 { font-size: 20px; font-weight: 500; }
+.detalhes-livro-info .detalhes-autor { font-size: 19px; }
+.detalhes-livro-info .detalhes-genero { font-size: 15px; }
+.detalhes-genero span { text-decoration: underline; margin-left: 12px; }
+.detalhes-livro-info .detalhes-disponivel { background: #00a83f; color: white; border-radius: 5px; font: 500 15px 'Roboto', sans-serif; width: fit-content; padding: 0 12px; height: 29px; box-shadow: 0 2px 4px #0003; }
+.detalhes-main .detalhes-divisor { border-color: var(--detalhes-borda); margin: -16px 0 0; }
+.detalhes-informacoes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.detalhes-card { border: 1px solid var(--detalhes-borda); border-radius: 10px; padding: 20px 24px; display: flex; flex-direction: column; gap: 6px; }
+.detalhes-card .detalhes-card-valor { color: var(--detalhes-roxo); font-size: 24px; font-weight: 600; }
+.detalhes-solicitacao .detalhes-card-descricao { font-size: 14px; color: #706868; }
+.detalhes-solicitacao .detalhes-entregas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.detalhes-entregas .detalhes-opcao { margin: 0; padding: 22px 24px; gap: 16px; border: 1px solid var(--detalhes-borda); border-radius: 10px; }
+.detalhes-entregas .selecionada { background: #937dc221; border: 2px solid var(--detalhes-roxo); padding: 21px 23px; }
+.detalhes-solicitacao .MuiRadio-root.Mui-checked, .detalhes-solicitacao .MuiCheckbox-root.Mui-checked { color: var(--detalhes-roxo); }
+.detalhes-opcao .MuiRadio-root { padding: 0; }
+.detalhes-opcao .detalhes-opcao-titulo { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.detalhes-opcao.selecionada .detalhes-opcao-titulo { color: var(--detalhes-roxo); }
+.detalhes-endereco { display: flex; gap: 20px; align-items: center; padding: 24px; border: 1px solid var(--detalhes-borda); border-radius: 10px; margin-top: 24px; }
+.detalhes-endereco > img { object-fit: contain; flex-shrink: 0; }
+.detalhes-endereco-dados { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.detalhes-endereco-dados .detalhes-endereco-nome { font-size: 22px; font-weight: 600; color: var(--detalhes-roxo); }
+.detalhes-endereco-dados > p { font-size: 18px; margin-bottom: 4px; }
+.detalhes-regras { border: 1px solid var(--detalhes-borda); border-radius: 10px; padding: 24px; font-size: 18px; }
+.detalhes-regras > p, .detalhes-regras .MuiFormControlLabel-label { font-size: 18px; }
+.detalhes-regras ul { padding-left: 22px; margin: 12px 0; }
+.detalhes-regras li + li { margin-top: 12px; }
+.detalhes-regras .MuiFormControlLabel-root { margin: 8px 0 0 -9px; }
+.detalhes-resumo { gap: 16px; flex-wrap: wrap; margin-top: -16px; }
+.detalhes-resumo > p { font-size: 20px; }
+.detalhes-solicitacao .MuiButton-outlined, .detalhes-endereco-dialog .MuiButton-outlined { color: #37228b; border-color: #37228b; }
+.detalhes-solicitacao .MuiButton-contained, .detalhes-endereco-dialog .MuiButton-contained { background: #37228b; }
+.detalhes-solicitacao .MuiButton-contained:hover, .detalhes-endereco-dialog .MuiButton-contained:hover { background: #2a1870; }
+.detalhes-solicitacao .MuiButton-contained.Mui-disabled { background: #ddd; color: #777; }
+.detalhes-acoes .MuiButton-root { min-height: 36px; }
+.detalhes-vazio { padding: 48px 0; align-items: flex-start; }
+.detalhes-endereco-dialog .MuiDialog-paper { width: calc(100% - 64px); max-width: 1391px; border-radius: 20px; padding: 12px 16px; color: #382c2c; }
+.detalhes-endereco-dialog .MuiDialogTitle-root { font: 600 28px 'Inter', sans-serif; color: #312793; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.detalhes-endereco-dialog .MuiDialogContent-root { padding-top: 8px; }
+.detalhes-endereco-dialog .MuiDialogActions-root { padding: 0 24px 24px; gap: 16px; }
+.detalhes-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 1000px) {
+    .detalhes-secoes { margin-left: 0; margin-right: 0; }
+    .detalhes-informacoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .detalhes-livro { padding-left: 0; }
+    .detalhes-entregas .detalhes-opcao { padding: 18px; gap: 12px; }
+}
+@media (max-width: 600px) {
+    .detalhes-main .detalhes-titulo { font-size: 28px; }
+    .detalhes-main .detalhes-subtitulo { font-size: 16px; }
+    .detalhes-secoes { gap: 28px; margin-top: 28px; }
+    .detalhes-main .detalhes-secao-titulo { font-size: 21px; }
+    .detalhes-livro { gap: 16px; padding: 16px 0; }
+    .detalhes-capa { width: 72px; height: 114px; }
+    .detalhes-livro-info { padding-top: 0; }
+    .detalhes-livro-info h3 { font-size: 16px; }
+    .detalhes-livro-info .detalhes-autor { font-size: 15px; }
+    .detalhes-livro-info .detalhes-genero { font-size: 13px; }
+    .detalhes-informacoes { gap: 12px; }
+    .detalhes-card { padding: 16px 12px; }
+    .detalhes-card > p { font-size: 14px; }
+    .detalhes-card .detalhes-card-valor { font-size: 20px; }
+    .detalhes-solicitacao .detalhes-entregas { grid-template-columns: 1fr; gap: 12px; }
+    .detalhes-endereco { flex-wrap: wrap; padding: 18px; gap: 12px; }
+    .detalhes-endereco-dados { flex-basis: calc(100% - 65px); }
+    .detalhes-endereco .MuiButton-root { width: 100%; }
+    .detalhes-regras { padding: 18px; }
+    .detalhes-regras > p, .detalhes-regras li, .detalhes-regras .MuiFormControlLabel-label { font-size: 16px; }
+    .detalhes-resumo > p { font-size: 16px; }
+    .detalhes-acoes { flex-wrap: wrap; gap: 12px; }
+    .detalhes-acoes .MuiButton-root { margin: 0; flex: 1 1 100%; }
+    .detalhes-endereco-dialog .MuiDialog-paper { width: calc(100% - 24px); margin: 12px; padding: 0; }
+    .detalhes-endereco-dialog .MuiDialogTitle-root { font-size: 22px; }
+    .detalhes-campos { grid-template-columns: 1fr; gap: 20px; }
+    .detalhes-endereco-dialog .MuiDialogActions-root { flex-wrap: wrap; gap: 12px; }
+}
+
+/* Escala visual equivalente a 90% de zoom, restrita a esta página. */
+.detalhes-solicitacao {
+    zoom: 0.9;
+    width: auto;
+}
+/* O Dialog é renderizado fora da página pelo portal do MUI. */
+.detalhes-endereco-dialog .MuiDialog-paper {
+    zoom: 0.9;
+}

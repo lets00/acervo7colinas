@@ -1,5 +1,10 @@
+
+import React, { useEffect, useState } from "react";
+import PageContent from "./PageContent";
 import React, { useState } from "react";
+
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
+import { obterFotoPerfil } from "../../utils/fotoPerfil";
 
 
 import {
@@ -24,9 +29,34 @@ export default function Header() {
   const navigate = useNavigate();
 
   const token = getToken();
-  const usuario = getUsuario();
+  const [usuario, setUsuario] = useState(() => {
+    const dadosUsuario = getUsuario();
+    return dadosUsuario
+      ? {
+          ...dadosUsuario,
+          fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+        }
+      : null;
+  });
   const { livros: livrosEmprestimo } = useEmprestimo();
   const quantidadeEmprestimo = livrosEmprestimo.length;
+
+  useEffect(() => {
+    const atualizarUsuario = () => {
+      const dadosUsuario = getUsuario();
+      setUsuario(
+        dadosUsuario
+          ? {
+              ...dadosUsuario,
+              fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+            }
+          : null
+      );
+    };
+
+    window.addEventListener("usuario-atualizado", atualizarUsuario);
+    return () => window.removeEventListener("usuario-atualizado", atualizarUsuario);
+  }, []);
 
   const isAdmin =
     usuario?.cargo?.toLowerCase() === "administrador";
@@ -87,7 +117,7 @@ export default function Header() {
 
     return (
     <Box className="header-container">
-      <Box className="header-content">
+      <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
 
         <img src={logo} alt="Logo" className="header-logo" />
 
@@ -116,7 +146,7 @@ export default function Header() {
               <>
                 <Tooltip title="Minha solicitação de empréstimo">
                   <IconButton
-                    onClick={() => navigate("/emprestimo")}
+                    onClick={() => navigate("/solicitacao-emprestimo")}
                     sx={{ p: 0.5 }}
                   >
                     <Badge badgeContent={quantidadeEmprestimo} color="error" max={99}>
@@ -166,6 +196,15 @@ export default function Header() {
                     }}
                   >
                     Meu Perfil
+                  </MenuItem>
+
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/meus-emprestimos");
+                      fecharMenuHamburguer();
+                    }}
+                  >
+                    Meus Empréstimos
                   </MenuItem>
 
                   {isAdmin && (
@@ -299,7 +338,7 @@ export default function Header() {
 
           </Stack>
         </Stack>
-      </Box>
+      </PageContent>
       <Divider className="header-divider" />
     </Box>
   );

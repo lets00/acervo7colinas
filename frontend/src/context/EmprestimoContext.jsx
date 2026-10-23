@@ -24,8 +24,19 @@ export function EmprestimoProvider({ children }) {
         }
     }, [livros]);
 
+    const adicionarLivro = (livro) => {
+        setLivros(prev => {
+            if (prev.some(l => Number(l.id) === Number(livro.id))) return prev;
+            return [...prev, livro];
+        });
+    };
+
+    const removerLivro = (id) => {
+        setLivros(prev => prev.filter(l => Number(l.id) !== Number(id)));
+    };
+
     return (
-        <EmprestimoContext.Provider value={{ livros, setLivros }}>
+        <EmprestimoContext.Provider value={{ livros, setLivros, adicionarLivro, removerLivro }}>
             {children}
         </EmprestimoContext.Provider>
     );
