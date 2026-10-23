@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import PageContent from "./PageContent";
-import React, { useState } from "react";
 
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
 import { obterFotoPerfil } from "../../utils/fotoPerfil";
