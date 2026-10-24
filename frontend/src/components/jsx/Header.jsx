@@ -181,7 +181,7 @@ export default function Header() {
                     </Avatar>
                   </IconButton>
                 </Tooltip>
-                <IconButton onClick={abrirMenuHamburguer}>
+                <IconButton onClick={abrirMenuHamburguer} aria-label="Abrir menu" aria-haspopup="true" aria-expanded={Boolean(anchorMenu)}>
                   <MenuIcon />
                 </IconButton>
                 <Menu
@@ -189,6 +189,8 @@ export default function Header() {
                   open={Boolean(anchorMenu)}
                   onClose={fecharMenuHamburguer}
                 >
+                  <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>
+                  <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>
                   <MenuItem
                     onClick={() => {
                       navigate("/perfil");
@@ -333,6 +335,16 @@ export default function Header() {
                   className="header-chip-login"
                   onClick={() => navigate('/login')}
                 />
+                <IconButton className="header-mobile-menu" onClick={abrirMenuHamburguer} aria-label="Abrir menu" aria-haspopup="true" aria-expanded={Boolean(anchorMenu)}>
+                  <MenuIcon />
+                </IconButton>
+                <Menu anchorEl={anchorMenu} open={Boolean(anchorMenu)} onClose={fecharMenuHamburguer}>
+                  <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>
+                  <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>
+                  <MenuItem component={Link} to="/usuarios" onClick={fecharMenuHamburguer}>Criar conta de usuário</MenuItem>
+                  <MenuItem component={Link} to="/entregadores" onClick={fecharMenuHamburguer}>Criar conta de entregador</MenuItem>
+                  <MenuItem component={Link} to="/login" onClick={fecharMenuHamburguer}>Entrar</MenuItem>
+                </Menu>
               </>
             )}
 
