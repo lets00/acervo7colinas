@@ -49,6 +49,7 @@ export default function Header() {
     <Box className="header-container header-login">
       <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
 
+        <Box className="header-brand-nav">
         <img src={logo} alt="Logo" className='header-logo'/>
 
 
@@ -58,6 +59,7 @@ export default function Header() {
         <Typography className='header-text' onClick={() => navigate("/acervo")}sx={{ cursor: "pointer" }}>
           Acervo
         </Typography>
+        </Box>
 
         <TextField
           size="small"
@@ -80,7 +82,7 @@ export default function Header() {
         />
 
         <Stack spacing={2}  className='header-stack'>
-          <Stack direction="row" spacing={4} className='header-stack-row'>
+          <Stack direction="row" className='header-stack-row'>
             <Chip
               label="Criar Conta"
               size="small"

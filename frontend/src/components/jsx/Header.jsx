@@ -119,10 +119,12 @@ export default function Header() {
       <PageContent responsive component="div" className="header-content" sx={{ minHeight: 80
         , py: 1 }}>
 
+        <Box className="header-brand-nav">
         <img src={logo} alt="Logo" className="header-logo" />
 
         <Typography component={Link} to="/"className="header-text">Inicio</Typography>
         <Typography component={Link} to="/acervo" className="header-text">Acervo</Typography>
+        </Box>
         
         <TextField
           size="small"
@@ -140,7 +142,7 @@ export default function Header() {
         />
 
         <Stack spacing={2} className="header-stack">
-          <Stack direction="row" spacing={4} className="header-stack-row">
+          <Stack direction="row" className="header-stack-row">
 
             {token ? (
               <>
