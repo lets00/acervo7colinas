@@ -116,7 +116,8 @@ export default function Header() {
 
     return (
     <Box className="header-container">
-      <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
+      <PageContent responsive component="div" className="header-content" sx={{ minHeight: 80
+        , py: 1 }}>
 
         <img src={logo} alt="Logo" className="header-logo" />
 
