@@ -1,64 +1,152 @@
-.container {
+.login-page {
   min-height: 100vh;
   width: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
 
-}
-header { 
+.login-page .login-header {
   width: 100%;
-  z-index: 10;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 24px 0;
+  position: relative;
+  z-index: 2;
 }
-.center-content {
+
+.login-page .header-login .header-content {
+  padding-inline: 0;
+}
+
+.login-page .center-content {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.img-livros {
-  width: 200px;
-  height: 100px;
-  margin-top: 100px;
-  margin-left: -880px;
-  transform: rotate(-30deg);
-}
-.img-livros-Dois {
-  width: 150px;
-  height: 150px;
-  margin-top: -115px;
-  margin-left: 840px;
-  transform: rotate(20deg);
-}
-.img-livros-Tres {
-  width: 200px;
-  height: 150px;
-  margin-top: 450px;
-  margin-left: -840px;
-  transform: rotate(20deg);
+  width: 100%;
+  padding: 80px 24px 48px;
+  position: relative;
+  z-index: 1;
 }
 
-.img-livros-Quatro {
-  width: 200px;
-  height: 150px;
-  margin-top: -160px;
-  margin-left: 880px;
-  transform: rotate(10deg);
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.2); 
-  backdrop-filter: blur(1px); 
-  -webkit-backdrop-filter: blur(10px); 
-
+.login-page .glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 24px clamp(20px, 4vw, 64px);
+  border: 1px solid rgba(36, 36, 36, 0.4);
+  min-width: 0;
 }
-.titulo {
-  margin-bottom: 32px;
-  font-weight: 700;
-  color: #37228B;
+
+.login-page .titulo {
+  font-weight: 500;
+  color: #242424;
   font-family: 'Roboto', sans-serif;
-  margin-top: 22px;
   text-align: center;
-  font-size: clamp(20px, 3vw, 28px);
+  font-size: clamp(24px, 3vw, 32px);
+}
+
+.login-page .glass form { width: 100%; }
+.login-page .glass .MuiFormControl-root { width: 100%; max-width: 100%; }
+.login-page .glass .botoes { margin-left: 0; }
+.login-page .glass .btn-cadastrar { width: 100%; max-width: 100%; }
+.login-page .login-forgot-password { display: block; margin-left: 0; margin-top: 8px; text-align: right; }
+
+.login-page .img-livros,
+.login-page .img-livros-Dois,
+.login-page .img-livros-Tres,
+.login-page .img-livros-Quatro {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  margin: 0;
+  width: clamp(100px, 13vw, 180px);
+  height: auto;
+}
+
+.login-page .img-livros { top: 150px; left: max(24px, calc(50% - 580px)); transform: rotate(-12deg); }
+.login-page .img-livros-Dois { top: 135px; right: max(24px, calc(50% - 580px)); transform: rotate(20deg); }
+.login-page .img-livros-Tres { bottom: 32px; left: max(24px, calc(50% - 580px)); transform: rotate(20deg); }
+.login-page .img-livros-Quatro { bottom: 32px; right: max(24px, calc(50% - 580px)); transform: rotate(10deg); }
+
+@media (max-width: 900px) {
+  .login-page .center-content { padding-top: 64px; }
+  .login-page .img-livros,
+  .login-page .img-livros-Dois { top: 180px; width: 100px; }
+  .login-page .img-livros-Tres,
+  .login-page .img-livros-Quatro { display: none; }
+}
+
+@media (max-width: 600px) {
+  .login-page .login-header { padding: 8px 16px 0; }
+  .login-page .center-content { padding: 48px 16px 32px; }
+  .login-page .glass { padding: 20px; }
+  .login-page .img-livros,
+  .login-page .img-livros-Dois { display: none; }
+}
+
+/* O header de login usa a largura do seu contêiner, não a da janela. */
+@media (min-width: 901px) {
+  .login-page .header-login .header-content.page-content {
+    grid-template-columns: auto minmax(160px, 1fr) auto;
+    gap: clamp(20px, 2vw, 40px);
+  }
+
+  .login-page .header-login .header-brand-nav {
+    gap: clamp(16px, 1.5vw, 28px);
+  }
+
+  .login-page .header-login .header-brand-nav .header-logo {
+    width: clamp(140px, 14vw, 180px);
+    flex-shrink: 0;
+  }
+
+  .login-page .header-login .header-input-preto {
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .login-page .header-login .header-brand-nav {
+    gap: 16px;
+  }
+
+  .login-page .header-login .header-brand-nav .header-logo {
+    width: 140px;
+  }
+}
+
+.login-page .glass .btn-cadastrar {
+  min-width: 0 !important;
+}
+
+.login-page .login-field .MuiOutlinedInput-root {
+  height: 48px;
+  align-items: center;
+  background: #e8eefc;
+}
+
+.login-page .login-field .MuiOutlinedInput-input {
+  box-sizing: border-box;
+  min-width: 0;
+  height: 100%;
+  padding-block: 12px;
+}
+
+.login-page .login-field input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #e8eefc inset;
+  -webkit-text-fill-color: #242424;
+  caret-color: #242424;
+}
+
+.login-page .login-field .MuiInputAdornment-root {
+  flex-shrink: 0;
+}
+
+.login-page .login-field .MuiIconButton-root {
+  width: 40px;
+  height: 40px;
 }
