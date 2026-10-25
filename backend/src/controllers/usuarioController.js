@@ -12,6 +12,14 @@ export async function criarUsuario(req, res) {
     
     const dadosParaValidar = {
         ...req.body,
+        endereco: req.body.endereco ?? {
+            rua: req.body['endereco[rua]'],
+            numero: req.body['endereco[numero]'],
+            cep: req.body['endereco[cep]'],
+            bairro: req.body['endereco[bairro]'],
+            cidade: req.body['endereco[cidade]'],
+            complemento: req.body['endereco[complemento]']
+        },
         fotoPerfil,
         fotoRg,
         comprovanteResidencial

@@ -18,7 +18,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
@@ -119,17 +118,17 @@ export default function FuncionariosSalvos() {
     const to                 = Math.min(page * rowsPerPage, funcionariosFiltrados.length);
 
     return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px", width: "100%" }}>
+    <Box className="saved-books-root saved-staff-root">
       <Header />
 
-      <Box sx={{ width: "100%", maxWidth: "1800px" }}>
+      <Box component="main" className="saved-books-content">
         <Box className="livrossalvos-page" sx={{ width: "100%" }}>
 
           <div className="livrossalvos-topbar">
             <h1 className="livrossalvos-titulo">Funcionários Cadastrados</h1>
           </div>
 
-          <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width: "1200px" }} />
+          <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width: "100%" }} />
 
           <div className="livrossalvos-filters">
             <span className="filter-inline-label">Filtrar:</span>
@@ -139,6 +138,7 @@ export default function FuncionariosSalvos() {
                 value={perfilFiltro}
                 onChange={(e) => { setPerfilFiltro(e.target.value); setPage(1); }}
                 sx={selectSx}
+                inputProps={{ 'aria-label': 'Filtrar funcionários por perfil' }}
                 displayEmpty
               >
                 {PERFIL_OPTIONS.map((perfil) => (
@@ -149,13 +149,14 @@ export default function FuncionariosSalvos() {
               </Select>
             </FormControl>
 
-            <div style={{ flex: 1 }} />
+            <div className="saved-books-filter-spacer" />
             <span className="filter-inline-label">Buscar:</span>
 
             <div className="filter-search-wrapper">
               <OutlinedInput
                 value={busca}
                 onChange={(e) => { setBusca(e.target.value); setPage(1); }}
+                inputProps={{ 'aria-label': 'Buscar funcionário por nome ou email' }}
                 placeholder="Procure por nome ou email do funcionário"
                 size="small"
                 fullWidth
@@ -267,10 +268,9 @@ export default function FuncionariosSalvos() {
                     )}
                   </TableBody>
 
-                  <TableFooter>
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <div className="livrossalvos-footer">
+                </Table>
+              </TableContainer>
+<div className="livrossalvos-footer">
                           <span className="livrossalvos-exibindo">
                             {funcionariosFiltrados.length === 0
                               ? "Nenhum funcionário encontrado"
@@ -291,12 +291,6 @@ export default function FuncionariosSalvos() {
                             }}
                           />
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableFooter>
-
-                </Table>
-              </TableContainer>
             </div>
           )}
 

@@ -191,13 +191,264 @@
 }
 
 @media (max-width: 600px) {
+    .footer-root {
+        padding-top: 24px;
+    }
+
+    .footer-root .footer-inner {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .footer-logo-area {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+    }
+
     .footer-logo {
-        max-width: 190px;
+        width: 160px;
+        max-width: 55%;
+        margin-bottom: 0;
+    }
+
+    .footer-social-title {
+        font-size: 12px !important;
+    }
+
+    .footer-social-icons {
+        gap: 8px;
+        transform: none;
+    }
+
+    .footer-social-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .footer-social-icon svg {
+        font-size: 24px;
+    }
+
+    .footer-section-title {
+        font-size: 14px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .footer-links-list {
+        gap: 0;
+    }
+
+    .footer-link {
+        font-size: 13px !important;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        overflow-wrap: anywhere;
+    }
+
+    .footer-contact-item {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .footer-contact-icon {
+        flex-shrink: 0;
+    }
+
+    .footer-contact-text,
+    .footer-cta-text {
+        font-size: 13px !important;
+    }
+
+    .footer-cta-area {
+        gap: 12px;
+        padding-left: 0;
+    }
+
+    .footer-cta-text {
+        max-width: none;
     }
 
     .footer-cta-button {
         width: 100%;
         min-width: unset;
+        min-height: 44px;
+        font-size: 14px !important;
+        padding: 8px 20px !important;
+    }
+
+    .footer-bottom {
+        padding: 14px 16px;
+    }
+
+    .footer-copyright {
+        font-size: 12px !important;
+        line-height: 1.5;
     }
 }
 .footer-root { flex-shrink: 0; text-align: left; }
+
+@media (max-width: 600px) {
+    .footer-contact-section,
+    .footer-cta-section {
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        padding-top: 16px;
+        min-width: 0;
+    }
+
+    .footer-root .footer-social-title {
+        margin-bottom: 4px !important;
+    }
+
+    .footer-root .footer-social-icons {
+        margin-top: 0;
+    }
+
+    .footer-root .footer-cta-button {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    .footer-root .footer-copyright {
+        font-weight: 500 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+}
+
+.footer-root .footer-social-mobile {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .footer-root .footer-social-desktop {
+        display: none;
+    }
+
+    .footer-root .footer-social-mobile {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 16px;
+    }
+}
+@media (max-width: 600px) {
+    .footer-contact-section {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .footer-contact-details {
+        min-width: 0;
+    }
+
+    .footer-root .footer-social-mobile {
+        margin-top: 0;
+        flex-shrink: 0;
+        align-items: center;
+    }
+}
+/* Distribuição por largura, sem comprimir as cinco seções em tablets. */
+.footer-root .footer-inner {
+    max-width: 1440px;
+    padding-inline: clamp(24px, 3vw, 48px);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) repeat(3, minmax(0, 1.2fr));
+    grid-template-areas: "brand categories links contact cta";
+    gap: clamp(24px, 2.5vw, 40px);
+    align-items: start;
+}
+
+.footer-grid > * { min-width: 0; }
+.footer-brand-section { grid-area: brand; }
+.footer-categories-section { grid-area: categories; }
+.footer-links-section { grid-area: links; }
+.footer-contact-section { grid-area: contact; }
+.footer-cta-section { grid-area: cta; }
+
+.footer-grid .footer-logo { display: block; }
+.footer-grid .footer-cta-area { padding-left: 0; }
+.footer-grid .footer-contact-icon { flex-shrink: 0; }
+.footer-grid .footer-link,
+.footer-grid .footer-contact-text,
+.footer-grid .footer-cta-text { overflow-wrap: anywhere; }
+
+@media (min-width: 601px) and (max-width: 1199px) {
+    .footer-root { padding-top: 36px; }
+
+    .footer-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-areas: "brand categories links" "contact contact cta";
+        gap: 32px clamp(20px, 3vw, 32px);
+    }
+
+    .footer-grid .footer-logo-area { gap: 20px; }
+    .footer-grid .footer-logo { max-width: 200px; margin-bottom: 0; }
+    .footer-grid .footer-social-wrapper { align-items: flex-start; }
+    .footer-grid .footer-social-desktop { display: none; }
+
+    .footer-grid .footer-contact-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px clamp(24px, 4vw, 48px);
+    }
+
+    .footer-grid .footer-social-mobile {
+        display: flex;
+        margin-top: 0;
+    }
+
+    .footer-grid .footer-contact-section,
+    .footer-grid .footer-cta-section {
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        padding-top: 24px;
+    }
+
+    .footer-grid .footer-cta-area { gap: 16px; }
+    .footer-grid .footer-cta-button { width: 100%; }
+}
+
+@media (max-width: 600px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas: "brand brand" "categories links" "contact contact" "cta cta";
+        gap: 24px 20px;
+    }
+
+    .footer-grid .footer-logo { max-width: 100%; }
+    .footer-grid .footer-contact-section { flex-wrap: wrap; gap: 16px 24px; }
+    .footer-grid .footer-cta-text { max-width: none; }
+}
+
+@media (min-width: 1400px) {
+    .footer-root .footer-inner {
+        max-width: 1760px;
+        padding-inline: clamp(48px, 4vw, 80px);
+    }
+
+    .footer-grid {
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr) repeat(3, minmax(0, 1.2fr));
+        column-gap: clamp(40px, 3vw, 64px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .footer-grid .footer-logo-area {
+        align-items: center;
+    }
+
+    .footer-grid .footer-social-desktop {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-grid .footer-social-icons {
+        justify-content: center;
+    }
+}

@@ -18,7 +18,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
@@ -28,11 +27,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import Header from "../../components/jsx/Header";
-import "../css/LivrosSalvos.css"; // Mantendo a folha de estilos padrão do primeiro código
+import "../css/LivrosSalvos.css"; 
 
-/* ─────────────────────────────────────────
-    CONSTANTES E ESTILOS COMPARTILHADOS
-───────────────────────────────────────── */
 const STATUS_OPTIONS = ["Todos", "Ativo", "Inativo", "Suspenso"];
 
 const selectSx = {
@@ -53,9 +49,7 @@ const actionBtnSx = {
 
 const AVATAR_COLORS = ["#F2A21E", "#00A83F", "#37228B", "#DB141F"];
 
-/* ─────────────────────────────────────────
-    HELPERS
-───────────────────────────────────────── */
+
 function getStatusColor(status) {
     switch (status) {
         case "Ativo": return { bgcolor: "#c5f0c9", color: "#2e7d32" };
@@ -78,9 +72,7 @@ function getAvatarColor(id) {
     return AVATAR_COLORS[id % AVATAR_COLORS.length];
 }
 
-/* ─────────────────────────────────────────
-    COMPONENTE PRINCIPAL
-───────────────────────────────────────── */
+
 export default function UsuariosSalvos() {
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -153,10 +145,10 @@ export default function UsuariosSalvos() {
     const to = Math.min(page * rowsPerPage, filtrados.length);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px", width: "100%" }}>
+        <Box className="saved-books-root saved-users-root">
             <Header />
 
-            <Box sx={{ width: "100%", maxWidth: "1800px" }}>
+            <Box component="main" className="saved-books-content">
                 <Box className="livrossalvos-page" sx={{ width: "100%" }}>
 
                     {/* ── Topbar (Título) ── */}
@@ -164,7 +156,7 @@ export default function UsuariosSalvos() {
                         <h1 className="livrossalvos-titulo">Usuários Cadastrados</h1>
                     </div>
 
-                    <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width: "1200px" }} />
+                    <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width: "100%" }} />
 
                     {/* ── Barra de Filtros Alinhada ── */}
                     <div className="livrossalvos-filters">
@@ -175,6 +167,7 @@ export default function UsuariosSalvos() {
                                 value={statusFiltro}
                                 onChange={(e) => { setStatusFiltro(e.target.value); setPage(1); }}
                                 sx={selectSx}
+                                inputProps={{ 'aria-label': 'Filtrar usuários por status' }}
                                 displayEmpty
                             >
                                 {STATUS_OPTIONS.map((s) => (
@@ -185,13 +178,14 @@ export default function UsuariosSalvos() {
                             </Select>
                         </FormControl>
 
-                        <div style={{ flex: 1 }} />
+                        <div className="saved-books-filter-spacer" />
                         <span className="filter-inline-label">Buscar:</span>
 
                         <div className="filter-search-wrapper">
                             <OutlinedInput
                                 value={busca}
                                 onChange={(e) => { setBusca(e.target.value); setPage(1); }}
+                                inputProps={{ 'aria-label': 'Buscar usuário por nome, email ou ID' }}
                                 placeholder="Procure por nome ou email do usuário"
                                 size="small"
                                 fullWidth
@@ -326,11 +320,11 @@ export default function UsuariosSalvos() {
                                         )}
                                     </TableBody>
 
-                                    {/* Rodapé e Paginação */}
-                                    <TableFooter>
-                                        <TableRow>
-                                            <TableCell colSpan={6}>
-                                                <div className="livrossalvos-footer">
+
+
+                                </Table>
+                            </TableContainer>
+<div className="livrossalvos-footer">
                                                     <span className="livrossalvos-exibindo">
                                                         {filtrados.length === 0
                                                             ? "Nenhum usuário encontrado"
@@ -351,12 +345,6 @@ export default function UsuariosSalvos() {
                                                         }}
                                                     />
                                                 </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableFooter>
-
-                                </Table>
-                            </TableContainer>
                         </div>
                     )}
 

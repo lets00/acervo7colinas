@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Box, MenuItem, TextField, Typography, 
+import { Box, MenuItem, TextField, Typography,
   FormControl, InputLabel, Select, OutlinedInput, FormHelperText } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import 'dayjs/locale/pt-br';
 import dayjs from 'dayjs';
-import Grid from '@mui/material/Grid';
 import Header from "../../components/jsx/Header";
 import '../css/CadastroLivros.css';
 import BotaoLivroCadastrar from '../../components/jsx/BotaoLivroCadastrar.jsx';
@@ -69,9 +68,9 @@ function CadastroLivros() {
   };
 
   const handleCancel = () => {
-    setFormData({ 
+    setFormData({
       titulo: "", isbn: "", ano: null, quantidadeExemplares: "", quantidadePaginas: "",
-      genero: "", autor: "", editora: "", descricao: "" 
+      genero: "", autor: "", editora: "", descricao: ""
     });
     setImagemLivro(null);
     setErrors({});
@@ -79,7 +78,7 @@ function CadastroLivros() {
 
   const cadastrolivro = async (e) => {
     e.preventDefault();
-    
+
     if (!validar()) {
       alert("Por favor, preencha todos os campos obrigatórios corretamente.");
       return;
@@ -95,9 +94,9 @@ function CadastroLivros() {
     dataToSend.append("autor", formData.autor);
     dataToSend.append("editora", formData.editora);
     dataToSend.append("descricao", formData.descricao);
-    
+
     if (imagemLivro) {
-      dataToSend.append("img", imagemLivro); 
+      dataToSend.append("img", imagemLivro);
     }
 
     console.log("=== DADOS ENVIADOS ===");
@@ -108,7 +107,7 @@ function CadastroLivros() {
     try {
       const response = await api.post("/livros", dataToSend, {
       });
-  
+
       if (response.status === 201 || response.status === 200) {
         alert("Livro cadastrado com sucesso!");
         handleCancel();
@@ -125,10 +124,10 @@ function CadastroLivros() {
   const descricaoHelper = `${formData.descricao.length}/${DESCRICAO_MAX}`;
 
   return (
-    <Box className="container" >
+    <Box className="books-register-page" >
         <Header />
-        <Box className="content">
-          
+        <Box component="main" className="books-register-content">
+
             <Typography variant="h4" align="center" className="titulo" sx={{ mt: 5 }}>
               Cadastro Dos Livros!
             </Typography>
@@ -140,12 +139,12 @@ function CadastroLivros() {
             </Box>
 
             <form onSubmit={cadastrolivro} >
-                <Grid container spacing={6} justifyContent="center"   >
-                  <Grid item xs={12} md={6} >
+                <Box className="books-register-grid">
+                  <Box>
                     <Box className="coluna">
-                      <TextField required fullWidth label="Título" error={!!errors.titulo} helperText={errors.titulo && "Título é obrigatório"} variant="outlined" sx={{ width: '468px' } }  name="titulo" value={formData.titulo} onChange={handleChange} />
-                      <TextField required fullWidth label="ISBN" error={!!errors.isbn} helperText={errors.isbn && "ISBN é obrigatório"} variant="outlined" sx={{ width: '468px' } }  name="isbn" value={formData.isbn} onChange={handleChange} />
-                      
+                      <TextField required fullWidth label="Título" error={!!errors.titulo} helperText={errors.titulo && "Título é obrigatório"} variant="outlined" sx={{ width: '100%' } }  name="titulo" value={formData.titulo} onChange={handleChange} />
+                      <TextField required fullWidth label="ISBN" error={!!errors.isbn} helperText={errors.isbn && "ISBN é obrigatório"} variant="outlined" sx={{ width: '100%' } }  name="isbn" value={formData.isbn} onChange={handleChange} />
+
                       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
                           <DatePicker
                             label="Ano"
@@ -153,28 +152,28 @@ function CadastroLivros() {
                             onChange={handleDateChange}
                             views={['year']}
                             format="YYYY"
-                            slotProps={{ 
-                              textField: { 
-                                fullWidth: true, 
-                                required: true, 
+                            slotProps={{
+                              textField: {
+                                fullWidth: true,
+                                required: true,
                                 error: !!errors.ano,
                                 helperText: errors.ano && "Selecione o ano",
-                                sx: { width: '468px'} 
-                              } 
+                                sx: { width: '100%'}
+                              }
                             }}
                           />
                       </LocalizationProvider>
 
-                      <TextField required fullWidth label="Quantidade de exemplares" error={!!errors.quantidadeExemplares} helperText={errors.quantidadeExemplares && "Quantidade de exemplares é obrigatória"}  type="number" sx={{ width: '468px' } } name="quantidadeExemplares" value={formData.quantidadeExemplares} onChange={handleChange}/>
+                      <TextField required fullWidth label="Quantidade de exemplares" error={!!errors.quantidadeExemplares} helperText={errors.quantidadeExemplares && "Quantidade de exemplares é obrigatória"}  type="number" sx={{ width: '100%' } } name="quantidadeExemplares" value={formData.quantidadeExemplares} onChange={handleChange}/>
 
-                      <TextField required fullWidth label="Quantidade de páginas" error={!!errors.quantidadePaginas} helperText={errors.quantidadePaginas && "Quantidade de páginas é obrigatória"} type="number" inputProps={{ min: 1 }} sx={{ width: '468px' }} name="quantidadePaginas" value={formData.quantidadePaginas} onChange={handleChange}/>
+                      <TextField required fullWidth label="Quantidade de páginas" error={!!errors.quantidadePaginas} helperText={errors.quantidadePaginas && "Quantidade de páginas é obrigatória"} type="number" inputProps={{ min: 1 }} sx={{ width: '100%' }} name="quantidadePaginas" value={formData.quantidadePaginas} onChange={handleChange}/>
 
-                      <FormControl required fullWidth sx={{ width: '468px' } } error={!!errors.genero} >
+                      <FormControl required fullWidth sx={{ width: '100%' } } error={!!errors.genero} >
                         <InputLabel>Gênero</InputLabel>
                         <Select
                           name="genero" value={formData.genero} onChange={handleChange}
                           input={<OutlinedInput label="Gênero" />}
-                          displayEmpty 
+                          displayEmpty
                         >
                           <MenuItem value="Ficção">Ficção</MenuItem>
                           <MenuItem value="Ficcao_Cientifica">Ficção Científica</MenuItem>
@@ -203,19 +202,19 @@ function CadastroLivros() {
                         {errors.genero && <FormHelperText>Gênero é obrigatório</FormHelperText>}
                       </FormControl>
                     </Box>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} md={6} >
+                <Box>
                   <Box className="coluna" >
-                    <TextField required fullWidth label="Autor" variant="outlined"  error={!!errors.autor} helperText={errors.autor && "Autor é obrigatório"}  sx={{ width: '468px' } } name="autor" value={formData.autor} onChange={handleChange}/>
-                    <TextField required fullWidth label="Editora" variant="outlined"  error={!!errors.editora} helperText={errors.editora && "Editora é obrigatória"}  sx={{ width: '468px' } } name="editora" value={formData.editora} onChange={handleChange} />
-                      
-                    <TextField label="Descrição" multiline rows={8.5} fullWidth sx={{ width: '468px' } }  error={!!errors.descricao} helperText={errors.descricao ? "Descrição é obrigatória" : descricaoHelper} variant="outlined" name="descricao" value={formData.descricao} onChange={handleChange}/>
+                    <TextField required fullWidth label="Autor" variant="outlined"  error={!!errors.autor} helperText={errors.autor && "Autor é obrigatório"}  sx={{ width: '100%' } } name="autor" value={formData.autor} onChange={handleChange}/>
+                    <TextField required fullWidth label="Editora" variant="outlined"  error={!!errors.editora} helperText={errors.editora && "Editora é obrigatória"}  sx={{ width: '100%' } } name="editora" value={formData.editora} onChange={handleChange} />
+
+                    <TextField label="Descrição" multiline rows={8} fullWidth sx={{ width: '100%' } }  error={!!errors.descricao} helperText={errors.descricao ? "Descrição é obrigatória" : descricaoHelper} variant="outlined" name="descricao" value={formData.descricao} onChange={handleChange}/>
                   </Box>
-                 </Grid>
-              </Grid> 
+                 </Box>
+              </Box>
               <CampoCadastrosLivros onChange={(file) => setImagemLivro(file)} error={!!errors.imagem} helperText={errors.imagem && "Selecione a foto do livro"} />
-                
+
               <BotaoLivroCadastrar onCancel={handleCancel} />
 
             </form>

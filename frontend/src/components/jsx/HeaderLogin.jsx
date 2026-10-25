@@ -5,11 +5,14 @@ import {  Typography, TextField, Box, Toolbar, Button, Stack, Chip, InputAdornme
 import logo from "../../assets/logo.png";
 import SearchPreto from '../../assets/SearchPreto.png';
 import Perfil from "../../assets/Perfil.png";
+import '../css/Header.css';
 import '../css/HeaderLogin.css';
 import { useNavigate } from 'react-router-dom';
 import { getUsuario } from '../../utils/auth';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 
 export default function Header() {
@@ -46,6 +49,7 @@ export default function Header() {
     <Box className="header-container header-login">
       <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
 
+        <Box className="header-brand-nav">
         <img src={logo} alt="Logo" className='header-logo'/>
 
 
@@ -55,6 +59,7 @@ export default function Header() {
         <Typography className='header-text' onClick={() => navigate("/acervo")}sx={{ cursor: "pointer" }}>
           Acervo
         </Typography>
+        </Box>
 
         <TextField
           size="small"
@@ -77,7 +82,7 @@ export default function Header() {
         />
 
         <Stack spacing={2}  className='header-stack'>
-          <Stack direction="row" spacing={4} className='header-stack-row'>
+          <Stack direction="row" className='header-stack-row'>
             <Chip
               label="Criar Conta"
               size="small"
@@ -107,6 +112,20 @@ export default function Header() {
               >
                 Entregador
               </MenuItem>
+            </Menu>
+            <IconButton className="header-mobile-menu" onClick={handleOpenMenu} aria-label="Abrir menu" aria-haspopup="true" aria-expanded={Boolean(anchorEl)}>
+              <MenuIcon />
+            </IconButton>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+              {[
+                ['Início', '/'],
+                ['Acervo', '/acervo'],
+                ['Criar conta de usuário', '/usuarios'],
+                ['Criar conta de entregador', '/entregadores'],
+                ['Entrar', '/login'],
+              ].map(([label, route]) => (
+                <MenuItem key={route} onClick={() => { navigate(route); setAnchorEl(null); }}>{label}</MenuItem>
+              ))}
             </Menu>
           </Stack>
         </Stack>

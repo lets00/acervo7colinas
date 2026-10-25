@@ -42,13 +42,13 @@ function CampoCadastrosLivros({ onChange, error, helperText }) {
   return (
     <Box className="container-cadastro" sx={{ width: '100%', p: 2 }}>
       <Box className="barra">
-        <Typography className="barra-texto" variant="h6" sx={{ml: 54}}>
-          Cadastro Dos Livros:
+        <Typography className="barra-texto" variant="h6">
+          Foto do livro
         </Typography>
       </Box>
 
       <Box 
-        className="card"
+        className="books-upload-card"
         sx={{
           mt: 2,
           p: 3,

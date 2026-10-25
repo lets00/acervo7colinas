@@ -1,42 +1,63 @@
-.glass-Tela {
-  background: rgba(255, 255, 255, 0.2); 
-  backdrop-filter: blur(2px); 
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 24px; 
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
-  
+.password-success-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background: #ccd3f8;
+}
+
+.password-success-content {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding: clamp(32px, 6vw, 80px) 24px;
 }
 
-.Quadro-Um {
-  background-color: #ffff;
-  border-radius: 5px;
-  padding: 40px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Isso é uma sombra*/
+.password-success-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 400px;
-  width: 800px;
+  gap: 24px;
+  width: 100%;
+  max-width: 720px;
+  padding: 56px clamp(24px, 5vw, 64px) 40px;
+  border-radius: 12px;
+  background: #fff;
+  color: #242424;
+  text-align: center;
+  box-shadow: 0 10px 32px rgb(0 0 0 / 10%);
 }
 
-.certo {
-  height: 100px;
-  width:  150px
+.password-success-card .password-success-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+}
 
+.password-success-close img { width: 20px; height: 20px; object-fit: contain; }
+.password-success-icon { width: 120px; height: 96px; object-fit: contain; }
+.password-success-card .password-success-title { font-size: clamp(24px, 3vw, 30px); font-weight: 500; }
+.password-success-card .password-success-message { font-size: 18px; }
+
+.password-success-card .password-success-button {
+  width: 100%;
+  max-width: 320px;
+  min-height: 44px;
+  margin-top: 8px;
+  background: #37228b;
+  color: #fff;
+  font-weight: 500;
+  text-transform: none;
 }
-.img {
-  height: 27px;
-  width:  30px;
-}
-.btn-cadastrar {
-  background-color: #37228B !important;
-  padding: 10px 40px !important;
-  font-weight: 700 !important;
-  font-family: 'Roboto', sans-serif !important;
-  width: 400px !important;
-  height: 35px;
+
+.password-success-card .password-success-button:hover { background: #2a1870; }
+
+@media (max-width: 600px) {
+  .password-success-content { padding: 32px 16px; }
+  .password-success-card { gap: 20px; padding: 56px 24px 32px; }
 }

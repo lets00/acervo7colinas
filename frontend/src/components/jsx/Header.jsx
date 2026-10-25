@@ -1,12 +1,16 @@
+
+import React, { useEffect, useState } from "react";
 import PageContent from "./PageContent";
-import React, { useState } from "react";
+
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
+import { obterFotoPerfil } from "../../utils/fotoPerfil";
 
 
 import {
   Typography, TextField, Box, Stack, Chip,
   InputAdornment, Divider, Avatar, Menu,
   MenuItem, IconButton, Tooltip, Badge,
+  useMediaQuery,
 } from "@mui/material";
 import { useNavigate ,Link} from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -20,14 +24,40 @@ import "../css/Header.css";
 
 
 export default function Header() {
+  const navegacaoNoMenu = useMediaQuery('(max-width: 600px)');
   const [pesquisar, setPesquisar] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
   const token = getToken();
-  const usuario = getUsuario();
+  const [usuario, setUsuario] = useState(() => {
+    const dadosUsuario = getUsuario();
+    return dadosUsuario
+      ? {
+          ...dadosUsuario,
+          fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+        }
+      : null;
+  });
   const { livros: livrosEmprestimo } = useEmprestimo();
   const quantidadeEmprestimo = livrosEmprestimo.length;
+
+  useEffect(() => {
+    const atualizarUsuario = () => {
+      const dadosUsuario = getUsuario();
+      setUsuario(
+        dadosUsuario
+          ? {
+              ...dadosUsuario,
+              fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
+            }
+          : null
+      );
+    };
+
+    window.addEventListener("usuario-atualizado", atualizarUsuario);
+    return () => window.removeEventListener("usuario-atualizado", atualizarUsuario);
+  }, []);
 
   const isAdmin =
     usuario?.cargo?.toLowerCase() === "administrador";
@@ -88,12 +118,15 @@ export default function Header() {
 
     return (
     <Box className="header-container">
-      <PageContent responsive component="div" className="header-content" sx={{ py: 1.5 }}>
+      <PageContent responsive component="div" className="header-content" sx={{ minHeight: 80
+        , py: 1 }}>
 
+        <Box className="header-brand-nav">
         <img src={logo} alt="Logo" className="header-logo" />
 
         <Typography component={Link} to="/"className="header-text">Inicio</Typography>
         <Typography component={Link} to="/acervo" className="header-text">Acervo</Typography>
+        </Box>
         
         <TextField
           size="small"
@@ -111,7 +144,7 @@ export default function Header() {
         />
 
         <Stack spacing={2} className="header-stack">
-          <Stack direction="row" spacing={4} className="header-stack-row">
+          <Stack direction="row" className="header-stack-row">
 
             {token ? (
               <>
@@ -152,7 +185,7 @@ export default function Header() {
                     </Avatar>
                   </IconButton>
                 </Tooltip>
-                <IconButton onClick={abrirMenuHamburguer}>
+                <IconButton onClick={abrirMenuHamburguer} aria-label="Abrir menu" aria-haspopup="true" aria-expanded={Boolean(anchorMenu)}>
                   <MenuIcon />
                 </IconButton>
                 <Menu
@@ -160,6 +193,8 @@ export default function Header() {
                   open={Boolean(anchorMenu)}
                   onClose={fecharMenuHamburguer}
                 >
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>}
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>}
                   <MenuItem
                     onClick={() => {
                       navigate("/perfil");
@@ -304,6 +339,16 @@ export default function Header() {
                   className="header-chip-login"
                   onClick={() => navigate('/login')}
                 />
+                <IconButton className="header-mobile-menu" onClick={abrirMenuHamburguer} aria-label="Abrir menu" aria-haspopup="true" aria-expanded={Boolean(anchorMenu)}>
+                  <MenuIcon />
+                </IconButton>
+                <Menu anchorEl={anchorMenu} open={Boolean(anchorMenu)} onClose={fecharMenuHamburguer}>
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>}
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>}
+                  <MenuItem component={Link} to="/usuarios" onClick={fecharMenuHamburguer}>Criar conta de usuário</MenuItem>
+                  <MenuItem component={Link} to="/entregadores" onClick={fecharMenuHamburguer}>Criar conta de entregador</MenuItem>
+                  <MenuItem component={Link} to="/login" onClick={fecharMenuHamburguer}>Entrar</MenuItem>
+                </Menu>
               </>
             )}
 

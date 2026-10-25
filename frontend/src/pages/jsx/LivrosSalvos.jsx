@@ -17,7 +17,6 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
@@ -118,18 +117,17 @@ export default function LivrosSalvos() {
     const to         = Math.min(page * rowsPerPage, filtrados.length);
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px", width: "100%" }}>
+        <Box className="saved-books-root">
             <Header />
 
-            <Box sx={{ width: "100%", maxWidth:"1800px"}}>
+            <Box component="main" className="saved-books-content">
                 <Box className="livrossalvos-page" sx={{ width: "100%" }}>
 
                     
-                    <div className="livrossalvos-topbar"  sx={{ width: "100%"}}>
+                    <div className="livrossalvos-topbar">
                         <h1 className="livrossalvos-titulo">Livros Cadastrados</h1>
                         <Button
                             variant="contained"
-                            sx={{ width: "100%"}}
                             startIcon={<AddIcon />}
                             onClick={() => navigate("/livros")}
                             sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
@@ -138,7 +136,7 @@ export default function LivrosSalvos() {
                         </Button>
                     </div>
 
-                    <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width:'1200px'}} />
+                    <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 3, width:'100%'}} />
 
                     
                     <div className="livrossalvos-filters" >
@@ -149,6 +147,7 @@ export default function LivrosSalvos() {
                                 value={generoFiltro}
                                 onChange={(e) => { setGeneroFiltro(e.target.value); setPage(1); }}
                                 sx={selectSx}
+                                inputProps={{ 'aria-label': 'Filtrar por gênero' }}
                                 displayEmpty
                             >
                                 {GENERO_OPTIONS.map((g) => (
@@ -159,7 +158,7 @@ export default function LivrosSalvos() {
                             </Select>
                         </FormControl>
 
-                        <div style={{ flex: 1 }} />
+                        <div className="saved-books-filter-spacer" />
 
                         <span className="filter-inline-label">Buscar:</span>
 
@@ -167,6 +166,7 @@ export default function LivrosSalvos() {
                             <OutlinedInput
                                 value={busca}
                                 onChange={(e) => { setBusca(e.target.value); setPage(1); }}
+                                inputProps={{ 'aria-label': 'Buscar livro por título ou autor' }}
                                 placeholder="Procure seu livro"
                                 size="small"
                                 fullWidth
@@ -266,10 +266,9 @@ export default function LivrosSalvos() {
                                     )}
                                 </TableBody>
 
-                                <TableFooter>
-                                    <TableRow>
-                                        <TableCell colSpan={6}>
-                                            <div className="livrossalvos-footer">
+                            </Table>
+                        </TableContainer>
+<div className="livrossalvos-footer">
                                                 <span className="livrossalvos-exibindo">
                                                     {filtrados.length === 0
                                                         ? "Nenhum livro encontrado"
@@ -290,12 +289,6 @@ export default function LivrosSalvos() {
                                                     }}
                                                 />
                                             </div>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableFooter>
-
-                            </Table>
-                        </TableContainer>
                     </div>
 
                 </Box>

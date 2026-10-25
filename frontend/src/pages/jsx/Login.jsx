@@ -113,9 +113,9 @@ export default function Login() {
       <CssBaseline />
       <Box
         sx={{ bgcolor: "background.default", position: "relative", overflow: "visible" }}
-        className="container"
+        className="login-page"
       >
-        <Box className="header" sx={{ ml: -60 }}>
+        <Box className="login-header">
           <HeaderLogin />
         </Box>
 
@@ -125,7 +125,7 @@ export default function Login() {
         <Box component="img" src={Books} alt="Books" className="img-livros-Quatro" />
 
         <Box className="center-content">
-          <Box className="glass" sx={{ width: 900, minHeight: 600, mt: -90 }}>
+          <Box className="glass" sx={{ width: "100%", maxWidth: 900, minHeight: 600 }}>
 
             <Typography variant="h4" align="center" className="titulo" sx={{ mt: 5 }}>
               Bem Vindo!
@@ -141,6 +141,7 @@ export default function Login() {
               <TextField
                 required
                 fullWidth
+                className="login-field"
                 label="Email"
                 autoComplete="username"
                 variant="outlined"
@@ -150,7 +151,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <FormControl sx={{ mt: 4, width: "750px" }} variant="outlined">
+              <FormControl className="login-field" fullWidth size="small" sx={{ mt: 3 }} variant="outlined">
                 <InputLabel>Senha</InputLabel>
                 <OutlinedInput
                   type={showPassword ? "text" : "password"}
@@ -160,6 +161,7 @@ export default function Login() {
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
+                        aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                         onClick={handleClickShowPassword}
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
@@ -169,7 +171,7 @@ export default function Login() {
                     </InputAdornment>
                   }
                   label="Senha"
-                  sx={{ height: "45px" }}
+
                 />
               </FormControl>
 
@@ -178,6 +180,7 @@ export default function Login() {
                   variant="body2"
                   component="a"
                   href="/esqueci-senha"
+                  className="login-forgot-password"
                   sx={{ ml: 75, color: "#000" }}
                 >
                   Esqueceu a senha?
