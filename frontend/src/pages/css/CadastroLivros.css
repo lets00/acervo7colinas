@@ -1,96 +1,51 @@
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.books-register-page {
+  width: 100%;
   min-height: 100vh;
-  background-color: #fff;
-  margin-top: -55px;
+  background: #fff;
 }
 
-.content {
+.books-register-content {
   width: 100%;
-  padding: 0 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 48px) 48px;
 }
 
-.titulo {
+.books-register-content .titulo {
   text-align: center;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 500;
+  color: #37228b;
   margin-bottom: 32px;
-  font-weight: 700;
-  color: #37228B;
-  font-family: 'Roboto', sans-serif;
-  margin-top: 22px;
-  font-size: clamp(20px, 3vw, 28px);
 }
 
-.barra {
-  background-color: #CCD3F8;
+.books-register-content .barra {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 10px 40px;
-  margin-bottom: 32px;
-  box-sizing: border-box;
+  margin: 32px 0 24px;
+  padding: 14px 24px;
+  background: #ccd3f8;
+  text-align: left;
 }
 
-.barra-texto {
-  color: #0D0D0D;
-  font-weight: 400;
-  font-size: 1.1rem;
-  font-family: 'Roboto', sans-serif;
+.books-register-content .barra-texto { margin: 0; color: #242424; font-size: 18px; font-weight: 500; }
+.books-register-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; max-width: 1040px; margin: 0 auto; }
+.books-register-grid > * { min-width: 0; }
+.books-register-content .coluna { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.books-register-content .coluna .MuiFormControl-root { min-width: 0; }
+.books-register-content .container-cadastro { padding: 0; }
+.books-register-content .books-upload-card { min-width: 0; }
+.books-register-content .books-upload-card .MuiButton-root { max-width: 100%; min-height: 44px; }
+.books-register-content .botoes { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-top: 32px; }
+.books-register-content .botoes > button { min-width: 0 !important; width: 240px; max-width: 100%; min-height: 44px; }
+
+@media (max-width: 750px) {
+  .books-register-grid { grid-template-columns: 1fr; gap: 24px; }
+  .books-register-content .barra { padding: 12px 16px; }
 }
 
-.coluna {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.barra-imagem {
-  background-color: #CCD3F8;
-  display: flex;
-  align-items: center;
-  width: 1200px;
-  padding: 10px 40px;
-  margin-bottom: 32px;
-  margin-top: 32px;
-  box-sizing: border-box;
-}
-
-.box-imagem {
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 12px;
-  margin-top: -32px;
-  width: 410px;
-  height: 150px;
-}
-
-.texto-imagem {
-  position: absolute;
-  color: #333;
-  font-size: 2.4rem;
-  margin-left: 250px !important;   
-  margin-top: 20px !important;
-  font-family: 'Roboto', sans-serif;
-}
-
-.img-preview {
-  display: block;
-  margin: 20px auto;
-  width: 200px !important;
-  height: 100px !important;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-left: -4px !important;
-}
-
-.botao-imagem {
-  position: relative;
-  bottom: 20px;
-  right: 20px;
-  top: -50px;
-  left: 105px;
-  color: #242424 !important;
-  background-color: #ccd3f8 !important;
+@media (max-width: 600px) {
+  .books-register-content .botoes { flex-direction: column; }
+  .books-register-content .botoes > button { width: 100%; }
 }
