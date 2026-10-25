@@ -3,7 +3,8 @@ import { Box, CircularProgress } from '@mui/material';
 import "../css/Perfil.css";
 import Footer from "../../components/jsx/Footer.jsx";
 import Header from "../../components/jsx/Header.jsx";
-import { getUsuario } from "../../utils/auth";
+import { getUsuario, getToken, saveUsuario } from "../../utils/auth";
+import api from "../../services/apis";
 import {
   comprimirFotoPerfil,
   obterFotoPerfil,
@@ -33,6 +34,7 @@ export default function PerfilUsuario() {
   const [tipoUsuario, setTipoUsuario] = useState("usuario");
   const [editando, setEditando] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [dados, setDados] = useState({
     nome: "",
@@ -47,6 +49,7 @@ export default function PerfilUsuario() {
   const [fotoComErro, setFotoComErro] = useState(false);
 
   useEffect(() => {
+    let ativo = true;
     const tipoLogado =
       localStorage.getItem("usuarioTipo") || "usuario";
 
@@ -54,25 +57,42 @@ export default function PerfilUsuario() {
 
     const usuario = getUsuario();
 
-    if (usuario) {
+    const preencherDados = (usuario) => {
+      setTipoUsuario(usuario.tipo || tipoLogado);
       setDados({
         nome: usuario.nomeCompleto || usuario.nome || "",
         email: usuario.email || "",
         telefone: usuario.telefone || "",
         endereco: formatarEndereco(usuario),
-        fotoPerfil: obterFotoPerfil(usuario.email) || usuario.fotoPerfil || "",
+        fotoPerfil: obterFotoPerfil(usuario.email) || (usuario.fotoPerfil?.startsWith('/')
+          ? `${api.defaults.baseURL}${usuario.fotoPerfil}` : usuario.fotoPerfil) || "",
         infoEspecifica: ""
       });
-    } else {
-      setDados({
-        nome: "",
-        email: "",
-        telefone: "",
-        endereco: "",
-        fotoPerfil: "",
-        infoEspecifica: ""
-      });
+    };
+    if (usuario) preencherDados(usuario);
+
+    const token = getToken();
+    if (!token) {
+      setErro("Faça login para carregar os dados do perfil.");
+      setCarregando(false);
+      return;
     }
+
+    api.get('/login/perfil', { headers: { Authorization: `Bearer ${token}` } })
+      .then(({ data }) => {
+        if (!ativo) return;
+        saveUsuario(data);
+        localStorage.setItem("usuarioTipo", data.tipo);
+        preencherDados(data);
+        window.dispatchEvent(new Event("usuario-atualizado"));
+      })
+      .catch((error) => {
+        if (ativo) setErro(error.response?.data?.mensagem || "Não foi possível carregar os dados atualizados do perfil.");
+      })
+      .finally(() => {
+        if (ativo) setCarregando(false);
+      });
+    return () => { ativo = false; };
   }, []);
 
   const handleFotoChange = async (e) => {
@@ -195,7 +215,7 @@ export default function PerfilUsuario() {
 
             <div className="botoes-acao">
               {!editando ? (
-                <button className="btn-editar" onClick={iniciarEdicao}>Editar Perfil</button>
+                <button className="btn-editar" onClick={iniciarEdicao} disabled={carregando}>Editar Perfil</button>
               ) : (
                 <>
                   <button
@@ -219,6 +239,7 @@ export default function PerfilUsuario() {
           {/* ÁREA DOS DADOS */}
           <main className="dados-perfil">
             <h3>Meus Dados</h3>
+            {carregando && <CircularProgress size={24} aria-label="Carregando perfil" />}
 
             <div className="campo-grupo">
               <label>Nome Completo:</label>
@@ -246,7 +267,7 @@ export default function PerfilUsuario() {
                 <p>{dados.telefone || "Não informado"}</p>
               )}
             </div>
-            {tipoUsuario === "usuario" && (
+            {(tipoUsuario === "usuario" || tipoUsuario === "entregador") && (
               <div className="campo-grupo">
                 <label>Endereço:</label>
 
