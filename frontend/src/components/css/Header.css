@@ -260,18 +260,18 @@
   }
 
   .header-container .header-content .header-emprestimo-icon {
-    width: 39.2px;
-    height: 35.28px;
+    width: 35px;
+    height: 35px;
   }
 
   .header-container .header-content .MuiAvatar-root {
-    width: 44.1px;
-    height: 44.1px;
-    font-size: 19.6px;
+    width: 40px;
+    height: 40px;
+    font-size: 19.21px;
   }
 
   .header-container .header-content .MuiIconButton-root .MuiSvgIcon-root {
-    font-size: 34.3px;
+    font-size: 32px;
   }
 
   .header-container .header-content .header-chip-criar,
