@@ -1,105 +1,158 @@
-.container {
+.acervo-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
   min-height: 100vh;
-  background-color: #fff;
-}
-
-.content {
   width: 100%;
-  max-width: 1250px;
+  background: #fff;
+}
+
+.acervo-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1360px;
+  min-width: 0;
   margin: 0 auto;
-  
+  padding: 32px clamp(16px, 3vw, 48px) 48px;
 }
 
-.titulo {
+.acervo-heading {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 32px;
-  font-weight: 700;
-  color: #37228B;
-  font-family: 'Roboto', sans-serif;
-  margin-top: 22px;
+}
+
+.acervo-heading .acervo-title {
+  grid-column: 2;
+  color: #37228b;
+  font-size: clamp(26px, 3vw, 44px);
+  font-weight: 500;
   text-align: center;
-  font-size: clamp(20px, 3vw, 28px);
 }
 
-.faixa {
-  background-color: #312783;
-  display: flex;
-  align-items: center;
-  width: 800px;
-  padding: 10px 40px;
-  margin-bottom: 16px;
-  border-radius: 20px;
-  height: 300px;
-}
-
-.faixaDois {
-  background-color: #312783;
-  display: flex;
-  align-items: center;
-  width: 800px;
-  padding: 10px 40px;
-  margin-bottom: 16px;
-  border-radius: 20px;
-  height: 280px;
-}
-
-.Quadro {
-  background-color: #ffff;
-  border-radius: 5px;
-  padding: 40px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+.acervo-search-panel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 130px;
-  width: 1090px;
-
+  gap: 32px;
+  padding: 32px;
+  border-radius: 20px;
+  background: #312783;
 }
 
-.headerInput {
-  width: 460px;
-}
-.headerInput .MuiOutlinedInput-root {
-  border-radius: 10px;
-  height: 27px;
+.acervo-search-panel .acervo-search { max-width: 800px; }
+.acervo-search .MuiInputBase-input { color: #fff; }
+.acervo-search .MuiInputBase-input::placeholder { opacity: 0.85; }
+.acervo-search .MuiOutlinedInput-root fieldset { border-color: #fff; }
+.acervo-search .MuiOutlinedInput-root:hover fieldset,
+.acervo-search .MuiOutlinedInput-root.Mui-focused fieldset { border-color: #fff; }
+
+.acervo-filter-card {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
+  align-items: start;
+  gap: 32px;
+  width: 100%;
+  padding: 24px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 16%);
 }
 
-.headerInput .MuiInputLabel-root {
-  font-size: 12px;
-  margin-top: -2px;
-  color: #fff;
-}
-.header-search {
-  width: 26px !important;
-  height: 24px !important;
-  margin-top: 4px;
+.acervo-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
 }
 
-.headerInput .MuiOutlinedInput-notchedOutline {
-  border-color: #fff !important;
+.acervo-sort { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.acervo-sort .acervo-filter-title { display: flex; align-items: center; gap: 8px; color: #37228b; font-size: 18px; }
+.acervo-filter-title img { width: 20px; height: 20px; }
+.acervo-sort .botoes { margin: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+.acervo-sort .botoes > button { flex: 1; min-width: 100px; width: auto; padding: 10px 16px; }
+
+.acervo-results-summary { margin: 32px 0 24px; padding-bottom: 12px; border-bottom: 1px solid #aaa; text-align: left; color: #777; }
+.acervo-books { min-width: 0; width: 100%; }
+.acervo-page .acervo-pagination { align-items: center; margin-top: 24px; }
+
+@media (max-width: 900px) {
+  .acervo-filter-card { grid-template-columns: 1fr; gap: 24px; }
+  .acervo-search-panel { padding: 24px; gap: 24px; }
 }
 
-.headerInput:hover .MuiOutlinedInput-notchedOutline {
-  border-color: #fff !important;
+@media (max-width: 600px) {
+  .acervo-heading { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+  .acervo-heading .acervo-title { grid-column: 1; }
+  .acervo-search-panel { padding: 20px 16px; border-radius: 16px; }
+  .acervo-filter-card { padding: 20px 16px; }
+  .acervo-filter-fields { grid-template-columns: 1fr; gap: 20px; }
 }
 
-.headerInput .Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #fff !important;
+/* Duas páginas do livro aberto ao fundo do painel de filtros. */
+.acervo-search-panel {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  border-radius: 0;
+  padding: clamp(40px, 5vw, 72px) 32px 0;
+  gap: clamp(40px, 5vw, 72px);
 }
 
-.headerInput .MuiInputBase-input {
-  color: #fff;
+.acervo-search-panel::before,
+.acervo-search-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 32px;
+  width: 50%;
+  background: #493d90;
+  z-index: -1;
+  pointer-events: none;
 }
 
-.linha {
-  border-bottom: 0.2px solid #898989 !important;
-  box-shadow: 0 0.2px 0.2px rgba(0, 0, 0, 0.8); 
-  padding-bottom: 4px !important;
-  margin-left: 25px;
-  margin-right: 25px; 
-  margin-top: 20px;   
-  margin-bottom: 20px; 
-  display: block;      
+.acervo-search-panel::before {
+  left: 0;
+  border-top-right-radius: 40px;
+}
+
+.acervo-search-panel::after {
+  right: 0;
+  border-top-left-radius: 40px;
+}
+
+.acervo-filter-card {
+  border-radius: 5px;
+}
+
+@media (max-width: 900px) {
+  .acervo-search-panel {
+    padding: 40px 24px 0;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .acervo-search-panel {
+    padding: 32px 12px 0;
+    gap: 28px;
+  }
+
+  .acervo-search-panel::before,
+  .acervo-search-panel::after {
+    bottom: 24px;
+  }
+
+  .acervo-search-panel::before { border-top-right-radius: 28px; }
+  .acervo-search-panel::after { border-top-left-radius: 28px; }
+}
+
+.acervo-search-panel::before {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.acervo-search-panel::after {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
