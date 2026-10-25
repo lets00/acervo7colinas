@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"; 
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'; 
 
@@ -56,117 +56,27 @@ function CampoUsuario({ onFileChange = () => {}, errors = {}, resetKey }) {
     }, [onFileChange]);
 
     return (
-        <>
-            <Grid container justifyContent="center">
-                <Box sx={{ mt: 5, display: 'flex', alignItems: 'center', width: '1200px', padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box', backgroundColor: '#CCD3F8' }}>
-                    <Typography className="textoTituloPerfil" sx={{ ml: 30 }}>
-                        Foto de Perfil
-                    </Typography>
-                    <Typography className="textoTituloRG" sx={{ ml: 50, color: "#242424" }}>
-                        Foto do RG
-                    </Typography>
-                </Box>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-                <Grid container spacing={5} justifyContent="center">
-                    <Box className="card" sx={{ mt: 2 }}>
-                        <Typography className="textoCard textoPerfil" sx={{ ml: 85 }}>
-                            Selecionar Foto
-                        </Typography>
-                        
-                        <Box component="img" src={perfilPreview || PerfilCadastros} alt="Perfil" className="imgPerfil" />
-
-                        <Button 
-                            component="label" 
-                            variant="contained" 
-                            tabIndex={-1} 
-                            disableElevation 
-                            className="botaoPerfil" 
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            SELECIONAR FOTO
-                            <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'perfil')} accept="image/*" />
+        <Box className="users-upload-section">
+            <Typography component="h2" className="users-register-section">Fotos e documentos</Typography>
+            <Box className="users-upload-grid">
+                {[
+                    { tipo: 'perfil', titulo: 'Foto de perfil', imagem: perfilPreview || PerfilCadastros, texto: 'Selecionar foto', erro: errors.perfil },
+                    { tipo: 'rg', titulo: 'Foto do RG', imagem: rgPreview || RG, texto: 'Selecionar foto do RG', erro: errors.rg },
+                    { tipo: 'residencia', titulo: 'Comprovante de residência', imagem: residenciaPreview || ComprovanteRes, texto: 'Selecionar comprovante', erro: errors.residencia },
+                ].map(({ tipo, titulo, imagem, texto, erro }) => (
+                    <Box key={tipo} className="users-upload-card">
+                        <Typography component="h3">{titulo}</Typography>
+                        <img src={imagem} alt={titulo} className="users-upload-preview" />
+                        <Button component="label" variant="contained" disableElevation startIcon={<CloudUploadIcon />}>
+                            {texto}
+                            <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, tipo)} accept="image/*" />
                         </Button>
-                        
-                        {errors.perfil && (
-                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                {errors.perfil}
-                            </Typography>
-                        )}
+                        {erro && <Typography color="error" variant="caption">{erro}</Typography>}
+                        {tipo === 'residencia' && <Typography variant="caption">Incluem contas de consumo (Água, Luz, Gás, Internet)</Typography>}
                     </Box>
-
-                    <Box className="card" sx={{ mt: 2 }}>
-                        <Typography className="textoCard textoRG" sx={{ ml: 5, mt: 2 }}>
-                            Selecionar Foto do RG
-                        </Typography>
-                        
-                        <Box component="img" src={rgPreview || RG} alt="RG" className="imgRG" sx={{ width: '200px', height: '120px', mt: 4 }} />
-
-                        <Button 
-                            sx={{ color: "#242424", backgroundColor: "#ccd3f8", ml: 5, mt: -5 }} 
-                            component="label" 
-                            variant="contained" 
-                            tabIndex={-1} 
-                            disableElevation 
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            SELECIONAR FOTO
-                            <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'rg')} accept="image/*" />
-                        </Button>
-                        
-                        {errors.rg && (
-                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                {errors.rg}
-                            </Typography>
-                        )}
-                    </Box>
-                </Grid>
-            </Grid>
-
-  
-            <Grid container justifyContent="center" sx={{ mt: 1 }}>
-                <Box sx={{ mt: 5, display: 'flex', alignItems: 'center', width: '1200px', padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box', backgroundColor: '#CCD3F8' }}>
-                    <Typography className="texto-titulo-residencia" sx={{ color: "#333", ml: 10 }}>
-                        Comprovante de Residência
-                    </Typography>
-                </Box>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-                <Grid container spacing={5} justifyContent="center">
-                    <Box className="card" sx={{ mt: 2, width: '500px !important' }}>
-                        <Typography className="text" sx={{ color: "#333", ml: 10 }}>
-                            Selecionar Foto do Comprovante de Residência
-                        </Typography>
-
-                        <Box component="img" src={residenciaPreview || ComprovanteRes} alt="Residência" className="img-comprovante" sx={{ width: "200px", height: "150px", mt: 3 }} />
-
-                        <Button 
-                            sx={{ color: "#242424", backgroundColor: "#ccd3f8", ml: 5, mt: -5 }} 
-                            component="label" 
-                            variant="contained" 
-                            tabIndex={-1} 
-                            disableElevation 
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            SELECIONAR FOTO
-                            <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'residencia')} accept="image/*" />
-                        </Button>
-
-                        {errors.residencia && (
-                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                {errors.residencia}
-                            </Typography>
-                        )}
-
-                        <Typography className="texto-informativo" sx={{ color: "#666", mt: 4 }}>
-                            Incluem contas de consumo (Água, Luz, Gás, Internet)
-                        </Typography>
-                    </Box>
-                </Grid>
-            </Grid>
-        </>
+                ))}
+            </Box>
+        </Box>
     );
 }
 
