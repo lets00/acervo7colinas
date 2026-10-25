@@ -9,7 +9,6 @@ import {
   Select,
   Button,
   Divider,
-  Grid,
   OutlinedInput,
   CircularProgress,
   Snackbar,
@@ -22,7 +21,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import Header from "../../components/jsx/Header.jsx";
-import "../css/CadastroLivros.css";
+import "../css/EditarLivros.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -174,21 +173,21 @@ function EditarLivros() {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-        <CircularProgress sx={{ color: "#37228B" }} />
+      <Box className="books-edit-page">
+        <Header />
+        <Box className="books-edit-loading"><CircularProgress sx={{ color: "#37228B" }} /></Box>
       </Box>
     );
   }
 
   return (
-    <Box
+    <Box className="books-edit-page"
       sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         minHeight: "100vh",
         bgcolor: "#fff",
-        mt: "-55px",
         width: "100%",
       }}
     >
@@ -196,13 +195,13 @@ function EditarLivros() {
 
       <Typography
         variant="h4"
-        className="livrossalvos-titulo"
-        sx={{ mt: 4, ml: -85, fontWeight: 700, color: "#37228B" }}
+        className="books-edit-title"
+        sx={{ mt: 4, fontWeight: 500, color: "#37228B" }}
       >
         Editar Livro
       </Typography>
 
-      <Box sx={{ width: "100%", maxWidth: "1000px", mt: 2, px: 3 }}>
+      <Box component="main" className="books-edit-content">
         <Divider sx={{ borderColor: "#F5A623", borderBottomWidth: 2, mb: 4 }} />
 
         <Box
@@ -211,9 +210,9 @@ function EditarLivros() {
           noValidate
           sx={{ display: "flex", flexDirection: "column", gap: 3 }}
         >
-          <Grid container spacing={4} justifyContent="center">
+          <Box className="books-edit-grid">
 
-            <Grid item xs={12} md={6}>
+            <Box className="books-edit-column">
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <TextField
                   required
@@ -225,7 +224,7 @@ function EditarLivros() {
                   onChange={handleChange}
                   error={!!errors.titulo}
                   helperText={errors.titulo}
-                  sx={{width: "468px"}}
+                  sx={{width: "100%"}}
                 />
 
                <TextField
@@ -291,9 +290,9 @@ function EditarLivros() {
                   )}
                 </FormControl>
               </Box>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} md={6}>
+            <Box className="books-edit-column">
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <TextField
                   required
@@ -305,7 +304,7 @@ function EditarLivros() {
                   onChange={handleChange}
                   error={!!errors.autor}
                   helperText={errors.autor}
-                  sx={{width: "468px"}}
+                  sx={{width: "100%"}}
                 />
 
                 <TextField
@@ -332,7 +331,7 @@ function EditarLivros() {
                   onChange={handleChange}
                 />
               </Box>
-            </Grid>
+            </Box>
             <TextField
                   required
                   fullWidth
@@ -340,7 +339,7 @@ function EditarLivros() {
                   type="number"
                   name="quantidadeExemplares"
                   inputProps={{ min: 0 }}
-                  sx={{ width: "960px" }}
+                  sx={{ width: "100%" }}
 
                   value={formData.quantidadeExemplares}
                   onChange={handleChange}
@@ -354,16 +353,16 @@ function EditarLivros() {
                   type="number"
                   name="quantidadePaginas"
                   inputProps={{ min: 1 }}
-                  sx={{ width: "960px" }}
+                  sx={{ width: "100%" }}
                   value={formData.quantidadePaginas}
                   onChange={handleChange}
                   error={!!errors.quantidadePaginas}
                   helperText={errors.quantidadePaginas}
                 />
-          </Grid>
+          </Box>
 
 
-          <Box sx={{ display: "flex", gap: 2, mt: 3, justifyContent: "center" }}>
+          <Box className="books-edit-actions">
             <Button
               variant="outlined"
               onClick={() => navigate("/livros")}
