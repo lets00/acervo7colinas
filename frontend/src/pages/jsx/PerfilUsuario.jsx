@@ -3,7 +3,6 @@ import { Box, CircularProgress } from '@mui/material';
 import "../css/Perfil.css";
 import Footer from "../../components/jsx/Footer.jsx";
 import Header from "../../components/jsx/Header.jsx";
-import Grid from "@mui/material/Grid";
 import { getUsuario } from "../../utils/auth";
 import {
   comprimirFotoPerfil,
@@ -163,9 +162,9 @@ export default function PerfilUsuario() {
   };
 
   return (
-     <Box className="container">
+     <Box className="profile-page">
         <Header />
-      <div className="container-perfil" size={{ xs: 12, sm: 6, md: 4 }}>
+      <div className="container-perfil">
         <div className="conteudo-perfil">
 
           {/* BARRA LATERAL (SIDEBAR) */}
@@ -272,9 +271,10 @@ export default function PerfilUsuario() {
               </div>
             )}
           </main>
-          <Footer/>
+
         </div>
       </div>
+      <Footer />
     </Box>
   );
 }
