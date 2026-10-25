@@ -25,9 +25,9 @@ export default function Footer() {
     return (
         <Box component="footer" className="footer-root">
             <PageContent responsive component="div" className="footer-inner" sx={{ pt: 0, pb: { xs: 3, md: 5 } }}>
-                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} alignItems="flex-start" justifyContent="space-between">
+                <Box className="footer-grid">
                     {/* Logo + Redes Sociais */}
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Box className="footer-brand-section">
                         <Box className="footer-logo-area">
                             <img src={logo} alt="Acervo Sete Colinas" className="footer-logo" />
                             <Box className="footer-social-wrapper footer-social-desktop">
@@ -42,10 +42,10 @@ export default function Footer() {
                                 </Box>
                             </Box>
                         </Box>
-                    </Grid>
+                    </Box>
 
                     {/* Categorias */}
-                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
+                    <Box className="footer-categories-section">
                         <Typography className="footer-section-title">Categorias</Typography>
                         <Box className="footer-links-list">
                             {categorias.map((cat) => (
@@ -54,10 +54,10 @@ export default function Footer() {
                                 </Typography>
                             ))}
                         </Box>
-                    </Grid>
+                    </Box>
 
                     {/* Links */}
-                    <Grid size={{ xs: 6, sm: 3, md: 2 }}>
+                    <Box className="footer-links-section">
                         <Typography className="footer-section-title">Links</Typography>
                         <Box className="footer-links-list">
                             {links.map((link) => (
@@ -66,10 +66,10 @@ export default function Footer() {
                                 </Typography>
                             ))}
                         </Box>
-                    </Grid>
+                    </Box>
 
                     {/* Contato e Endereço */}
-                    <Grid className="footer-contact-section" size={{ xs: 12, sm: 6, md: 2 }}>
+                    <Box className="footer-contact-section">
                         <Box className="footer-contact-details">
                         <Typography className="footer-section-title">Contato e endereço</Typography>
                         <Box className="footer-contact-item">
@@ -88,10 +88,10 @@ export default function Footer() {
                                 <Box className="footer-social-icon"><InstagramIcon /></Box>
                             </Box>
                         </Box>
-                    </Grid>
+                    </Box>
 
                     {/* CTA */}
-                    <Grid className="footer-cta-section" size={{ xs: 12, sm: 6, md: 3 }}>
+                    <Box className="footer-cta-section">
                         <Box className="footer-cta-area">
                             <Typography className="footer-cta-text">
                                 Se tiver alguma dúvida, pode entrar em contato conosco.
@@ -100,8 +100,8 @@ export default function Footer() {
                                 Fale conosco
                             </Button>
                         </Box>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </PageContent>
 
             <Divider className="footer-divider" />
