@@ -185,12 +185,17 @@
     gap: 10px;
 }
 
+.livro-cell-thumb,
 .livro-cell-thumb-placeholder {
     width: 36px;
     height: 48px;
     background: #ccc;
     border-radius: 3px;
     flex-shrink: 0;
+}
+
+.livro-cell-thumb {
+    object-fit: contain;
 }
 
 .livro-cell-info {
