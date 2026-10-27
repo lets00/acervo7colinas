@@ -10,6 +10,7 @@ import {
   Typography, TextField, Box, Stack, Chip,
   InputAdornment, Divider, Avatar, Menu,
   MenuItem, IconButton, Tooltip, Badge,
+  useMediaQuery,
 } from "@mui/material";
 import { useNavigate ,Link} from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -23,6 +24,7 @@ import "../css/Header.css";
 
 
 export default function Header() {
+  const navegacaoNoMenu = useMediaQuery('(max-width: 600px)');
   const [pesquisar, setPesquisar] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
@@ -191,8 +193,8 @@ export default function Header() {
                   open={Boolean(anchorMenu)}
                   onClose={fecharMenuHamburguer}
                 >
-                  <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>
-                  <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>}
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>}
                   <MenuItem
                     onClick={() => {
                       navigate("/perfil");
@@ -341,8 +343,8 @@ export default function Header() {
                   <MenuIcon />
                 </IconButton>
                 <Menu anchorEl={anchorMenu} open={Boolean(anchorMenu)} onClose={fecharMenuHamburguer}>
-                  <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>
-                  <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/" onClick={fecharMenuHamburguer}>Início</MenuItem>}
+                  {navegacaoNoMenu && <MenuItem component={Link} to="/acervo" onClick={fecharMenuHamburguer}>Acervo</MenuItem>}
                   <MenuItem component={Link} to="/usuarios" onClick={fecharMenuHamburguer}>Criar conta de usuário</MenuItem>
                   <MenuItem component={Link} to="/entregadores" onClick={fecharMenuHamburguer}>Criar conta de entregador</MenuItem>
                   <MenuItem component={Link} to="/login" onClick={fecharMenuHamburguer}>Entrar</MenuItem>

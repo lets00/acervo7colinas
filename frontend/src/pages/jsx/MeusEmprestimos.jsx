@@ -40,7 +40,8 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import Footer from "../../components/jsx/Footer";
 import Header from "../../components/jsx/Header";
 import Girlreading from "../../assets/Girl-enjoying-reading.png"; // ajuste o caminho
-import { getUsuario } from "../../utils/auth";
+import { getToken } from "../../utils/auth";
+import { capaLivro } from "../../utils/solicitacao";
 import "../css/MeusEmprestimos.css";
 
 
@@ -54,11 +55,6 @@ function dataDeHoje() {
     return `${agora.getFullYear()}-${mes}-${dia}`;
 }
 
-function somarDias(data, dias) {
-    const base = new Date(`${data}T00:00:00`);
-    base.setDate(base.getDate() + dias);
-    return `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, "0")}-${String(base.getDate()).padStart(2, "0")}`;
-}
 
 function formatarData(data) {
     if (!data) return "—";
@@ -78,6 +74,7 @@ function paraLinha(emprestimo) {
         codigo: `EMP-${String(emprestimo.id).slice(0, 8).toUpperCase()}`,
         livro: emprestimo.Livro?.titulo ?? "Livro removido",
         autor: emprestimo.Livro?.autor ?? "",
+        capa: capaLivro(emprestimo.Livro ?? {}),
         dataPedido: formatarData(emprestimo.data_emprestimo),
         devolucaoPrevista: formatarData(emprestimo.data_entrega),
         dataEntrega: emprestimo.data_entrega,
@@ -91,6 +88,14 @@ const STATUS_OPTIONS = ["Todos", "Solicitado", "Ativo", "Atrasado", "Cancelado",
 /* ─────────────────────────────────────────
    HELPERS DE UI
 ───────────────────────────────────────── */
+function CapaEmprestimo({ src, titulo }) {
+    const [falhou, setFalhou] = useState(false);
+    return src && !falhou ? (
+        <img className="livro-cell-thumb" src={src} alt={`Capa de ${titulo}`}
+            loading="lazy" onError={() => setFalhou(true)} />
+    ) : <div className="livro-cell-thumb-placeholder" aria-label="Capa indisponível" />;
+}
+
 function StatusBadge({ status }) {
     const cls = {
         Solicitado: "status-solicitado",
@@ -149,16 +154,15 @@ export default function MeusEmprestimos() {
     const [emprestimos, setEmprestimos]   = useState([]);
     const [carregando, setCarregando]     = useState(true);
     const [erro, setErro]                 = useState("");
-    const [acaoPendente, setAcaoPendente] = useState(null);
 
     // TablePagination usa page baseado em 0
     const [page, setPage]               = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const carregarEmprestimos = useCallback(async () => {
-        const userId = localStorage.getItem("user_id") || getUsuario()?.id;
+        const token = getToken();
 
-        if (!userId) {
+        if (!token) {
             setErro("Faça login para ver seus empréstimos.");
             setCarregando(false);
             return;
@@ -166,9 +170,11 @@ export default function MeusEmprestimos() {
 
         try {
             setErro("");
-            const { data } = await axios.get("http://localhost:3000/emprestimos", {
-                params: { user_id: userId },
+            setCarregando(true);
+            const { data } = await axios.get("http://localhost:3000/usuario/emprestimos/lista", {
+                headers: { Authorization: `Bearer ${token}` },
             });
+            if (!Array.isArray(data)) throw new Error("Resposta de empréstimos inválida.");
             setEmprestimos(data.map(paraLinha));
         } catch (error) {
             setErro(error.response?.data?.mensagem ?? "Não foi possível carregar seus empréstimos.");
@@ -210,34 +216,6 @@ export default function MeusEmprestimos() {
     };
 
     const handleFiltrar = () => setPage(0);
-
-    const handleCancelar = async (id) => {
-        if (!window.confirm("Tem certeza que deseja cancelar esta solicitação?")) return;
-
-        try {
-            setAcaoPendente(id);
-            await axios.delete(`http://localhost:3000/emprestimos/${id}`);
-            await carregarEmprestimos();
-        } catch (error) {
-            alert(error.response?.data?.mensagem ?? "Não foi possível cancelar a solicitação.");
-        } finally {
-            setAcaoPendente(null);
-        }
-    };
-
-    const handleRenovar = async (emprestimo) => {
-        try {
-            setAcaoPendente(emprestimo.id);
-            await axios.patch(`http://localhost:3000/emprestimos/${emprestimo.id}`, {
-                data_entrega: somarDias(emprestimo.dataEntrega ?? dataDeHoje(), 14),
-            });
-            await carregarEmprestimos();
-        } catch (error) {
-            alert(error.response?.data?.mensagem ?? "Não foi possível renovar o empréstimo.");
-        } finally {
-            setAcaoPendente(null);
-        }
-    };
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: 0 }}>
@@ -361,7 +339,7 @@ export default function MeusEmprestimos() {
 
                                                 <TableCell>
                                                     <div className="livro-cell">
-                                                        <div className="livro-cell-thumb-placeholder" />
+                                                        <CapaEmprestimo key={row.capa ?? "sem-capa"} src={row.capa} titulo={row.livro} />
                                                         <div className="livro-cell-info">
                                                             <span className="livro-cell-nome">{row.livro}</span>
                                                             <span className="livro-cell-autor">{row.autor}</span>
@@ -379,13 +357,12 @@ export default function MeusEmprestimos() {
                                                 <TableCell>
                                                     <div className="acoes-cell">
                                                         {row.status === "Solicitado" && (
-                                                            <Tooltip title="Cancelar pedido">
+                                                            <Tooltip title="Cancelamento disponível em uma próxima etapa">
                                                                 <Button
                                                                     variant="outlined"
                                                                     size="small"
                                                                     startIcon={<CloseIcon />}
-                                                                    disabled={acaoPendente === row.id}
-                                                                    onClick={() => handleCancelar(row.id)}
+                                                                    disabled
                                                                     sx={actionBtnSx}
                                                                 >
                                                                     Cancelar
@@ -393,13 +370,12 @@ export default function MeusEmprestimos() {
                                                             </Tooltip>
                                                         )}
                                                         {row.status === "Atrasado" && (
-                                                            <Tooltip title="Renovar empréstimo">
+                                                            <Tooltip title="Renovação disponível em uma próxima etapa">
                                                                 <Button
                                                                     variant="outlined"
                                                                     size="small"
                                                                     startIcon={<AutorenewIcon />}
-                                                                    disabled={acaoPendente === row.id}
-                                                                    onClick={() => handleRenovar(row)}
+                                                                    disabled
                                                                     sx={actionBtnSx}
                                                                 >
                                                                     Renovar

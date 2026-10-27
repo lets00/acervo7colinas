@@ -40,9 +40,7 @@ function SolicitacaoListaEmprestimo() {
 
     const [selecionados, setSelecionados] = useState([]);
     const [feedback, setFeedback] = useState(null);
-    const [emprestimosAtivosUsuario, setEmprestimosAtivosUsuario] = useState(0);
-
-    const vagasRestantes = Math.max(0, LIMITE_EMPRESTIMOS_ATIVOS - emprestimosAtivosUsuario);
+    const vagasRestantes = LIMITE_EMPRESTIMOS_ATIVOS;
 
     useEffect(() => {
         let ativo = true;
@@ -58,26 +56,19 @@ function SolicitacaoListaEmprestimo() {
             setCarregando(true);
 
             try {
-                const userId = localStorage.getItem("user_id") || getUsuario()?.id;
-
-                const [livrosRes, exemplaresRes, emprestimosRes] = await Promise.all([
+                const [livrosRes, exemplaresRes] = await Promise.all([
                     fetch("http://localhost:3000/livros"),
                     fetch("http://localhost:3000/exemplares"),
-                    userId
-                        ? fetch(`http://localhost:3000/emprestimos?user_id=${userId}`)
-                        : Promise.resolve(null),
                 ]);
 
                 if (!ativo) return;
 
+                if (!livrosRes.ok || !exemplaresRes.ok) throw new Error("Falha ao consultar disponibilidade");
+
                 const livrosApi = await livrosRes.json();
                 const exemplares = await exemplaresRes.json();
-                const emprestimosUsuario = emprestimosRes ? await emprestimosRes.json() : [];
-
-                const totalAtivos = Array.isArray(emprestimosUsuario)
-                    ? emprestimosUsuario.filter(e => !e.is_devolvido).length
-                    : 0;
-                const vagas = Math.max(0, LIMITE_EMPRESTIMOS_ATIVOS - totalAtivos);
+                if (!Array.isArray(livrosApi) || !Array.isArray(exemplares)) throw new Error("Resposta inválida");
+                const vagas = LIMITE_EMPRESTIMOS_ATIVOS;
 
                 const livrosAtualizados = carrinho.map(livroCarrinho => {
                     const naApi = livrosApi.find(l => Number(l.id) === Number(livroCarrinho.id));
@@ -93,7 +84,6 @@ function SolicitacaoListaEmprestimo() {
 
                 if (!ativo) return;
 
-                setEmprestimosAtivosUsuario(totalAtivos);
                 setLivros(livrosAtualizados);
                 setSelecionados(
                     livrosAtualizados.filter(l => l.disponivel && (
@@ -102,6 +92,7 @@ function SolicitacaoListaEmprestimo() {
                 );
             } catch {
                 if (!ativo) return;
+                setFeedback({ severidade: "error", mensagem: "Não foi possível verificar a disponibilidade dos livros. Tente novamente mais tarde." });
                 setLivros(carrinho);
                 setSelecionados([]);
             } finally {
@@ -159,12 +150,9 @@ function SolicitacaoListaEmprestimo() {
                         Confira os livros que você deseja pegar emprestados.
                     </Typography>
 
-                    {!carregando && (vagasRestantes < livros.length || emprestimosAtivosUsuario > 0) && (
+                    {!carregando && vagasRestantes < livros.length && (
                         <Typography sx={{ fontSize: 13, color: "#888", mt: "4px" }}>
-                            {emprestimosAtivosUsuario > 0
-                                ? `Você já possui ${emprestimosAtivosUsuario} empréstimo(s) ativo(s) — `
-                                : ""}
-                            Você pode solicitar até {vagasRestantes} livro(s) por vez (limite de {LIMITE_EMPRESTIMOS_ATIVOS} empréstimos simultâneos).
+                            Selecione até {vagasRestantes} livros por envio.
                         </Typography>
                     )}
 

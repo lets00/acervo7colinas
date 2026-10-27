@@ -11,7 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
 import { useEmprestimo } from "../../context/EmprestimoContext";
-import { getUsuario, saveUsuario } from "../../utils/auth";
+import { getToken, getUsuario, saveUsuario } from "../../utils/auth";
 import { capaLivro, enderecoCompleto, enderecoDoUsuario, formatarEndereco, REGRAS_EMPRESTIMO } from "../../utils/solicitacao";
 import enderecoIcone from "../../assets/solicitacao/address.png";
 import "../css/DetalhesSolicitacaoEmprestimo.css";
@@ -91,6 +91,11 @@ export default function DetalhesSolicitacaoEmprestimo() {
             setFeedback({ severity: "error", message: "Faça login para confirmar a solicitação." });
             return;
         }
+        const token = getToken();
+        if (!token) {
+            setFeedback({ severity: "error", message: "Faça login novamente para confirmar a solicitação." });
+            return;
+        }
         envioEmCurso.current = true;
         setEnviando(true);
         setFeedback(null);
@@ -104,13 +109,20 @@ export default function DetalhesSolicitacaoEmprestimo() {
                 setFeedback({ severity: "error", message: "A disponibilidade mudou. Volte à lista e revise os livros selecionados." });
                 return;
             }
-            // Contrato já utilizado pela lista. Entrega/endereço aguardam API do backend.
-            const { data } = await axios.post(`${API}/emprestimos`, {
-                user_id: Number(userId),
-                livro_ids: livros.map(livro => Number(livro.id)),
-            });
-            setLivros(anteriores => anteriores.filter(livro => !ids.includes(Number(livro.id))));
-            navigate("/meus-emprestimos", { replace: true, state: { mensagem: data.mensagem } });
+            // A API atual registra um livro por chamada, sem transação em lote.
+            const confirmados = [];
+            for (const livro of livros) {
+                try {
+                    await axios.post(`${API}/usuario/emprestimos`, { token, livro_id: Number(livro.id) });
+                    confirmados.push(Number(livro.id));
+                    setLivros(anteriores => anteriores.filter(item => Number(item.id) !== Number(livro.id)));
+                } catch (error) {
+                    const motivo = error.response?.data?.mensagem ?? "Não foi possível confirmar o registro. Confira com a biblioteca antes de tentar novamente.";
+                    setFeedback({ severity: "error", message: `${confirmados.length} de ${livros.length} livro(s) registrado(s). Envio interrompido em “${livro.titulo}”. ${motivo}` });
+                    return;
+                }
+            }
+            navigate("/meus-emprestimos", { replace: true, state: { mensagem: `${confirmados.length} livro(s) registrado(s) com sucesso.` } });
         } catch (error) {
             setFeedback({ severity: "error", message: error.response?.data?.mensagem
                 ?? "Não foi possível confirmar a solicitação. Tente novamente." });
@@ -169,6 +181,7 @@ export default function DetalhesSolicitacaoEmprestimo() {
                         </Box>
                         <Box component="section" aria-labelledby="forma-entrega">
                             <Typography component="h2" id="forma-entrega" className="detalhes-secao-titulo">Forma de entrega</Typography>
+                            <Alert severity="info" sx={{ mb: 2 }}>O envio registra os livros solicitados. Combine a entrega ou retirada com a biblioteca; a preferência e o endereço abaixo ficam apenas neste navegador.</Alert>
                             <RadioGroup aria-labelledby="forma-entrega" name="forma-entrega" value={entrega}
                                 onChange={event => setEntrega(event.target.value)} className="detalhes-entregas">
                                 {[

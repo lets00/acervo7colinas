@@ -10,6 +10,38 @@ import {
 } from '../validators/emprestimoValidator.js';
 import { th } from 'zod/v4/locales';
 
+export async function listarEmprestimos(req, res) {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).json({ mensagem: 'Token não informado!' });
+    }
+
+    const token = authorization.startsWith('Bearer ')
+        ? authorization.slice(7)
+        : authorization;
+    let dadosToken;
+    try {
+        dadosToken = jwt.verify(token, process.env.JWT_SECRET || 'segredo');
+        if (!Number.isInteger(dadosToken.id) || dadosToken.id <= 0) {
+            return res.status(401).json({ mensagem: 'Token inválido ou expirado!' });
+        }
+    } catch {
+        return res.status(401).json({ mensagem: 'Token inválido ou expirado!' });
+    }
+
+    try {
+        const emprestimos = await Emprestimo.findAll({
+            where: { user_id: dadosToken.id },
+            include: [{ model: Livro, attributes: ['id', 'titulo', 'autor', 'img'] }],
+            order: [['data_emprestimo', 'DESC'], ['id', 'DESC']],
+        });
+        return res.status(200).json(emprestimos);
+    } catch (error) {
+        console.error('Erro ao listar empréstimos:', error);
+        return res.status(500).json({ mensagem: 'Não foi possível carregar seus empréstimos.' });
+    }
+}
+
 export async function listarQuantidadeEmprestimos(req, res) {
     try {
         const authorization = req.headers.authorization;
