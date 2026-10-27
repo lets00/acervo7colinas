@@ -14,11 +14,16 @@ import BotaoAcervo from "../../components/jsx/BotaoAcervo.jsx";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Footer from "../../components/jsx/Footer";
+import { useSearchParams } from "react-router-dom";
 
+const LIVROS_POR_PAGINA = 5;
 
 function NossoAcervo() {
+    const [searchParams] = useSearchParams();
+    const termoUrl = searchParams.get("q") || "";
     const [pesquisar, setPesquisar] = useState('');
     const [ordem, setOrdem] = useState('');
+    const [pagina, setPagina] = useState(1);
     const [livros, setLivros] = useState([]);
     const [categoria, setCategoria] = useState('');
     const [editora, setEditora] = useState('');
@@ -26,13 +31,26 @@ function NossoAcervo() {
     const [ano, setAno] = useState('');
     const [isbn, setIsbn] = useState('');
 
-   
-    const livrosFiltrados = livros.filter((livro) =>
-        (livro.titulo ?? "")
-            .toLowerCase()
-            .includes(pesquisar.toLowerCase()) &&
+    useEffect(() => {
+        setPesquisar(termoUrl);
+        setPagina(1);
+    }, [termoUrl]);
 
-        String(livro.categoria ?? "")
+    const livrosFiltrados = livros.filter((livro) =>
+        [
+            livro.titulo,
+            livro.autor,
+            livro.genero,
+            livro.categoria,
+            livro.editora,
+            livro.isbn,
+        ].some((campo) =>
+            String(campo ?? "")
+                .toLocaleLowerCase("pt-BR")
+                .includes(pesquisar.trim().toLocaleLowerCase("pt-BR"))
+        ) &&
+
+        String(livro.genero ?? livro.categoria ?? "")
             .toLowerCase()
             .includes(categoria.toLowerCase()) &&
 
@@ -72,6 +90,15 @@ function NossoAcervo() {
         return 0;
     });
 
+    const totalPaginas = Math.ceil(livrosExibidos.length / LIVROS_POR_PAGINA);
+    const livrosDaPagina = livrosExibidos.slice(
+        (pagina - 1) * LIVROS_POR_PAGINA,
+        pagina * LIVROS_POR_PAGINA
+    );
+    const primeiroLivro = livrosExibidos.length > 0
+        ? (pagina - 1) * LIVROS_POR_PAGINA + 1
+        : 0;
+    const ultimoLivro = Math.min(pagina * LIVROS_POR_PAGINA, livrosExibidos.length);
 
     
     useEffect(() => {
@@ -99,7 +126,14 @@ function NossoAcervo() {
 
     const handleOrdemChange = (event) => {
         setOrdem(event.target.value);
+        setPagina(1);
     };
+
+    const handleFiltroChange = (setFiltro, value) => {
+        setFiltro(value);
+        setPagina(1);
+    };
+
     return (
         <Box className="acervo-page">
             <Header />
@@ -115,7 +149,7 @@ function NossoAcervo() {
                         size="small"
                         placeholder="Procure seu livro"
                         value={pesquisar}
-                        onChange={(e) => setPesquisar(e.target.value)}
+                        onChange={(e) => handleFiltroChange(setPesquisar, e.target.value)}
                         inputProps={{ 'aria-label': 'Procure seu livro no acervo' }}
                         InputProps={{ endAdornment: (
                             <InputAdornment position="end"><img src={SearchBranco} alt="" width={20} /></InputAdornment>
@@ -123,11 +157,11 @@ function NossoAcervo() {
                     />
                     <Box className="acervo-filter-card">
                         <Box className="acervo-filter-fields">
-                            <TextField fullWidth label="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} placeholder="Ex: Ficção" size="small" />
-                            <TextField fullWidth label="Editora" value={editora} onChange={(e) => setEditora(e.target.value)} placeholder="Ex: Companhia das Letras" size="small" />
-                            <TextField fullWidth label="Autor" value={autor} onChange={(e) => setAutor(e.target.value)} placeholder="Ex: Machado de Assis" size="small" />
-                            <TextField fullWidth label="Ano" value={ano} onChange={(e) => setAno(e.target.value)} placeholder="Ex: 2023" size="small" />
-                            <TextField fullWidth label="ISBN" value={isbn} onChange={(e) => setIsbn(e.target.value)} placeholder="Ex: 123..." size="small" />
+                            <TextField fullWidth label="Categoria" value={categoria} onChange={(e) => handleFiltroChange(setCategoria, e.target.value)} placeholder="Ex: Ficção" size="small" />
+                            <TextField fullWidth label="Editora" value={editora} onChange={(e) => handleFiltroChange(setEditora, e.target.value)} placeholder="Ex: Companhia das Letras" size="small" />
+                            <TextField fullWidth label="Autor" value={autor} onChange={(e) => handleFiltroChange(setAutor, e.target.value)} placeholder="Ex: Machado de Assis" size="small" />
+                            <TextField fullWidth label="Ano" value={ano} onChange={(e) => handleFiltroChange(setAno, e.target.value)} placeholder="Ex: 2023" size="small" />
+                            <TextField fullWidth label="ISBN" value={isbn} onChange={(e) => handleFiltroChange(setIsbn, e.target.value)} placeholder="Ex: 123..." size="small" />
                         </Box>
                         <Box className="acervo-sort">
                             <Typography component="h2" className="acervo-filter-title">
@@ -150,13 +184,22 @@ function NossoAcervo() {
 
                 <Box className="acervo-results-summary">
                     <Typography variant="body2">
-                        Exibindo {livrosFiltrados.length > 0 ? 1 : 0}-{Math.min(5, livrosFiltrados.length)} de {livrosFiltrados.length} livro(s)
+                        Exibindo {primeiroLivro}-{ultimoLivro} de {livrosExibidos.length} livro(s)
                     </Typography>
                 </Box>
-                <Box className="acervo-books"><BookCarrosselAcervo books={livrosExibidos} /></Box>
-                <Stack className="acervo-pagination">
-                    <Pagination count={10} sx={{ '& .Mui-selected': { backgroundColor: '#312783 !important', color: '#fff' } }} />
-                </Stack>
+                <Box className="acervo-books">
+                    <BookCarrosselAcervo key={pagina} books={livrosDaPagina} />
+                </Box>
+                {totalPaginas > 0 && (
+                    <Stack className="acervo-pagination">
+                        <Pagination
+                            count={totalPaginas}
+                            page={pagina}
+                            onChange={(_, novaPagina) => setPagina(novaPagina)}
+                            sx={{ '& .Mui-selected': { backgroundColor: '#312783 !important', color: '#fff' } }}
+                        />
+                    </Stack>
+                )}
             </Box>
             <Footer />
         </Box>

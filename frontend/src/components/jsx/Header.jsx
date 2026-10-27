@@ -4,6 +4,7 @@ import PageContent from "./PageContent";
 
 import { getToken, getUsuario, removeToken } from "../../utils/auth";
 import { obterFotoPerfil } from "../../utils/fotoPerfil";
+import api from "../../services/apis";
 
 
 import {
@@ -12,7 +13,7 @@ import {
   MenuItem, IconButton, Tooltip, Badge,
   useMediaQuery,
 } from "@mui/material";
-import { useNavigate ,Link} from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
 import logo   from "../../assets/logo.png";
@@ -22,37 +23,39 @@ import iconEmprestimo from "../../assets/header/emprestimos-livros-selecionado.p
 import { useEmprestimo } from "../../context/EmprestimoContext";
 import "../css/Header.css";
 
+const carregarUsuarioHeader = () => {
+  const dadosUsuario = getUsuario();
+  if (!dadosUsuario) return null;
+
+  const fotoPerfil = obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "";
+
+  return {
+    ...dadosUsuario,
+    fotoPerfil: fotoPerfil.startsWith("/") && !fotoPerfil.startsWith("//")
+      ? `${api.defaults.baseURL}${fotoPerfil}`
+      : fotoPerfil,
+  };
+};
 
 export default function Header() {
   const navegacaoNoMenu = useMediaQuery('(max-width: 600px)');
   const [pesquisar, setPesquisar] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const token = getToken();
-  const [usuario, setUsuario] = useState(() => {
-    const dadosUsuario = getUsuario();
-    return dadosUsuario
-      ? {
-          ...dadosUsuario,
-          fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
-        }
-      : null;
-  });
+  const [usuario, setUsuario] = useState(carregarUsuarioHeader);
   const { livros: livrosEmprestimo } = useEmprestimo();
   const quantidadeEmprestimo = livrosEmprestimo.length;
 
   useEffect(() => {
+    setPesquisar(new URLSearchParams(location.search).get("q") || "");
+  }, [location.search]);
+
+  useEffect(() => {
     const atualizarUsuario = () => {
-      const dadosUsuario = getUsuario();
-      setUsuario(
-        dadosUsuario
-          ? {
-              ...dadosUsuario,
-              fotoPerfil: obterFotoPerfil(dadosUsuario.email) || dadosUsuario.fotoPerfil || "",
-            }
-          : null
-      );
+      setUsuario(carregarUsuarioHeader());
     };
 
     window.addEventListener("usuario-atualizado", atualizarUsuario);
@@ -116,6 +119,18 @@ export default function Header() {
     navigate('/login');
   };
 
+  const handlePesquisar = () => {
+    const termo = pesquisar.trim();
+    const caminho = location.pathname === "/" || location.pathname === "/acervo"
+      ? location.pathname
+      : "/acervo";
+
+    navigate({
+      pathname: caminho,
+      search: termo ? `?q=${encodeURIComponent(termo)}` : "",
+    });
+  };
+
     return (
     <Box className="header-container">
       <PageContent responsive component="div" className="header-content" sx={{ minHeight: 80
@@ -134,10 +149,23 @@ export default function Header() {
           label="Procure seu livro"
           value={pesquisar}
           onChange={(e) => setPesquisar(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handlePesquisar();
+            }
+          }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <img src={Search} alt="Lupa" className="header-search-icon" />
+                <IconButton
+                  aria-label="Pesquisar livros"
+                  onClick={handlePesquisar}
+                  edge="end"
+                  size="small"
+                >
+                  <img src={Search} alt="" className="header-search-icon" />
+                </IconButton>
               </InputAdornment>
             ),
           }}
@@ -181,7 +209,7 @@ export default function Header() {
                         cursor: "pointer",
                       }}
                     >
-                      {!usuario?.fotoPerfil && getIniciais()}
+                      {getIniciais()}
                     </Avatar>
                   </IconButton>
                 </Tooltip>

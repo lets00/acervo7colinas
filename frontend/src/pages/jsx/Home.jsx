@@ -18,17 +18,33 @@ import TableRow from "@mui/material/TableRow";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
+import { Typography } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
 function Home() {
+    const [searchParams] = useSearchParams();
+    const termoPesquisa = (searchParams.get("q") || "").trim().toLocaleLowerCase("pt-BR");
     const [destaques, setDestaques] = useState([]);
     const [novidades, setNovidades] = useState([]);
     const [agendas, setAgendas] = useState([]);
 
     const destaquesRef = useRef(null);
     const novidadesRef = useRef(null);
+    const livrosEncontrados = destaques.filter((livro) =>
+        [
+            livro.titulo,
+            livro.autor,
+            livro.genero,
+            livro.categoria,
+            livro.editora,
+            livro.isbn,
+        ].some((campo) =>
+            String(campo ?? "").toLocaleLowerCase("pt-BR").includes(termoPesquisa)
+        )
+    );
     const imagens = ["/imagem-carrossel-biblioteca.png", "/imagem-carrossel-dia-nacional-do-livro-infantil.png", "/imagem-carrossel-divertida.png"];
     function Carousel({ imagens }) {
         return (
@@ -95,13 +111,28 @@ function Home() {
                 <div className="carousel-wrapper">
                     <Carousel imagens={imagens} />
                 </div>
-                {/* DESTAQUES */}
-                <SectionHeader title="Destaque" />
-                <BookCarrossel books={destaques} />
+                {termoPesquisa ? (
+                    <>
+                        <SectionHeader title={`Resultados para "${searchParams.get("q")}"`} />
+                        {livrosEncontrados.length > 0 ? (
+                            <BookCarrossel books={livrosEncontrados} />
+                        ) : (
+                            <Typography role="status" sx={{ py: 3 }}>
+                                Nenhum livro encontrado para essa pesquisa.
+                            </Typography>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        {/* DESTAQUES */}
+                        <SectionHeader title="Destaque" />
+                        <BookCarrossel books={destaques} />
 
-                {/* NOVIDADES */}
-                <SectionHeader title="Novidades" />
-                <BookCarrossel books={novidades} ref={novidadesRef} />
+                        {/* NOVIDADES */}
+                        <SectionHeader title="Novidades" />
+                        <BookCarrossel books={novidades} ref={novidadesRef} />
+                    </>
+                )}
 
                 {/* AGENDA */}
                 <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
