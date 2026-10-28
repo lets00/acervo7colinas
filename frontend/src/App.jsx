@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createTheme, ThemeProvider, Container } from "@mui/material";
+import { createTheme, ThemeProvider, Box } from "@mui/material";
 
 import Home from "./pages/jsx/Home.jsx";
 import InformacaoLivro from "./pages/jsx/informacaoLivro.jsx";
@@ -25,6 +25,7 @@ import EntregadoresSalvos from "./pages/jsx/EntregadoresSalvos.jsx";
 import EditarLivros from "./pages/jsx/EditarLivros.jsx";
 import PerfilUsuario from "./pages/jsx/PerfilUsuario.jsx";
 import SolicitacaoListaEmprestimo from "./pages/jsx/SolicitacaoListaEmprestimo.jsx";
+import DetalhesSolicitacaoEmprestimo from "./pages/jsx/DetalhesSolicitacaoEmprestimo.jsx";
 
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
@@ -37,7 +38,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <EmprestimoProvider>
       <BrowserRouter>
-        <Container maxWidth={false} sx={{ marginTop: '2rem' }}>
+        <Box className="app-layout">
           <Routes>
             {/* 🔓 Rotas Públicas */}
             <Route path="/" element={<Home />} />
@@ -47,7 +48,8 @@ function App() {
             <Route path="/gerar-senha" element={<GerarSenha />} />
             <Route path="/senha-alterada" element={<SenhaAlterada />} />
             <Route path="/livro/:id" element={<InformacaoLivro />} />
-            <Route path="/emprestimo" element={<SolicitacaoListaEmprestimo />} />
+            <Route path="/solicitacao-emprestimo" element={<SolicitacaoListaEmprestimo />} />
+            <Route path="/solicitacao-emprestimo/detalhes" element={<DetalhesSolicitacaoEmprestimo />} />
             <Route path="/usuarios" element={<CadastroUsuarios />} />
             <Route path="/perfil" element={<PerfilUsuario />} />
             <Route path="/acervo" element={<NossoAcervo />} />
@@ -57,7 +59,7 @@ function App() {
 
             {/* 👤 Rotas do Usuário (e superiores) */}
 
-            <Route path="/emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
+            <Route path="/meus-emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario', 'entregador']}><Dashboard /></ProtectedRoute>} />
 
             {/* 🔧 Rotas de Funcionário/Admin */}
@@ -72,7 +74,7 @@ function App() {
             <Route path="/usuarios-salvos" element={<ProtectedRoute allowedRoles={['admin']}><UsuariosSalvos /></ProtectedRoute>} />
           </Routes>
 
-        </Container>
+        </Box>
       </BrowserRouter>
       </EmprestimoProvider>
 

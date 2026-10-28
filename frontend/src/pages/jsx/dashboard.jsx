@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -62,6 +63,7 @@ export default function Dashboard() {
     const [editValue, setEditValue] = useState(0);
     const [loadingProgresso, setLoadingProgresso] = useState(true);
     const [desejos, setDesejos] = useState([]);
+    const [carregandoDesejos, setCarregandoDesejos] = useState(true);
     const [erroProgresso, setErroProgresso] = useState(null);
     const [erroDesejos, setErroDesejos] = useState(null);
     const [erroOperacao, setErroOperacao] = useState(null);
@@ -92,7 +94,7 @@ export default function Dashboard() {
     }, [progressData]);
 
     const getUserId = () =>
-        localStorage.getItem("user_id") || getUsuario()?.id;
+        getUsuario()?.id || localStorage.getItem("user_id");
 
     const mensagemErroApi = (status, recurso) => {
         if (status === 400) return `Dados inválidos ao buscar ${recurso}.`;
@@ -125,6 +127,7 @@ export default function Dashboard() {
         const userId = getUserId();
         if (!userId) {
             setErroDesejos("Usuário não identificado.");
+            setCarregandoDesejos(false);
             return;
         }
 
@@ -133,8 +136,9 @@ export default function Dashboard() {
                 if (!res.ok) throw new Error(mensagemErroApi(res.status, "a lista Quero Ler"));
                 return res.json();
             })
-            .then((items) => setDesejos(Array.isArray(items) ? items.map((item) => item.Livro) : []))
-            .catch((err) => setErroDesejos(err.message));
+            .then((items) => setDesejos(Array.isArray(items) ? items.map((item) => item.Livro).filter(Boolean) : []))
+            .catch((err) => setErroDesejos(err.message))
+            .finally(() => setCarregandoDesejos(false));
     }, []);
     useEffect(() => {
         const userId = getUserId();
@@ -342,19 +346,12 @@ export default function Dashboard() {
                 alignItems: "center",
                 minHeight: "100vh",
                 bgcolor: "#fff",
-                mt: "-55px",
+                mt: 0,
             }}
         >
             <Header />
 
-            <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: "1440px",
-                    px: { xs: "16px", sm: "28px", md: "60px" },
-                    pb: "48px",
-                }}
-            >
+            <PageContent>
                 {/* SAUDAÇÃO */}
                 <h1 className="dashboard-greeting">Olá, {usuario?.nomeCompleto ?? "usuário"}</h1>
 
@@ -442,7 +439,9 @@ export default function Dashboard() {
 
                 {/* DESTAQUES DE FUTURAS LEITURAS */}
                 <SectionHeader title="Lista de futuras leituras" />
-                {erroDesejos ? (
+                {carregandoDesejos ? (
+                    <Typography sx={{ py: 2 }}>Carregando futuras leituras...</Typography>
+                ) : erroDesejos ? (
                     <Typography color="error" sx={{ py: 2 }}>{erroDesejos}</Typography>
                 ) : desejos.length === 0 ? (
                     <Typography color="rgba(0,0,0,0.6)" sx={{ py: 2 }}>
@@ -622,10 +621,9 @@ export default function Dashboard() {
                     </div>
 
                 </div>
-                <div className="footer-container">
-                    <Footer />
-                </div>
-            </Box>
+
+            </PageContent>
+            <Footer />
 
             <AddReadingModal
                 open={modalOpen}

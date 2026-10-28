@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import "../css/Home.css";
@@ -17,17 +18,33 @@ import TableRow from "@mui/material/TableRow";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
+import { Typography } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
 function Home() {
+    const [searchParams] = useSearchParams();
+    const termoPesquisa = (searchParams.get("q") || "").trim().toLocaleLowerCase("pt-BR");
     const [destaques, setDestaques] = useState([]);
     const [novidades, setNovidades] = useState([]);
     const [agendas, setAgendas] = useState([]);
 
     const destaquesRef = useRef(null);
     const novidadesRef = useRef(null);
+    const livrosEncontrados = destaques.filter((livro) =>
+        [
+            livro.titulo,
+            livro.autor,
+            livro.genero,
+            livro.categoria,
+            livro.editora,
+            livro.isbn,
+        ].some((campo) =>
+            String(campo ?? "").toLocaleLowerCase("pt-BR").includes(termoPesquisa)
+        )
+    );
     const imagens = ["/imagem-carrossel-biblioteca.png", "/imagem-carrossel-dia-nacional-do-livro-infantil.png", "/imagem-carrossel-divertida.png"];
     function Carousel({ imagens }) {
         return (
@@ -35,7 +52,7 @@ function Home() {
             modules={[Pagination, Autoplay]}
             spaceBetween={10}
             slidesPerView={1}
-            pagination={{ clickable: true }} 
+            pagination={{ clickable: true }}
             autoplay={{ delay: 5000 }}
             speed={1500}
             loop={true}
@@ -84,30 +101,39 @@ function Home() {
                 alignItems: "center",
                 minHeight: "100vh",
                 bgcolor: "#fff",
-                mt: "-55px"
+                mt: 0
             }}
         >
             <Header />
 
-            <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: "1440px",
-                    px: { xs: "16px", md: "60px" }
-                }}
-            >
-                
+            <PageContent>
+
                 <div className="carousel-wrapper">
                     <Carousel imagens={imagens} />
                 </div>
-                {/* DESTAQUES */}                
-                <SectionHeader title="Destaque" />
-                <BookCarrossel books={destaques} />
+                {termoPesquisa ? (
+                    <>
+                        <SectionHeader title={`Resultados para "${searchParams.get("q")}"`} />
+                        {livrosEncontrados.length > 0 ? (
+                            <BookCarrossel books={livrosEncontrados} />
+                        ) : (
+                            <Typography role="status" sx={{ py: 3 }}>
+                                Nenhum livro encontrado para essa pesquisa.
+                            </Typography>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        {/* DESTAQUES */}
+                        <SectionHeader title="Destaque" />
+                        <BookCarrossel books={destaques} />
 
-                {/* NOVIDADES */}
-                <SectionHeader title="Novidades" />
-                <BookCarrossel books={novidades} ref={novidadesRef} />
-                
+                        {/* NOVIDADES */}
+                        <SectionHeader title="Novidades" />
+                        <BookCarrossel books={novidades} ref={novidadesRef} />
+                    </>
+                )}
+
                 {/* AGENDA */}
                 <SectionHeader title="Agenda de Encontros: Espaço de Debates" />
 
@@ -153,8 +179,9 @@ function Home() {
                         <img src={debateImg} alt="Debate" />
                     </div>
                 </div>
-                <div className="container-footer"><Footer /> </div>
-            </Box>
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

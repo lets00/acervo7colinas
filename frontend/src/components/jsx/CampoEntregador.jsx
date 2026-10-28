@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react"; 
-import { Grid, Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import "../css/EntregadoresCampo.css";
 
 import PerfilCadastros from '../../assets/PerfilCadastros.png'; 
 import CNH from '../../assets/CNH.png';
@@ -52,92 +51,22 @@ function CampoEntregador({ onFileChange = () => {}, errors = {}, resetKey }) {
     }, [onFileChange]);
 
     return (
-        <>
-            <Grid container justifyContent="center">
-                <Box className="boxTituloPerfil">
-                    <Typography className="textoTituloPerfil" sx={{ ml: 32 }}>
-                        Foto de Perfil
-                    </Typography>
+        <Box className="delivery-upload-grid">
+            {[
+                { tipo: 'perfilFoto', titulo: 'Foto de perfil', imagem: perfilPreview || PerfilCadastros },
+                { tipo: 'cnhFoto', titulo: 'Foto da CNH', imagem: cnhPreview || CNH },
+            ].map(({ tipo, titulo, imagem }) => (
+                <Box key={tipo} className="delivery-upload-card">
+                    <Typography component="h3">{titulo}</Typography>
+                    <img src={imagem} alt={titulo} className="delivery-upload-preview" />
+                    <Button component="label" variant="contained" disableElevation startIcon={<CloudUploadIcon />}>
+                        SELECIONAR FOTO
+                        <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, tipo)} accept="image/*" />
+                    </Button>
+                    {errors[tipo] && <Typography color="error" variant="caption">{errors[tipo]}</Typography>}
                 </Box>
-                <Box className="boxTituloCNH">
-                    <Typography className="textoTituloCNH" sx={{ ml: 16 }}>
-                        Foto da CNH
-                    </Typography>
-                </Box>
-            </Grid> 
-
-            <Grid item xs={12} md={6}>
-                <Grid container spacing={5} justifyContent="center">
-
-                    <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoPerfil">
-                            Selecionar Foto
-                        </Typography>
-                        <Box 
-                            component="img" 
-                            src={perfilPreview || PerfilCadastros} 
-                            alt="Perfil" 
-                            className="imgPerfil" 
-                            sx={{ objectFit: 'cover' }} 
-                        />
-                        <Button
-                            component="label"
-                            variant="contained"
-                            tabIndex={-1}
-                            disableElevation
-                            className="botaoPerfil"
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            SELECIONAR FOTO
-                            <VisuallyHiddenInput
-                                type="file"
-                                onChange={(event) => handleFileChange(event, 'perfilFoto')}
-                                accept="image/*"
-                            />
-                        </Button>
-                        {errors.perfilFoto && (
-                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                {errors.perfilFoto}
-                            </Typography>
-                        )}
-                    </Box>
-
-                    <Box className="card" sx={{ mt: 1 }}>
-                        <Typography className="textoCard textoCNH">
-                            Selecionar Foto da CNH
-                        </Typography>
-                        <Box 
-                            component="img" 
-                            src={cnhPreview || CNH} 
-                            alt="CNH" 
-                            className="imgCNH" 
-                            sx={{ objectFit: 'cover' }} 
-                        />
-                        <Button
-                            component="label"
-                            variant="contained"
-                            tabIndex={-1}
-                            disableElevation
-                            className="botaoCNH"
-                            startIcon={<CloudUploadIcon />}
-                        >
-                            SELECIONAR FOTO
-                            <VisuallyHiddenInput
-                                type="file"
-                                onChange={(event) => handleFileChange(event, 'cnhFoto')}
-                                accept="image/*"
-                            />
-                        </Button>
-                        {errors.cnhFoto && ( 
-                            <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                {errors.cnhFoto}
-                            </Typography>
-                        )}
-                    </Box>
-
-                </Grid>
-            </Grid>
-        </>
+            ))}
+        </Box>
     );
 }
 

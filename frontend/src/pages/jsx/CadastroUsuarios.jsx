@@ -4,7 +4,6 @@ import {
     Box,
     Typography,
     TextField,
-    Grid,
     InputAdornment,
     FormControl,
     InputLabel,
@@ -12,7 +11,6 @@ import {
     MenuItem,
     Checkbox,
     FormControlLabel,
-    OutlinedInput,
     IconButton
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -25,6 +23,7 @@ import "../css/Usuario.css";
 import CampoUsuario from "../../components/jsx/CampoUsuario.jsx";
 import api from "../../services/apis";
 import { useNavigate } from "react-router-dom";
+import { comprimirFotoPerfil, salvarFotoPerfil } from "../../utils/fotoPerfil";
 
 dayjs.locale('pt-br');
 
@@ -143,9 +142,23 @@ function CadastroUsuarios() {
         }
 
         try {
+            const fotoPerfilComprimida = fotoPerfil
+                ? await comprimirFotoPerfil(fotoPerfil)
+                : null;
+
             await api.post('/usuarios', formDataToSend);
 
-            alert("Usuário cadastrado com sucesso!");
+            let mensagemSucesso = "Usuário cadastrado com sucesso!";
+            if (fotoPerfilComprimida) {
+                try {
+                    salvarFotoPerfil(formData.email, fotoPerfilComprimida);
+                } catch (error) {
+                    console.error("Erro ao salvar foto do perfil:", error);
+                    mensagemSucesso += " Não foi possível guardar a foto neste navegador.";
+                }
+            }
+
+            alert(mensagemSucesso);
 
             setFormData({
                 nomeCompleto: '',
@@ -176,328 +189,69 @@ function CadastroUsuarios() {
             console.error("Erro ao cadastrar:", error);
             console.log("ERRO DO BACKEND:", error.response?.data);
 
-            const mensagem = error.response?.data?.mensagem || "Erro ao conectar com o servidor.";
+            const mensagem = error.response?.data?.mensagem
+                || (!error.response && error.message)
+                || "Erro ao conectar com o servidor.";
             alert(`Erro: ${mensagem}`);
         }
     }
 
     return (
-        <Box className="container">
+        <Box className="users-register-page">
             <Header />
-
-            <Box className="content" sx={{ mt: 0.5 }}>
-                <Typography
-                    variant="h4"
-                    align="center"
-                    className="titulo"
-                    sx={{ mt: 3 }}
-                >
-                    Cadastro Dos Usuários!
-                </Typography>
-
-                <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', width: '1200px', padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box', backgroundColor: '#CCD3F8' }}>
-                    <Typography className="faixa-text">
-                        Cadastro Dos Dados:
-                    </Typography>
-                </Box>
-
-                <form onSubmit={handleSubmit}>
-                    <Box className="input-grande">
-                        <TextField
-                            required
-                            name="nomeCompleto"
-                            fullWidth
-                            label="Nome Completo"
-                            variant="outlined"
-                            value={formData.nomeCompleto}
-                            onChange={handleChange}
-                            size="small"
-                            sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
-                        />
+            <Box component="main" className="users-register-content">
+                <Typography component="h1" className="users-register-title">Cadastro dos Usuários</Typography>
+                <Box component="form" onSubmit={handleSubmit} className="users-register-form">
+                    <Typography component="h2" className="users-register-section">Cadastro dos dados</Typography>
+                    <Box className="users-register-fields">
+                        <TextField className="users-register-wide" required fullWidth name="nomeCompleto" label="Nome Completo" value={formData.nomeCompleto} onChange={handleChange} size="small" />
+                        {[
+                            ['cpf', 'CPF'], ['rg', 'RG'], ['sexo', 'Sexo'],
+                        ].map(([name, label]) => (
+                            <TextField key={name} required fullWidth name={name} label={label} value={formData[name]} onChange={handleChange} size="small" />
+                        ))}
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+                            <DatePicker label="Data de Nascimento" views={['year', 'month', 'day']} format="DD/MM/YYYY" value={formData.dataNascimento} onChange={(value) => setFormData(prev => ({ ...prev, dataNascimento: value }))} slotProps={{ textField: { fullWidth: true, required: true, size: 'small' } }} />
+                        </LocalizationProvider>
+                        <TextField required fullWidth name="email" label="Email" type="email" autoComplete="email" value={formData.email} onChange={handleChange} size="small" />
+                        <TextField required fullWidth name="telefone" label="Telefone" type="tel" autoComplete="tel" value={formData.telefone} onChange={handleChange} size="small" />
+                        {[
+                            ['senha', 'Senha'], ['confirmarSenha', 'Confirmar Senha'],
+                        ].map(([name, label]) => (
+                            <TextField key={name} fullWidth name={name} label={label} type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={formData[name]} onChange={handleChange} size="small" error={senhaError} helperText={senhaError ? 'As senhas não conferem.' : ''} InputProps={{ endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} onMouseUp={handleMouseUpPassword} edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ) }} />
+                        ))}
                     </Box>
-
-                    <Grid container spacing={2} justifyContent="center">
-                        <Grid item xs={12} md={6}>
-                            <Grid container spacing={4}>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="CPF"
-                                        size="small"
-                                        sx={{ width: "460px" }}
-                                        name="cpf"
-                                        value={formData.cpf}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="RG"
-                                        size="small"
-                                        sx={{ width: "460px" }}
-                                        name="rg"
-                                        value={formData.rg}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Grid container spacing={4}>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Sexo"
-                                        size="small"
-                                        sx={{ width: "460px" }}
-                                        name="sexo"
-                                        value={formData.sexo}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-                                        <DatePicker
-                                            label="Data de Nascimento"
-                                            views={['year', 'month', 'day']}
-                                            format="DD/MM/YYYY"
-                                            sx={{ width: "460px" }}
-                                            value={formData.dataNascimento}
-                                            onChange={(value) => setFormData({ ...formData, dataNascimento: value })}
-                                            slotProps={{
-                                                textField: {
-                                                    fullWidth: true,
-                                                    required: true,
-                                                    size: "small"
-                                                }
-                                            }}
-                                        />
-                                    </LocalizationProvider>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <TextField
-                            required
-                            fullWidth
-                            label="Email"
-                            variant="outlined"
-                            size="small"
-                            sx={{ maxWidth: '950px', mx: 'auto', mb: 2 }}
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-
-                        <Grid item xs={12} md={12}>
-                            <Grid container spacing={4} justifyContent="center">
-                                <Grid item xs={4}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Telefone"
-                                        variant="outlined"
-                                        size="small"
-                                        placeholder="(00) 00000-0000"
-                                        name="telefone"
-                                        value={formData.telefone}
-                                        onChange={handleChange}
-                                        sx={{ width: '950px', mb: 2, mx: 'auto' }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <img src="https://flagcdn.com/w20/br.png" alt="Brasil" style={{ width: 20, borderRadius: '2px' }} />
-                                                        <Typography sx={{ color: 'text.primary', fontSize: '0.9rem' }}>+ 55</Typography>
-                                                        <Box sx={{ borderLeft: '1px solid #ccc', height: '20px', ml: 1 }} />
-                                                    </Box>
-                                                </InputAdornment>
-                                            ),
-                                        }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container spacing={4}>
-                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined">
-                                <InputLabel>Senha</InputLabel>
-                                <OutlinedInput
-                                    type={showPassword ? 'text' : 'password'}
-                                    name="senha"
-                                    value={formData.senha}
-                                    onChange={handleChange}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={handleClickShowPassword}
-                                                onMouseDown={handleMouseDownPassword}
-                                                onMouseUp={handleMouseUpPassword}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Senha"
-                                    sx={{ height: "50px" }}
-                                />
-                            </FormControl>
-
-                            <FormControl sx={{ mt: -1, width: '460px', mb: 2 }} variant="outlined">
-                                <InputLabel>Confirmar Senha</InputLabel>
-                                <OutlinedInput
-                                    type={showPassword ? 'text' : 'password'}
-                                    name="confirmarSenha"
-                                    value={formData.confirmarSenha}
-                                    onChange={handleChange}
-                                    endAdornment={
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={handleClickShowPassword}
-                                                onMouseDown={handleMouseDownPassword}
-                                                onMouseUp={handleMouseUpPassword}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    }
-                                    label="Confirmar Senha"
-                                    sx={{ height: "50px" }}
-                                />
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-
-                    <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', width: '1200px', padding: '10px 40px', marginBottom: '16px', boxSizing: 'border-box', backgroundColor: '#CCD3F8' }}>
-                        <Typography className="faixa-text">
-                            Endereço
-                        </Typography>
+                    <Typography component="h2" className="users-register-section">Endereço</Typography>
+                    <Box className="users-register-fields">
+                        {[
+                            ['rua', 'Rua'], ['numero', 'Número'], ['cep', 'CEP'], ['bairro', 'Bairro'],
+                        ].map(([name, label]) => (
+                            <TextField key={name} required fullWidth name={name} label={label} value={formData[name]} onChange={handleChange} size="small" />
+                        ))}
+                        <FormControl required fullWidth size="small">
+                            <InputLabel id="select-cidade-label">Cidade</InputLabel>
+                            <Select labelId="select-cidade-label" name="cidade" value={formData.cidade} onChange={handleChange} label="Cidade">
+                                <MenuItem value="Garanhuns">Garanhuns</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField required fullWidth name="complemento" label="Complemento" value={formData.complemento} onChange={handleChange} size="small" />
                     </Box>
-
-                    <Grid container spacing={2} justifyContent="center">
-                        <Grid item xs={12} md={6}>
-                            <Grid container spacing={4}>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Rua"
-                                        size="small"
-                                        sx={{ width: "794px", mt: 2 }}
-                                        name="rua"
-                                        value={formData.rua}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Numero"
-                                        size="small"
-                                        sx={{ width: "120px", mt: 2 }}
-                                        name="numero"
-                                        value={formData.numero}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Grid container spacing={4}>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="CEP"
-                                        size="small"
-                                        sx={{ width: "460px", mt: 1 }}
-                                        name="cep"
-                                        value={formData.cep}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Bairro"
-                                        size="small"
-                                        sx={{ width: "460px", mt: 1 }}
-                                        name="bairro"
-                                        value={formData.bairro}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Grid container spacing={4}>
-                                <Grid item xs={6}>
-                                    <FormControl required fullWidth size="small" sx={{ width: "460px", mt: 1 }}>
-                                        <InputLabel id="select-cidade-label">Cidade</InputLabel>
-                                        <Select
-                                            labelId="select-cidade-label"
-                                            id="select-cidade"
-                                            name="cidade"
-                                            value={formData.cidade}
-                                            onChange={handleChange}
-                                            label="Cidade"
-                                        >
-                                            <MenuItem value="Garanhuns">Garanhuns</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <TextField
-                                        required
-                                        fullWidth
-                                        label="Complemento"
-                                        size="small"
-                                        sx={{ width: "460px", mt: 1 }}
-                                        name="complemento"
-                                        value={formData.complemento}
-                                        onChange={handleChange}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-
-                    <CampoUsuario
-                        onFileChange={(file, tipo) => {
-                            if ( tipo === 'perfil') setFotoPerfil(file);
-                            if ( tipo === 'rg') setFotoRg(file);
-                            if ( tipo === 'residencia') setComprovanteResidencial(file);
-                        }}
-                    />
-
-                    <Grid container justifyContent="center" sx={{ mt: 5 }}>
-                        <Box className="checkbox-box">
-                            <FormControlLabel
-                                control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />}
-                                label="Não Sou Robô"
-                                sx={{ color: "#000", ml: -40 }}
-                            />
-                        </Box>
-                    </Grid>
-
+                    <CampoUsuario onFileChange={(file, tipo) => {
+                        if (tipo === 'perfil') setFotoPerfil(file);
+                        if (tipo === 'rg') setFotoRg(file);
+                        if (tipo === 'residencia') setComprovanteResidencial(file);
+                    }} />
+                    <Box className="users-register-captcha">
+                        <FormControlLabel control={<Checkbox checked={formData.captcha} onChange={handleCaptchaChange} />} label="Não sou robô" />
+                    </Box>
                     <BotaoCadastrar />
-                </form>
+                </Box>
             </Box>
         </Box>
     );

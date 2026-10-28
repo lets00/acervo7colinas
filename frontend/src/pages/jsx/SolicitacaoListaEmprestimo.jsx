@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import PageContent from "../../components/jsx/PageContent";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 // MUI
 import Box from "@mui/material/Box";
@@ -8,26 +10,17 @@ import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import Tooltip from "@mui/material/Tooltip";
 
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
 import { useEmprestimo } from "../../context/EmprestimoContext";
+import { getUsuario } from "../../utils/auth";
 import "../css/SolicitacaoListaEmprestimo.css";
 
-// Capas locais usadas nos dados de teste (acesso direto à página)
-import MaxtonHall from "../../assets/MaxtonHall.jpg";
-import SociedadeVampiros from "../../assets/SociedadeVampiros.jpg";
-import UmBeijo from "../../assets/UmBeijo.jpg";
-import UmPerfeitoCavalheiro from "../../assets/UmPerfeitoCavalheiro.jpg";
-import Vergonha from "../../assets/Vergonha.jpg";
-
-const MOCK_LIVROS = [
-    { id: 1, titulo: "Um Perfeito Cavalheiro", autor: "Lisa Kleypas", genero: "Romance", img: UmPerfeitoCavalheiro, disponivel: true },
-    { id: 2, titulo: "Um Beijo Inesquecível", autor: "Nicholas Sparks", genero: "Romance", img: UmBeijo, disponivel: true },
-    { id: 3, titulo: "Sociedade dos Vampiros", autor: "Richelle Mead", genero: "Fantasia", img: SociedadeVampiros, disponivel: false },
-    { id: 4, titulo: "Maxton Hall", autor: "Mona Kasten", genero: "Romance", img: MaxtonHall, disponivel: true },
-    { id: 5, titulo: "Vergonha", autor: "Tarryn Fisher", genero: "Thriller", img: Vergonha, disponivel: false },
-];
+const LIMITE_EMPRESTIMOS_ATIVOS = 3;
 
 function coverSrc(livro) {
     if (!livro?.img) return null;
@@ -38,29 +31,30 @@ function coverSrc(livro) {
 }
 
 function SolicitacaoListaEmprestimo() {
-    const { state } = useLocation();
-    const livroDaNavegacao = state?.livro;
-    const livroInicialId = livroDaNavegacao?.id ?? null;
-    const livroFallbackRef = useRef(livroDaNavegacao);
+    const navigate = useNavigate();
+    const { state: selecaoAnterior } = useLocation();
+    const { livros: carrinho, removerLivro: removerLivroCarrinho } = useEmprestimo();
 
-    const [livros, setLivros] = useState(() => {
-        if (livroDaNavegacao) {
-            return [{ ...livroDaNavegacao, disponivel: true }];
-        }
-        return MOCK_LIVROS;
-    });
+    const [livros, setLivros] = useState([]);
     const [carregando, setCarregando] = useState(true);
-    const [selecionados, setSelecionados] = useState([]);
-    const { setLivros: setLivrosGlobal } = useEmprestimo();
 
-    useEffect(() => {
-        setLivrosGlobal(livros);
-    }, [livros, setLivrosGlobal]);
+    const [selecionados, setSelecionados] = useState([]);
+    const [feedback, setFeedback] = useState(null);
+    const vagasRestantes = LIMITE_EMPRESTIMOS_ATIVOS;
 
     useEffect(() => {
         let ativo = true;
 
         const carregar = async () => {
+            if (carrinho.length === 0) {
+                setLivros([]);
+                setSelecionados([]);
+                setCarregando(false);
+                return;
+            }
+
+            setCarregando(true);
+
             try {
                 const [livrosRes, exemplaresRes] = await Promise.all([
                     fetch("http://localhost:3000/livros"),
@@ -69,40 +63,38 @@ function SolicitacaoListaEmprestimo() {
 
                 if (!ativo) return;
 
+                if (!livrosRes.ok || !exemplaresRes.ok) throw new Error("Falha ao consultar disponibilidade");
+
                 const livrosApi = await livrosRes.json();
                 const exemplares = await exemplaresRes.json();
+                if (!Array.isArray(livrosApi) || !Array.isArray(exemplares)) throw new Error("Resposta inválida");
+                const vagas = LIMITE_EMPRESTIMOS_ATIVOS;
 
-                const livrosComDisponibilidade = livrosApi.map(livro => ({
-                    ...livro,
-                    disponivel: exemplares.some(
-                        e => Number(e.id_livro) === Number(livro.id) && e.disponivel
-                    ),
-                }));
+                const livrosAtualizados = carrinho.map(livroCarrinho => {
+                    const naApi = livrosApi.find(l => Number(l.id) === Number(livroCarrinho.id));
+                    const base = naApi ?? livroCarrinho;
 
-                if (livroInicialId) {
-                    const naApi = livrosComDisponibilidade.find(
-                        l => Number(l.id) === Number(livroInicialId)
-                    );
-                    const base = naApi ?? livroFallbackRef.current;
+                    return {
+                        ...base,
+                        disponivel: exemplares.some(
+                            e => Number(e.id_livro) === Number(base.id) && e.disponivel
+                        ),
+                    };
+                });
 
-                    if (base) {
-                        setLivros([{
-                            ...base,
-                            id: base.id ?? livroInicialId,
-                            disponivel: naApi
-                                ? naApi.disponivel
-                                : exemplares.some(
-                                    e => Number(e.id_livro) === Number(base.id) && e.disponivel
-                                ),
-                        }]);
-                    } else {
-                        setLivros([]);
-                    }
-                } else {
-                    setLivros(livrosComDisponibilidade);
-                }
+                if (!ativo) return;
+
+                setLivros(livrosAtualizados);
+                setSelecionados(
+                    livrosAtualizados.filter(l => l.disponivel && (
+                        !Array.isArray(selecaoAnterior?.livroIds) || selecaoAnterior.livroIds.map(Number).includes(Number(l.id))
+                    )).map(l => l.id).slice(0, vagas)
+                );
             } catch {
                 if (!ativo) return;
+                setFeedback({ severidade: "error", mensagem: "Não foi possível verificar a disponibilidade dos livros. Tente novamente mais tarde." });
+                setLivros(carrinho);
+                setSelecionados([]);
             } finally {
                 if (ativo) setCarregando(false);
             }
@@ -113,16 +105,18 @@ function SolicitacaoListaEmprestimo() {
         return () => {
             ativo = false;
         };
-    }, [livroInicialId]);
+    }, [carrinho, selecaoAnterior]);
 
     const toggleLivro = (id) => {
-        setSelecionados(prev =>
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        );
+        setSelecionados(prev => {
+            if (prev.includes(id)) return prev.filter(x => x !== id);
+            if (prev.length >= vagasRestantes) return prev;
+            return [...prev, id];
+        });
     };
 
     const removerLivro = (id) => {
-        setLivros(prev => prev.filter(l => l.id !== id));
+        removerLivroCarrinho(id);
         setSelecionados(prev => prev.filter(x => x !== id));
     };
 
@@ -133,16 +127,20 @@ function SolicitacaoListaEmprestimo() {
         : `${quantidade} livros selecionados`;
 
     const handleSolicitar = () => {
-        // TODO: enviar livrosSelecionados para o backend (endpoint de empréstimo ainda não existe).
-        // A solicitação NÃO deve ser marcada como concluída antes da resposta do servidor.
-        console.log("Solicitação preparada:", livrosSelecionados);
+        const userId = localStorage.getItem("user_id") || getUsuario()?.id;
+        if (!userId) {
+            setFeedback({ severidade: "error", mensagem: "Faça login para solicitar um empréstimo." });
+            return;
+        }
+        navigate("/solicitacao-emprestimo/detalhes", {
+            state: { livroIds: livrosSelecionados.map(livro => Number(livro.id)), userId: String(userId) },
+        });
     };
-
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: "-55px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", bgcolor: "#fff", mt: 0 }}>
             <Header />
 
-            <Box sx={{ width: "100%", maxWidth: "1214px", mx: "auto", px: { xs: 2, sm: 3, md: 0 }, pb: "48px" }}>
+            <PageContent>
                 <Box className="sol-page">
 
                     <Typography className="sol-cabecalho-titulo" component="h1">
@@ -151,6 +149,12 @@ function SolicitacaoListaEmprestimo() {
                     <Typography className="sol-subtitulo">
                         Confira os livros que você deseja pegar emprestados.
                     </Typography>
+
+                    {!carregando && vagasRestantes < livros.length && (
+                        <Typography sx={{ fontSize: 13, color: "#888", mt: "4px" }}>
+                            Selecione até {vagasRestantes} livros por envio.
+                        </Typography>
+                    )}
 
                     {carregando ? (
                         <Typography className="sol-vazio">Carregando...</Typography>
@@ -162,6 +166,21 @@ function SolicitacaoListaEmprestimo() {
                         <Stack spacing={0} divider={<Divider orientation="horizontal" flexItem sx={{ borderColor: "#e5e5e5" }} />} className="sol-lista">
                             {livros.map(livro => {
                                 const marcado = selecionados.includes(livro.id);
+                                const bloqueadoPorLimite = livro.disponivel && !marcado && selecionados.length >= vagasRestantes;
+
+                                const checkbox = (
+                                    <Checkbox
+                                        checked={marcado}
+                                        disabled={!livro.disponivel || bloqueadoPorLimite}
+                                        onChange={() => toggleLivro(livro.id)}
+                                        sx={{
+                                            color: "#37228B",
+                                            mt: "6px",
+                                            "&.Mui-checked": { color: "#37228B" },
+                                            "&.Mui-disabled": { color: "#c9c9c9" },
+                                        }}
+                                    />
+                                );
 
                                 return (
                                     <Stack
@@ -171,17 +190,11 @@ function SolicitacaoListaEmprestimo() {
                                         spacing={{ xs: 1.5, md: 2 }}
                                         className="sol-item"
                                     >
-                                        <Checkbox
-                                            checked={marcado}
-                                            disabled={!livro.disponivel}
-                                            onChange={() => toggleLivro(livro.id)}
-                                            sx={{
-                                                color: "#37228B",
-                                                mt: "6px",
-                                                "&.Mui-checked": { color: "#37228B" },
-                                                "&.Mui-disabled": { color: "#c9c9c9" },
-                                            }}
-                                        />
+                                        {bloqueadoPorLimite ? (
+                                            <Tooltip title={`Limite de ${LIMITE_EMPRESTIMOS_ATIVOS} empréstimos simultâneos atingido. Desmarque outro livro para trocar.`}>
+                                                <span>{checkbox}</span>
+                                            </Tooltip>
+                                        ) : checkbox}
 
                                         <Box component="img" src={coverSrc(livro)} alt={livro.titulo} className="sol-capa" />
 
@@ -220,17 +233,41 @@ function SolicitacaoListaEmprestimo() {
                         <Button
                             variant="contained"
                             className="sol-botao"
-                            disabled={quantidade === 0}
+                            disabled={quantidade === 0 || quantidade > vagasRestantes}
                             onClick={handleSolicitar}
                         >
                             SOLICITAR EMPRÉSTIMO
                         </Button>
                     </Box>
 
+                    <Snackbar
+                        open={Boolean(feedback)}
+                        autoHideDuration={6000}
+                        onClose={() => {
+                            const sucesso = feedback?.severidade === "success";
+                            setFeedback(null);
+                            if (sucesso) navigate("/meus-emprestimos");
+                        }}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    >
+                        <Alert
+                            severity={feedback?.severidade ?? "info"}
+                            variant="filled"
+                            onClose={() => {
+                                const sucesso = feedback?.severidade === "success";
+                                setFeedback(null);
+                                if (sucesso) navigate("/meus-emprestimos");
+                            }}
+                        >
+                            {feedback?.mensagem}
+                        </Alert>
+                    </Snackbar>
+
                 </Box>
 
-                <div className="container-footer"><Footer /></div>
-            </Box>
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

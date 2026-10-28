@@ -1,3 +1,4 @@
+import PageContent from "../../components/jsx/PageContent";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import "../css/informacaoLivros.css";
@@ -6,6 +7,10 @@ import BookCarousel from "../../components/jsx/BookCarrossel";
 import Comentario from "../../components/jsx/comentario";
 import Header from "../../components/jsx/Header";
 import Footer from "../../components/jsx/Footer";
+import { useEmprestimo } from "../../context/EmprestimoContext";
+import { getUsuario, isAuthenticated } from "../../utils/auth";
+import api from "../../services/apis";
+import Alert from "@mui/material/Alert";
 
 
 import iconInfo from "../../assets/info.png";
@@ -31,17 +36,80 @@ import Rating from "@mui/material/Rating";
 function InformacaoLivro() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const destaquesRef = useRef(null);
+    const { adicionarLivro } = useEmprestimo();
 
     const [livro, setLivro] = useState(null);
     const [favorito, setFavorito] = useState(false);
-    const emprestimosAtivos = 0;
+    const [carregandoFavorito, setCarregandoFavorito] = useState(true);
+    const [erroFavorito, setErroFavorito] = useState(null);
+    const [favoritoCarregado, setFavoritoCarregado] = useState(false);
+    const userId = getUsuario()?.id || localStorage.getItem("user_id");
     const [exemplares, setExemplares] = useState([]);
     const [avaliacoes, setAvaliacoes] = useState([]);
     const [relacionados, setRelacionados] = useState([]);
     const descricaoRef = useRef(null);
     const [expandido, setExpandido] = useState(false);
     const [descricaoOverflow, setDescricaoOverflow] = useState(false);
+
+    useEffect(() => {
+        let ativo = true;
+        setFavorito(false);
+        setErroFavorito(null);
+        setFavoritoCarregado(false);
+        setCarregandoFavorito(true);
+
+        if (!isAuthenticated() || !userId) {
+            setCarregandoFavorito(false);
+            return () => { ativo = false; };
+        }
+
+        api.get("/usuario/queroler", { params: { user_id: userId } })
+            .then(({ data }) => {
+                if (!Array.isArray(data)) throw new Error("Resposta inválida da lista de futuras leituras.");
+                if (ativo) {
+                    setFavorito(data.some(item => String(item.livro_id) === String(id)));
+                    setFavoritoCarregado(true);
+                }
+            })
+            .catch(() => {
+                if (ativo) setErroFavorito("Não foi possível carregar sua lista. Recarregue a página para tentar novamente.");
+            })
+            .finally(() => {
+                if (ativo) setCarregandoFavorito(false);
+            });
+
+        return () => { ativo = false; };
+    }, [id, userId]);
+
+    const alternarFavorito = async () => {
+        if (!isAuthenticated() || !userId) {
+            navigate("/login");
+            return;
+        }
+        if (carregandoFavorito || !favoritoCarregado) return;
+
+        setCarregandoFavorito(true);
+        setErroFavorito(null);
+        const data = { user_id: userId, livro_id: id };
+        try {
+            if (favorito) {
+                await api.delete("/usuario/queroler", { data });
+            } else {
+                await api.post("/usuario/queroler", data);
+            }
+            setFavorito(!favorito);
+        } catch (error) {
+            // Outra aba pode já ter aplicado a mesma alteração.
+            if ((!favorito && error.response?.status === 409) ||
+                (favorito && error.response?.status === 404)) {
+                setFavorito(!favorito);
+            } else {
+                setErroFavorito(error.response?.data?.mensagem || "Não foi possível atualizar sua lista de futuras leituras.");
+            }
+        } finally {
+            setCarregandoFavorito(false);
+        }
+    };
 
     useEffect(() => {
         fetch(`http://localhost:3000/livros/${id}`)
@@ -80,14 +148,6 @@ function InformacaoLivro() {
         }
     }, [livro]);
 
-    const scrollLeft = (ref) => {
-        ref.current.scrollBy({ left: -300, behavior: "smooth" });
-    };
-
-    const scrollRight = (ref) => {
-        ref.current.scrollBy({ left: 300, behavior: "smooth" });
-    };
-
     const livrosRelacionados = relacionados.filter(
         b => b.genero === livro?.genero && b.id !== livro?.id
     );
@@ -101,11 +161,11 @@ function InformacaoLivro() {
             alignItems: "center",
             minHeight: "100vh",
             bgcolor: "#fff",
-            marginTop: "-55px"
+            marginTop: 0
         }}>
 
             <Header />
-            <Box sx={{ width: "100%", maxWidth: "1250px", px: 2, marginLeft: "60px", marginRight: "60px" }}>
+            <PageContent>
 
                 {/* 🔥 TOPO DO LIVRO */}
                 <div className="livro-info-topo">
@@ -121,7 +181,8 @@ function InformacaoLivro() {
                             <Button
                                 variant="outlined"
                                 className="btn-favorito"
-                                onClick={() => setFavorito(!favorito)}
+                                onClick={alternarFavorito}
+                                disabled={carregandoFavorito || (isAuthenticated() && !!userId && !favoritoCarregado)}
                             >
                                 {favorito
                                     ? "Remover dos favoritos"
@@ -131,16 +192,15 @@ function InformacaoLivro() {
                             <Button
                                 variant="contained"
                                 className="btn-emprestimo"
-                                disabled={emprestimosAtivos >= 3}
-                                onClick={() =>
-                                    navigate("/emprestimo", {
-                                        state: { livro }
-                                    })
-                                }
+                                onClick={() => {
+                                    adicionarLivro(livro);
+                                    navigate("/solicitacao-emprestimo");
+                                }}
                             >
                                 Pedir emprestado
                             </Button>
                         </div>
+                        {erroFavorito && <Alert severity="error" role="alert">{erroFavorito}</Alert>}
                     </div>
 
                     <div className="livro-detalhes">
@@ -267,10 +327,11 @@ function InformacaoLivro() {
                         />
                     ))}
                 </div>
-                <div className="container-footer"><Footer /> </div>
-                
 
-            </Box>
+
+
+            </PageContent>
+            <Footer />
         </Box>
     );
 }

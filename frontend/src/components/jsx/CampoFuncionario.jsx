@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Grid, Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PerfilCadastros from '../../assets/PerfilCadastros.png';
@@ -38,44 +38,16 @@ function CampoFuncionario({ onFileChange = () => {}, errors = {}, resetKey }) {
   }, [onFileChange]);
 
   return (
-    <>
-      <Grid container justifyContent="center" sx={{mt:-2}}>
-        <Box className="foto-barra" >
-
-        </Box>
-      </Grid> 
-      <Grid item xs={12} md={6}>
-        <Grid container spacing={5} justifyContent="center">
-
-          <Box className="card" sx={{ mt: 2 }}>
-              <Typography className="textoCard textoPerfil" sx={{ ml: 85 }}>
-                  Selecionar Foto
-              </Typography>
-              
-              <Box component="img" src={perfilPreview || PerfilCadastros} alt="Perfil" className="imgPerfil" />
-
-              <Button 
-                  component="label" 
-                  variant="contained" 
-                  tabIndex={-1} 
-                  disableElevation 
-                  className="botaoPerfil" 
-                  startIcon={<CloudUploadIcon />}
-              >
-                  SELECIONAR FOTO
-                  <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'perfil')} accept="image/*" />
-              </Button>
-              
-              {errors.perfil && (
-                  <Typography color="error" variant="caption" sx={{ mt: 1, fontWeight: 'bold' }}>
-                      {errors.perfil}
-                  </Typography>
-              )}
-          </Box>
-        </Grid>
-      </Grid>
-    </>
+    <Box className="staff-upload-card">
+      <Typography component="h3">Selecionar foto de perfil</Typography>
+      <img src={perfilPreview || PerfilCadastros} alt="Prévia da foto de perfil" className="staff-upload-preview" />
+      <Button component="label" variant="contained" disableElevation startIcon={<CloudUploadIcon />}>
+        SELECIONAR FOTO
+        <VisuallyHiddenInput type="file" onChange={(e) => handleFileChange(e, 'perfil')} accept="image/*" />
+      </Button>
+      {errors.perfil && <Typography color="error" variant="caption">{errors.perfil}</Typography>}
+    </Box>
   );
-} 
+}
 
 export default CampoFuncionario;

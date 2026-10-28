@@ -6,8 +6,7 @@
     gap: 48px;
     margin-top: 30px;
     margin-bottom: 40px;
-    margin-left: 30px;
-    margin-right: 30px;
+
     align-items: flex-start;
 }
 
@@ -203,7 +202,9 @@
 }
 
 .exemplares-table {
-    width: 1388px;
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
 }
 
 .exemplares-table table {
@@ -239,3 +240,5 @@
         max-width: 100%;
     }
 }
+
+.livro-detalhes { min-width: 0; overflow-wrap: anywhere; }
