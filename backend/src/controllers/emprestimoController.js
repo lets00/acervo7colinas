@@ -82,6 +82,39 @@ export async function criarEmprestimo(req, res) {
             });
         }
 
+        if (dadosToken.tipo !== 'usuario') {
+            return res.status(403).json({
+                mensagem: 'Acesso permitido apenas para usuários!'
+            });
+        }
+
+        const quantidadeAtivos = await Emprestimo.count({
+            where: {
+                user_id: dadosToken.id,
+                is_devolvido: false
+            }
+        });
+
+        if (quantidadeAtivos >= LIMITE_EMPRESTIMO_ATIVOS) {
+            return res.status(400).json({
+                mensagem: 'Você já atingiu o limite de 3 empréstimos ativos!'
+            });
+        }
+
+        const emprestimoExistente = await Emprestimo.findOne({
+            where: {
+                user_id: dadosToken.id,
+                livro_id,
+                is_devolvido: false
+            }
+        });
+
+        if (emprestimoExistente) {
+            return res.status(400).json({
+                mensagem: 'Você já possui um empréstimo ativo deste livro!'
+            });
+        }
+
         const emprestimo = await Emprestimo.create({
             user_id: dadosToken.id,
             livro_id,
@@ -190,6 +223,7 @@ export async function criarEmprestimos(req, res) {
                 const emprestimo = await Emprestimo.create({
                     user_id,
                     livro_id,
+                    exemplar_id: exemplar.id,
                     data_emprestimo: hoje,
                     data_entrega: somarDias(hoje, PRAZO_DIAS),
                     is_devolvido: false
