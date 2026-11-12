@@ -8,7 +8,6 @@ import {
     criarEmprestimoSchema,
     atualizarEmprestimoSchema
 } from '../validators/emprestimoValidator.js';
-import { th } from 'zod/v4/locales';
 
 export async function listarQuantidadeEmprestimos(req, res) {
     try {
@@ -216,6 +215,85 @@ export async function criarEmprestimos(req, res) {
             mensagem: error.status
                 ? error.message
                 : "Erro ao criar empréstimos!"
+        });
+    }
+}
+
+export async function atualizarEmprestimo(req, res) {
+    try {
+        const { token, livro_id, ...dadosAtualizacao } = req.body;
+        const validacao = atualizarEmprestimoSchema.safeParse(dadosAtualizacao);
+
+        if (!validacao.success) {
+            return res.status(400).json({
+                mensagem: 'Dados inválidos!',
+                erros: validacao.error.flatten()
+            });
+        }
+
+        if (Object.keys(validacao.data).length === 0) {
+            return res.status(400).json({
+                mensagem: 'Informe pelo menos um campo para atualizar!'
+            });
+        }
+
+        if (!token) {
+            return res.status(401).json({
+                mensagem: 'Token não informado!'
+            });
+        }
+
+        let dadosToken;
+
+        try {
+            dadosToken = jwt.verify(
+                token,
+                process.env.JWT_SECRET || 'segredo'
+            );
+        } catch (error) {
+            return res.status(401).json({
+                mensagem: 'Token inválido ou expirado!'
+            });
+        }
+
+        if (dadosToken.tipo !== 'usuario') {
+            return res.status(403).json({
+                mensagem: 'Acesso permitido apenas para usuários!'
+            });
+        }
+
+        if (!livro_id) {
+            return res.status(400).json({
+                mensagem: 'O livro_id é obrigatório!'
+            });
+        }
+
+        const emprestimo = await Emprestimo.findOne({
+            where: {
+                user_id: dadosToken.id,
+                livro_id: livro_id,
+                is_devolvido: false
+            }
+        });
+
+        if (!emprestimo) {
+            return res.status(404).json({
+                mensagem: 'Empréstimo ativo não encontrado!'
+            });
+        }
+
+        await emprestimo.update(validacao.data);
+
+        return res.status(200).json({
+            mensagem: 'Empréstimo atualizado com sucesso!',
+            emprestimo
+        });
+
+    } catch (error) {
+        console.log("Erro ao atualizar empréstimos: ", error);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao atualizar empréstimo!'
         });
     }
 }
