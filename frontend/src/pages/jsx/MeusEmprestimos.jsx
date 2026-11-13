@@ -1,6 +1,7 @@
 import PageContent from "../../components/jsx/PageContent";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 // MUI — layout
 import Box from "@mui/material/Box";
@@ -230,6 +231,8 @@ export default function MeusEmprestimos() {
                         <Button
                             variant="contained"
                             startIcon={<AddIcon />}
+                            component={Link}
+                            to="/solicitacao-emprestimo"
                             sx={{ bgcolor: "#37228B", borderRadius: "8px", fontWeight: 600, fontSize: 14, px: 3, py: 1, textTransform: "none", "&:hover": { bgcolor: "#2a1870" } }}
                         >
                             Novo Pedido
