@@ -11,6 +11,7 @@ import exemplarRoutes from './routes/exemplarRoutes.js';
 import desejoRoutes from './routes/desejoRoutes.js';
 import progressoRoutes from './routes/progressoRoutes.js';
 import emprestimoRoutes from './routes/emprestimoRoutes.js';
+import favoritoRoutes from './routes/favoritoRoutes.js';
 
 const app = express();
 
@@ -28,5 +29,6 @@ app.use('/exemplares', exemplarRoutes);
 app.use('/usuario', desejoRoutes);
 app.use('/usuarios/progresso', progressoRoutes);
 app.use('/usuario', emprestimoRoutes);
+app.use('/usuario', favoritoRoutes);
 
 export default app;
