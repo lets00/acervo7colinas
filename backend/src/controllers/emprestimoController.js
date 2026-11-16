@@ -4,6 +4,7 @@ import sequelize from '../config/database.js';
 import Usuario from '../models/Usuario.js';
 import Livro from '../models/Livro.js';
 import Exemplar from '../models/Exemplar.js';
+import Entrega from '../models/Entrega.js';
 import { atualizarEmprestimoSchema } from '../validators/emprestimoValidator.js';
 
 export async function listarQuantidadeEmprestimos(req, res) {
@@ -51,11 +52,17 @@ export async function listarQuantidadeEmprestimos(req, res) {
 }
 
 export async function criarEmprestimo(req, res) {
-    const { token, livro_id } = req.body;
+    const { token, livro_id, endereco_entrega, tipo_retirada = 'RETIRADA' } = req.body;
 
     if (!token) {
         return res.status(401).json({
             mensagem: 'Token não informado!'
+        });
+    }
+
+    if (!['ENTREGA', 'RETIRADA'].includes(tipo_retirada)) {
+        return res.status(400).json({
+            mensagem: 'Tipo de retirada inválido! Escolha ENTREGA ou RETIRADA.'
         });
     }
 
@@ -95,6 +102,32 @@ export async function criarEmprestimo(req, res) {
             if (!usuario) {
                 const erro = new Error('Usuário não encontrado!');
                 erro.status = 404;
+                throw erro;
+            }
+
+            const enderecoCadastrado = [
+                usuario.rua,
+                usuario.numero,
+                usuario.complemento,
+                usuario.bairro,
+                usuario.cidade,
+                usuario.cep
+            ].filter(Boolean).join(', ');
+
+            const enderecoEscolhido = endereco_entrega === undefined
+                ? enderecoCadastrado
+                : endereco_entrega;
+
+            if (
+                tipo_retirada === 'ENTREGA' &&
+                (
+                    typeof enderecoEscolhido !== 'string' ||
+                    !enderecoEscolhido.trim() ||
+                    enderecoEscolhido.length > 500
+                )
+            ) {
+                const erro = new Error('informe um endereço de entrega válido!');
+                erro.status = 400;
                 throw erro;
             }
 
@@ -163,6 +196,10 @@ export async function criarEmprestimo(req, res) {
                 user_id: dadosToken.id,
                 livro_id,
                 exemplar_id: exemplar.id,
+                tipo_retirada,
+                status_retirada: tipo_retirada === 'RETIRADA'
+                    ? 'AGUARDANDO_APROVACAO'
+                    : null,
                 data_emprestimo: dataDeHoje(),
                 data_entrega: null,
                 is_devolvido: false
@@ -172,6 +209,15 @@ export async function criarEmprestimo(req, res) {
                 { disponivel: false },
                 { transaction }
             );
+
+            if (tipo_retirada === 'ENTREGA') {
+                await Entrega.create({
+                    emprestimo_id: novoEmprestimo.id,
+                    entregador_id: null,
+                    status: 'SOLICITADO',
+                    endereco_entrega: enderecoEscolhido.trim()
+                }, { transaction });
+            }
 
             return novoEmprestimo;
         });
@@ -272,6 +318,44 @@ export async function atualizarEmprestimo(req, res) {
 
         return res.status(500).json({
             mensagem: 'Erro ao atualizar empréstimo!'
+        });
+    }
+}
+
+export async function aprovarRetirada(req, res) {
+    try {
+        const { id } = req.params;
+
+        const emprestimo = await Emprestimo.findByPk(id);
+
+        if (!emprestimo) {
+            return res.status(404).json({
+                mensagem: 'Empréstimo não encontrado!'
+            });
+        }
+
+        if (
+            emprestimo.tipo_retirada !== 'RETIRADA' ||
+            emprestimo.status_retirada !== 'AGUARDANDO_APROVACAO'
+        ) {
+            return res.status(400).json({
+                mensagem: 'Este empréstimo não está aguardando aprovação!'
+            });
+        }
+
+        await emprestimo.update({
+            status_retirada: 'PRONTO_PARA_RETIRADA'
+        });
+
+        return res.status(200).json({
+            mensagem: 'Retirada aprovada! Livro pronto para retirada.',
+            emprestimo
+        });
+    } catch (error) {
+        console.error('Erro ao aprovar retirada: ', error);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao aprovar retirada!'
         });
     }
 }

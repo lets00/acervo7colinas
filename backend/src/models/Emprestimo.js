@@ -19,6 +19,27 @@ const Emprestimo = sequelize.define('Emprestimo', {
         allowNull: false
     },
 
+    tipo_retirada: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: 'RETIRADA',
+        validate: {
+            isIn: [['ENTREGA', 'RETIRADA']]
+        },
+    },
+    status_retirada: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+        validate: {
+            isIn: [[
+                'AGUARDANDO_APROVACAO',
+                'PRONTO_PARA_RETIRADA',
+                'RETIRADO',
+                'CANCELADO'
+            ]]
+        }
+    },
+
     exemplar_id: {
     type: DataTypes.INTEGER,
     allowNull: true

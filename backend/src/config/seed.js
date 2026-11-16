@@ -8,6 +8,7 @@ import Desejo from "../models/Desejo.js";
 import Emprestimo from "../models/Emprestimo.js";
 import Progresso from "../models/Progresso.js";
 import Favorito from "../models/Favorito.js";
+import Entrega from "../models/Entrega.js";
 import bcrypt from "bcrypt";
 
 async function seedDatabase() {
