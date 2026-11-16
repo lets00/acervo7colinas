@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const criarEmprestimoSchema = z.object({
-    user_id: z.number().int().positive(),
-    livro_ids: z.array(
-        z.number().int().positive()
-    ).min(1)
+    token: z.string().min(1, "Token obrigatório"),
+    livro_id: z.number().int().positive(),
+    tipo_retirada: z.enum(["ENTREGA", "RETIRADA"]).optional(),
+    endereco_entrega: z.string().max(500).optional()
 });
 
 export const atualizarEmprestimoSchema = z.object({

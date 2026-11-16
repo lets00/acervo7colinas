@@ -33,6 +33,12 @@ export async function listarQuantidadeEmprestimos(req, res) {
             });
         }
 
+        if (dadosToken.tipo !== 'usuario') {
+            return res.status(403).json({
+                mensagem: 'Acesso permitido apenas para usuários!'
+            });
+        }
+
         const quantidade = await Emprestimo.count({
             where: {
                 user_id: dadosToken.id
@@ -246,20 +252,6 @@ function dataDeHoje() {
 export async function atualizarEmprestimo(req, res) {
     try {
         const { token, livro_id, ...dadosAtualizacao } = req.body;
-        const validacao = atualizarEmprestimoSchema.safeParse(dadosAtualizacao);
-
-        if (!validacao.success) {
-            return res.status(400).json({
-                mensagem: 'Dados inválidos!',
-                erros: validacao.error.flatten()
-            });
-        }
-
-        if (Object.keys(validacao.data).length === 0) {
-            return res.status(400).json({
-                mensagem: 'Informe pelo menos um campo para atualizar!'
-            });
-        }
 
         if (!token) {
             return res.status(401).json({
@@ -286,38 +278,92 @@ export async function atualizarEmprestimo(req, res) {
             });
         }
 
-        if (!livro_id) {
+        if (!Number.isInteger(livro_id) || livro_id <= 0) {
             return res.status(400).json({
-                mensagem: 'O livro_id é obrigatório!'
+                mensagem: 'Informe um livro_id válido!'
             });
         }
 
-        const emprestimo = await Emprestimo.findOne({
-            where: {
-                user_id: dadosToken.id,
-                livro_id: livro_id,
-                is_devolvido: false
+        const validacao = atualizarEmprestimoSchema.safeParse(dadosAtualizacao);
+
+        if (!validacao.success) {
+            return res.status(400).json({
+                mensagem: 'Dados inválidos!',
+                erros: validacao.error.flatten()
+            });
+        }
+
+        if (Object.keys(validacao.data).length === 0) {
+            return res.status(400).json({
+                mensagem: 'Informe pelo menos um campo para atualizar!'
+            });
+        }
+
+        const emprestimoAtualizado = await sequelize.transaction( async (transaction) => {
+            const emprestimo = await Emprestimo.findOne({
+                where: {
+                    user_id: dadosToken.id,
+                    livro_id: livro_id,
+                    is_devolvido: false
+                },
+                transaction,
+                lock: transaction.LOCK.UPDATE
+            });
+
+            if (!emprestimo) {
+                const erro = new Error('Empréstimo ativo não encontrado!');
+                erro.status = 404;
+                throw erro;
+
             }
+
+            const dados = { ...validacao.data };
+
+            if (dados.is_devolvido === true) {
+                if (!dados.data_entrega) {
+                    dados.data_entrega = dataDeHoje();
+                }
+
+                if (emprestimo.exemplar_id !== null) {
+                    const exemplar = await Exemplar.findByPk(
+                        emprestimo.exemplar_id,
+                        {
+                            transaction,
+                            lock: transaction.LOCK.UPDATE
+                        }
+                    );
+
+                    if (!exemplar) {
+                        const erro = new Error('Exemplar do empréstimo não encontrado!');
+                        erro.status = 404;
+                        throw erro;
+                    }
+
+                    await exemplar.update(
+                        { disponivel: true },
+                        { transaction }
+                    );
+                }
+            }
+
+            await emprestimo.update(dados, { transaction });
+
+            return emprestimo;
+
         });
-
-        if (!emprestimo) {
-            return res.status(404).json({
-                mensagem: 'Empréstimo ativo não encontrado!'
-            });
-        }
-
-        await emprestimo.update(validacao.data);
 
         return res.status(200).json({
             mensagem: 'Empréstimo atualizado com sucesso!',
-            emprestimo
+            emprestimo: emprestimoAtualizado
         });
 
     } catch (error) {
         console.log("Erro ao atualizar empréstimos: ", error);
 
-        return res.status(500).json({
-            mensagem: 'Erro ao atualizar empréstimo!'
+        return res.status(error.status || 500).json({
+            mensagem: error.status
+                ? error.message
+                :'Erro ao atualizar empréstimo!'
         });
     }
 }
