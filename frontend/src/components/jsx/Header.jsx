@@ -64,6 +64,7 @@ export default function Header() {
 
   const isAdmin =
     usuario?.cargo?.toLowerCase() === "administrador";
+  const podeGerenciarEntregas = ["admin", "funcionario"].includes(usuario?.tipo);
 
   const [anchorMenu, setAnchorMenu] = useState(null);
 
@@ -240,6 +241,16 @@ export default function Header() {
                   >
                     Meus Empréstimos
                   </MenuItem>
+                  {podeGerenciarEntregas && (
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/entregas");
+                        fecharMenuHamburguer();
+                      }}
+                    >
+                      Gerenciar Entregas
+                    </MenuItem>
+                  )}
 
                   {isAdmin && (
                     <>
@@ -251,6 +262,14 @@ export default function Header() {
                       >
                         Cadastrar Livro
                       </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          navigate("/funcionarios");
+                          fecharMenuHamburguer();
+                        }}
+                      >
+                        Cadastro Funcionários
+                      </MenuItem>
 
                       <MenuItem
                         onClick={() => {
@@ -259,15 +278,6 @@ export default function Header() {
                         }}
                       >
                         Livros Salvos
-                      </MenuItem>
-
-                      <MenuItem
-                        onClick={() => {
-                          navigate("/funcionarios");
-                          fecharMenuHamburguer();
-                        }}
-                      >
-                        Cadastro Funcionários
                       </MenuItem>
                       <MenuItem onClick={abrirMenuUsuariosSalvos}>
                         Usuarios Salvos

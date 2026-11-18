@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import {
-  Box, Checkbox, Typography, TextField, InputAdornment,
+  Box, Typography, TextField, InputAdornment,
   FormControl, InputLabel, OutlinedInput, IconButton,
-  FormControlLabel, Button, Grid, Alert, CircularProgress,
+  Button, Grid, Alert, CircularProgress, FormControlLabel,
+  Radio, RadioGroup, FormLabel
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import "../css/Login.css";
@@ -20,9 +21,6 @@ import { saveToken, saveUsuario } from "../../utils/auth";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-
-const label = { slotProps: { input: { "aria-label": "Checkbox demo" } } };
-
 const theme = createTheme({
   palette: {
     primary: { main: "#CCD3F8" },
@@ -31,14 +29,13 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const [mostrarTipos, setMostrarTipos] = useState(false);
   const [email, setEmail]               = useState('');
   const [senha, setSenha]               = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [tipoAcesso, setTipoAcesso] = useState('');
 
   const [anchorCriarConta, setAnchorCriarConta] = useState(null);
 
@@ -48,14 +45,6 @@ export default function Login() {
 
   const fecharMenuCriarConta = () => {
     setAnchorCriarConta(null);
-  };
-
-  const handleOpenMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
   };
 
   const handleClickShowPassword = () => setShowPassword((s) => !s);
@@ -73,40 +62,40 @@ export default function Login() {
         body: JSON.stringify({ email, senha }),
       });
 
-      const data = await response.json();
-      console.log("STATUS:", response.status);
-      console.log("RESPOSTA:", data);
-
-      if (response.ok) {
-        saveToken(data.token);
-        saveUsuario(data.usuario);
-        localStorage.setItem("user_id", data.usuario.id);
-
-        // ─── SALVA O TIPO PARA O PERFIL MOCKADO ──────────────────────────────────
-        // Caso sua API retorne o campo dentro de 'usuario' (ex: data.usuario.tipo)
-        if (data.usuario && data.usuario.tipo) {
-          localStorage.setItem("usuarioTipo", data.usuario.tipo);
-        } else if (data.tipo) {
-          localStorage.setItem("usuarioTipo", data.tipo);
-        } else {
-          // Fallback caso a API ainda não envie o campo: tenta adivinhar pelo email
-          if (email.includes("admin")) localStorage.setItem("usuarioTipo", "admin");
-          else if (email.includes("carlos")) localStorage.setItem("usuarioTipo", "funcionario");
-          else if (email.includes("rafael")) localStorage.setItem("usuarioTipo", "entregador");
-          else localStorage.setItem("usuarioTipo", "usuario");
-        }
-        // ─────────────────────────────────────────────────────────────────────────
-
-          navigate('/');
-        } else {
-          setErro(data.mensagem || 'Login ou senha incorreto');
-        }
-      } catch (err) {
-        setErro('Erro da conexão com o servidor.');
-      } finally {
-        setLoading(false);
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        setErro('O servidor retornou uma resposta inválida.');
+        return;
       }
-    };
+
+      if (!response.ok) {
+        setErro(data.mensagem || 'Email ou senha incorretos.');
+        return;
+      }
+
+      const tipo = data.tipo || data.usuario?.tipo;
+      if (!data.token || !data.usuario || !tipo) {
+        setErro('Não foi possível concluir o login: resposta inválida do servidor.');
+        return;
+      }
+
+      saveToken(data.token);
+      saveUsuario(data.usuario);
+      localStorage.setItem("user_id", data.usuario.id);
+      localStorage.setItem("usuarioTipo", tipo);
+      navigate('/');
+    } catch (error) {
+      setErro(
+        error instanceof TypeError
+          ? 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
+          : 'Não foi possível concluir o login. Tente novamente.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -143,6 +132,7 @@ export default function Login() {
                 fullWidth
                 className="login-field"
                 label="Email"
+                type="email"
                 autoComplete="username"
                 variant="outlined"
                 size="small"
@@ -155,6 +145,7 @@ export default function Login() {
                 <InputLabel>Senha</InputLabel>
                 <OutlinedInput
                   type={showPassword ? "text" : "password"}
+                  required
                   value={senha}
                   autoComplete="current-password"
                   onChange={(e) => setSenha(e.target.value)}
@@ -186,6 +177,27 @@ export default function Login() {
                   Esqueceu a senha?
                 </Typography>
               </Box>
+
+              <Box>
+                <FormControl component="fieldset">
+                    <FormLabel component="legend" id="tipo-acesso-label">Tipo de acesso</FormLabel>
+                      <RadioGroup
+                        row
+                        aria-labelledby="tipo-acesso-label"
+                        name="tipoAcesso"
+                        value={tipoAcesso}
+                        onChange={(e) => setTipoAcesso(e.target.value)}
+                      >
+                        <FormControlLabel value="Administrador" control={<Radio required />} label="Administrador" />
+                        <FormControlLabel value="Funcionário" control={<Radio required />} label="Funcionário" />
+                         <FormControlLabel value="Entregador" control={<Radio required />} label="Entregador" />
+                        <FormControlLabel value="usuario" control={<Radio required />} label="Usuário" />
+
+                      </RadioGroup>
+                </FormControl>
+              </Box>
+
+
               <Box className="botoes" sx={{mt:3}}> 
                   <Button
                   type="submit"

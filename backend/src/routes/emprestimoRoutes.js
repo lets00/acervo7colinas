@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { 
     listarQuantidadeEmprestimos,
+    listarEmprestimos,
     criarEmprestimo,
     atualizarEmprestimo,
     aprovarRetirada

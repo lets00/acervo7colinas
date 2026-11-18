@@ -26,7 +26,7 @@ import EditarLivros from "./pages/jsx/EditarLivros.jsx";
 import PerfilUsuario from "./pages/jsx/PerfilUsuario.jsx";
 import SolicitacaoListaEmprestimo from "./pages/jsx/SolicitacaoListaEmprestimo.jsx";
 import DetalhesSolicitacaoEmprestimo from "./pages/jsx/DetalhesSolicitacaoEmprestimo.jsx";
-
+import GerenciamentoEntregas from "./pages/jsx/GerenciamentoEntregas.jsx"
 
 import ProtectedRoute from "./components/jsx/ProtectedRoute.jsx";
 import { EmprestimoProvider } from "./context/EmprestimoContext.jsx";
@@ -61,6 +61,7 @@ function App() {
 
             <Route path="/meus-emprestimos" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario']}><MeusEmprestimos /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['usuario', 'admin', 'funcionario', 'entregador']}><Dashboard /></ProtectedRoute>} />
+            <Route path="/entregas" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><GerenciamentoEntregas /></ProtectedRoute>} />
 
             {/* 🔧 Rotas de Funcionário/Admin */}
             <Route path="/livros" element={<ProtectedRoute allowedRoles={['admin', 'funcionario']}><CadastroLivros /></ProtectedRoute>} />
