@@ -4,11 +4,9 @@ import sequelize from '../config/database.js';
 import Usuario from '../models/Usuario.js';
 import Livro from '../models/Livro.js';
 import Exemplar from '../models/Exemplar.js';
-import {
-    criarEmprestimoSchema,
-    atualizarEmprestimoSchema
-} from '../validators/emprestimoValidator.js';
-import { th } from 'zod/v4/locales';
+import Entrega from '../models/Entrega.js';
+import Entregador from '../models/Entregador.js';
+import { atualizarEmprestimoSchema } from '../validators/emprestimoValidator.js';
 
 export async function listarQuantidadeEmprestimos(req, res) {
     try {
@@ -36,6 +34,12 @@ export async function listarQuantidadeEmprestimos(req, res) {
             });
         }
 
+        if (dadosToken.tipo !== 'usuario') {
+            return res.status(403).json({
+                mensagem: 'Acesso permitido apenas para usuários!'
+            });
+        }
+
         const quantidade = await Emprestimo.count({
             where: {
                 user_id: dadosToken.id
@@ -55,18 +59,264 @@ export async function listarQuantidadeEmprestimos(req, res) {
 }
 
 export async function criarEmprestimo(req, res) {
+    const { token, livro_id, endereco_entrega, tipo_retirada = 'RETIRADA' } = req.body;
+
+    if (!token) {
+        return res.status(401).json({
+            mensagem: 'Token não informado!'
+        });
+    }
+
+    if (!['ENTREGA', 'RETIRADA'].includes(tipo_retirada)) {
+        return res.status(400).json({
+            mensagem: 'Tipo de retirada inválido! Escolha ENTREGA ou RETIRADA.'
+        });
+    }
+
+    if (!Number.isInteger(livro_id) || livro_id <= 0) {
+        return res.status(400).json({
+            mensagem: 'Informe um livro_id válido!'
+        });
+    }
+
+    let dadosToken;
+
     try {
-        const { token, livro_id } = req.body;
+        dadosToken = jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'segredo'
+        );
+    } catch (error) {
+        return res.status(401).json({
+            mensagem: 'Token inválido ou expirado!'
+        });
+    }
+
+    if (dadosToken.tipo !== 'usuario') {
+        return res.status(403).json({
+            mensagem: 'Acesso permitido apenas para usuários!'
+        });
+    }
+
+    try {
+        const emprestimo = await sequelize.transaction(async (transaction) => {
+            //bloqueia o usuário durante a solciitação
+            const usuario = await Usuario.findByPk(dadosToken.id, {
+                transaction,
+                lock: transaction.LOCK.UPDATE
+            });
+
+            if (!usuario) {
+                const erro = new Error('Usuário não encontrado!');
+                erro.status = 404;
+                throw erro;
+            }
+
+            const enderecoCadastrado = [
+                usuario.rua,
+                usuario.numero,
+                usuario.complemento,
+                usuario.bairro,
+                usuario.cidade,
+                usuario.cep
+            ].filter(Boolean).join(', ');
+
+            const enderecoEscolhido = endereco_entrega === undefined
+                ? enderecoCadastrado
+                : endereco_entrega;
+
+            if (
+                tipo_retirada === 'ENTREGA' &&
+                (
+                    typeof enderecoEscolhido !== 'string' ||
+                    !enderecoEscolhido.trim() ||
+                    enderecoEscolhido.length > 500
+                )
+            ) {
+                const erro = new Error('informe um endereço de entrega válido!');
+                erro.status = 400;
+                throw erro;
+            }
+
+            const quantidadeAtivos = await Emprestimo.count({
+                where: {
+                    user_id: dadosToken.id,
+                    is_devolvido: false
+                },
+                transaction
+            });
+
+            if (quantidadeAtivos >= LIMITE_EMPRESTIMO_ATIVOS) {
+                const erro = new Error(
+                    'Você já atingiu o limite de 3 empréstimos ativos!'
+                );
+                erro.status = 400;
+                throw erro;
+            }
+
+            const emprestimoExistente = await Emprestimo.findOne({
+                where: {
+                    user_id: dadosToken.id,
+                    livro_id,
+                    is_devolvido: false
+                },
+                transaction
+            });
+
+            if (emprestimoExistente) {
+                const erro = new Error(
+                    'Você já possui um empréstimo ativo deste livro!'
+                );
+                erro.status = 400;
+                throw erro;
+            }
+
+            const livro = await Livro.findByPk(livro_id, {
+                transaction
+            });
+
+            if (!livro) {
+                const erro = new Error('Livro não encontrado!');
+                erro.status = 404;
+                throw erro;
+            }
+
+            const exemplar = await Exemplar.findOne({
+                where: {
+                    id_livro: livro_id,
+                    disponivel: true
+                },
+                transaction,
+                lock: transaction.LOCK.UPDATE,
+                skipLocked: true
+            });
+
+            if (!exemplar) {
+                const erro = new Error(
+                    'Não há exemplares disponíveis deste livro!'
+                );
+                erro.status = 400;
+                throw erro;
+            }
+
+            const novoEmprestimo = await Emprestimo.create({
+                user_id: dadosToken.id,
+                livro_id,
+                exemplar_id: exemplar.id,
+                tipo_retirada,
+                status_retirada: tipo_retirada === 'RETIRADA'
+                    ? 'AGUARDANDO_APROVACAO'
+                    : null,
+                data_emprestimo: dataDeHoje(),
+                data_entrega: null,
+                is_devolvido: false
+            }, { transaction });
+
+            await exemplar.update(
+                { disponivel: false },
+                { transaction }
+            );
+
+            if (tipo_retirada === 'ENTREGA') {
+
+                const novaEntrega = await Entrega.create({
+                    emprestimo_id: novoEmprestimo.id,
+                    entregador_id: null,
+                    status: 'SOLICITADO',
+                    endereco_entrega: enderecoEscolhido.trim()
+                }, { transaction });
+
+                await novaEntrega.update(
+                    { status: 'BUSCANDO_ENTREGADOR'},
+                    { transaction }
+                );
+
+                const entregadores = await Entregador.findAll({
+                    transaction
+                });
+
+                const entregadorSorteado = entregadores.length > 0
+                    ? entregadores[Math.floor(Math.random() * entregadores.length)]
+                    : null;
+
+                if (entregadorSorteado) {
+                    await novaEntrega.update(
+                        { 
+                            entregador_id: entregadorSorteado.id,
+                            status: 'AGUARDANDO_ACEITE' 
+                        },
+                        { transaction }
+                    );
+
+                    const tokenConvite = jwt.sign(
+                        {
+                            entrega_id: novaEntrega.id,
+                            entregador_id: entregadorSorteado.id
+                        },
+                        process.env.JWT_SECRET || 'segredo',
+                        { expiresIn: '5m' }
+                    );
+
+                    const urlConvite = `http://localhost:3000/entregas/convites/${tokenConvite}/aceitar`;
+
+                    console.log(`
+                        ===== NOVA SOLICITAÇÃO DE ENTREGA =====
+
+                        Olá, ${entregadorSorteado.nomeCompleto}!
+
+                        Você recebeu uma solicitação para retirar
+                        um livro na biblioteca e entregar ao usuário.
+
+                        Solicitação #${novaEntrega.id}
+
+                        Destino: ${novaEntrega.endereco_entrega}
+
+                        Prazo para aceitar: 5 minutos
+
+                        Aceitar solicitação:
+                        ${urlConvite}
+
+                        ======================================
+                    `);
+                } else {
+                    await novaEntrega.update(
+                        { status: 'SEM_ENTREGADOR' },
+                        { transaction }
+                    );
+                }
+            }
+
+            return novoEmprestimo;
+        });
+
+        return res.status(201).json({
+            mensagem: 'Empréstimo criado com sucesso!',
+            emprestimo
+        });
+    } catch (error) {
+        console.error('Erro ao criar empréstimo:', error);
+
+        return res.status(error.status || 500).json({
+            mensagem: error.status
+                ? error.message
+                : 'Erro ao criar empréstimo!'
+        });
+    }
+}
+
+const LIMITE_EMPRESTIMO_ATIVOS = 3;
+
+function dataDeHoje() {
+    return new Date().toISOString().split("T")[0];
+}
+
+export async function atualizarEmprestimo(req, res) {
+    try {
+        const { token, livro_id, ...dadosAtualizacao } = req.body;
 
         if (!token) {
             return res.status(401).json({
                 mensagem: 'Token não informado!'
-            });
-        }
-
-        if (!livro_id) {
-            return res.status(400).json({
-                mensagem: 'O livro_id é obrigatório!'
             });
         }
 
@@ -83,139 +333,136 @@ export async function criarEmprestimo(req, res) {
             });
         }
 
-        const emprestimo = await Emprestimo.create({
-            user_id: dadosToken.id,
-            livro_id,
-            data_emprestimo: new Date().toISOString().split('T')[0],
-            data_entrega: null,
-            is_devolvido: false
-        });
+        if (dadosToken.tipo !== 'usuario') {
+            return res.status(403).json({
+                mensagem: 'Acesso permitido apenas para usuários!'
+            });
+        }
 
-        return res.status(201).json({
-            mensagem: 'Empréstimo criado com sucesso!',
-            emprestimo
-        });
-    } catch (error) {
-        console.error('Erro ao criar empréstimo:', error);
+        if (!Number.isInteger(livro_id) || livro_id <= 0) {
+            return res.status(400).json({
+                mensagem: 'Informe um livro_id válido!'
+            });
+        }
 
-        return res.status(500).json({
-            mensagem: 'Erro ao criar empréstimo!'
-        });
-    }
-    
-}
+        const validacao = atualizarEmprestimoSchema.safeParse(dadosAtualizacao);
 
-const PRAZO_DIAS = 14;
-const LIMITE_EMPRESTIMO_ATIVOS = 3;
+        if (!validacao.success) {
+            return res.status(400).json({
+                mensagem: 'Dados inválidos!',
+                erros: validacao.error.flatten()
+            });
+        }
 
-function dataDeHoje() {
-    return new Date().toISOString().split("T")[0];
-}
+        if (Object.keys(validacao.data).length === 0) {
+            return res.status(400).json({
+                mensagem: 'Informe pelo menos um campo para atualizar!'
+            });
+        }
 
-function somarDias(data, dias) {
-    const resultado = new Date(`${data}T12:00:00Z`);
-    resultado.setUTCDate(resultado.getUTCDate() + dias);
-    return resultado.toISOString().split("T")[0];
-}
-
-export async function criarEmprestimos(req, res) {
-    const validacao = criarEmprestimoSchema.safeParse(req.body);
-
-    if (!validacao.success) {
-        return res.status(400).json({
-            mensagem: "Dados inválidos!",
-            erros: validacao.error.flatten()
-        });
-    }
-
-    const { user_id, livro_ids } = validacao.data;
-    const livrosUnicos = [...new Set(livro_ids)];
-
-    try {
-        const emprestimos = await sequelize.transaction(async (transaction) => {
-            const usuario = await Usuario.findByPk(user_id, { transaction });
-
-            if (!usuario) {
-                const erro = new Error("Usuário não encontrado!");
-                erro.status = 404;
-                throw erro;
-            }
-
-            const ativos = await Emprestimo.count({
-                where: { user_id, is_devolvido: false },
-                transaction
+        const emprestimoAtualizado = await sequelize.transaction( async (transaction) => {
+            const emprestimo = await Emprestimo.findOne({
+                where: {
+                    user_id: dadosToken.id,
+                    livro_id: livro_id,
+                    is_devolvido: false
+                },
+                transaction,
+                lock: transaction.LOCK.UPDATE
             });
 
-            if (ativos + livrosUnicos.length > LIMITE_EMPRESTIMO_ATIVOS) {
-                const erro = new Error("Limite de 3 empréstimos ativos excedido!");
-                erro.status = 400;
+            if (!emprestimo) {
+                const erro = new Error('Empréstimo ativo não encontrado!');
+                erro.status = 404;
                 throw erro;
+
             }
 
-            const criados = [];
+            const dados = { ...validacao.data };
 
-            for (const livro_id of livrosUnicos) {
-                const livro = await Livro.findByPk(livro_id, { transaction });
-
-                if (!livro) {
-                    const erro = new Error(`Livro ${livro_id} não encontrado!`);
-                    erro.status = 404;
-                    throw erro;
+            if (dados.is_devolvido === true) {
+                if (!dados.data_entrega) {
+                    dados.data_entrega = dataDeHoje();
                 }
 
-                const repetido = await Emprestimo.findOne({
-                    where: { user_id, livro_id, is_devolvido: false },
-                    transaction
-                });
+                if (emprestimo.exemplar_id !== null) {
+                    const exemplar = await Exemplar.findByPk(
+                        emprestimo.exemplar_id,
+                        {
+                            transaction,
+                            lock: transaction.LOCK.UPDATE
+                        }
+                    );
 
-                if (repetido) {
-                    const erro = new Error("Usuário já possui empréstimo ativo desse livro!")
-                    erro.status = 400;
-                    throw erro;
+                    if (!exemplar) {
+                        const erro = new Error('Exemplar do empréstimo não encontrado!');
+                        erro.status = 404;
+                        throw erro;
+                    }
+
+                    await exemplar.update(
+                        { disponivel: true },
+                        { transaction }
+                    );
                 }
-
-                const exemplar = await Exemplar.findOne({
-                    where: { id_livro: livro_id, disponivel: true},
-                    transaction,
-                    lock: transaction.LOCK.UPDATE
-                });
-
-                if (!exemplar) {
-                    const erro = new Error(`Não há exemplar disponível do livro ${livro_id}!`);
-                    erro.status = 400;
-                    throw erro;
-                }
-                
-                const hoje = dataDeHoje();
-
-                const emprestimo = await Emprestimo.create({
-                    user_id,
-                    livro_id,
-                    data_emprestimo: hoje,
-                    data_entrega: somarDias(hoje, PRAZO_DIAS),
-                    is_devolvido: false
-                }, { transaction });
-
-                await exemplar.update(
-                    { disponivel: false },
-                    { transaction }
-                );
-
-                criados.push(emprestimo);
             }
 
-            return criados;
+            await emprestimo.update(dados, { transaction });
+
+            return emprestimo;
+
         });
 
-        return res.status(201).json({
-            mensagem: "Empréstimos criados com sucesso!",
-            emprestimos
+        return res.status(200).json({
+            mensagem: 'Empréstimo atualizado com sucesso!',
+            emprestimo: emprestimoAtualizado
         });
+
     } catch (error) {
+        console.log("Erro ao atualizar empréstimos: ", error);
+
         return res.status(error.status || 500).json({
             mensagem: error.status
                 ? error.message
-                : "Erro ao criar empréstimos!"
+                :'Erro ao atualizar empréstimo!'
+        });
+    }
+}
+
+export async function aprovarRetirada(req, res) {
+    try {
+        const { id } = req.params;
+
+        const emprestimo = await Emprestimo.findByPk(id);
+
+        if (!emprestimo) {
+            return res.status(404).json({
+                mensagem: 'Empréstimo não encontrado!'
+            });
+        }
+
+        if (
+            emprestimo.tipo_retirada !== 'RETIRADA' ||
+            emprestimo.status_retirada !== 'AGUARDANDO_APROVACAO'
+        ) {
+            return res.status(400).json({
+                mensagem: 'Este empréstimo não está aguardando aprovação!'
+            });
+        }
+
+        await emprestimo.update({
+            status_retirada: 'PRONTO_PARA_RETIRADA'
+        });
+
+        return res.status(200).json({
+            mensagem: 'Retirada aprovada! Livro pronto para retirada.',
+            emprestimo
+        });
+    } catch (error) {
+        console.error('Erro ao aprovar retirada: ', error);
+
+        return res.status(500).json({
+            mensagem: 'Erro ao aprovar retirada!'
         });
     }
 }
