@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import Usuario from '../models/Usuario.js';
 import Progresso from '../models/Progresso.js';
 import Livro from '../models/Livro.js';
 import { usuarioSchema } from "../validators/usuarioValidator.js";
+import Emprestimo from '../models/Emprestimo.js';
 
 export async function criarUsuario(req, res) {
 
@@ -104,29 +106,50 @@ export async function listarUsuarios(req, res) {
 }
 
 export async function listarGeneros(req, res) {
+    const authorization = req.headers.authorization;
+
+    if (!authorization) {
+        return res.status(401).json({
+            mensagem: 'Token não informado!'
+        });
+    }
+
+    const token = authorization.startsWith('Bearer ')
+        ? authorization.split(' ')[1]
+        : authorization;
+
+    let dadosToken;
+
     try {
-        const { user_id } = req.query;
+        dadosToken = jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'segredo'
+        );
+    } catch (error) {
+        return res.status(401).json({
+            mensagem: 'Token inválido ou expirado!'
+        });
+    }
+    
+    if (dadosToken.tipo !== 'usuario') {
+        return res.status(403).json({
+            mensagem: 'Acesso permitido apenas para usuários!'
+        });
+    }
 
-        if (!user_id) {
-            return res.status(400).json({
-                mensagem: 'O user_id é obrigatório!'
-            });
-        }
-
-        const progressos = await Progresso.findAll({
-            where: { user_id },
-            include: [
-                {
-                    model: Livro,
-                    attributes: ['genero']
-                }
-            ]
+    try {
+        const emprestimos = await Emprestimo.findAll({
+            where: { user_id: dadosToken.id },
+            include: [{
+                model: Livro,
+                attributes: ['genero']
+            }]
         });
 
         const generos = {};
 
-        progressos.forEach((progresso) => {
-            const genero = progresso.Livro?.genero;
+        emprestimos.forEach((emprestimo) => {
+            const genero = emprestimo.Livro?.genero;
 
             if (genero) {
                 generos[genero] = (generos[genero] || 0) + 1;
@@ -134,9 +157,9 @@ export async function listarGeneros(req, res) {
         });
 
         const resultado = Object.entries(generos).map(
-            ([genero, quantidade]) => ({
+            ([genero, livros]) => ({
                 genero,
-                quantidade
+                livros
             })
         );
 
