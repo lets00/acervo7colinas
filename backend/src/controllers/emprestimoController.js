@@ -5,6 +5,7 @@ import Usuario from '../models/Usuario.js';
 import Livro from '../models/Livro.js';
 import Exemplar from '../models/Exemplar.js';
 import Entrega from '../models/Entrega.js';
+import Entregador from '../models/Entregador.js';
 import { atualizarEmprestimoSchema } from '../validators/emprestimoValidator.js';
 
 export async function listarQuantidadeEmprestimos(req, res) {
@@ -217,12 +218,72 @@ export async function criarEmprestimo(req, res) {
             );
 
             if (tipo_retirada === 'ENTREGA') {
-                await Entrega.create({
+
+                const novaEntrega = await Entrega.create({
                     emprestimo_id: novoEmprestimo.id,
                     entregador_id: null,
                     status: 'SOLICITADO',
                     endereco_entrega: enderecoEscolhido.trim()
                 }, { transaction });
+
+                await novaEntrega.update(
+                    { status: 'BUSCANDO_ENTREGADOR'},
+                    { transaction }
+                );
+
+                const entregadores = await Entregador.findAll({
+                    transaction
+                });
+
+                const entregadorSorteado = entregadores.length > 0
+                    ? entregadores[Math.floor(Math.random() * entregadores.length)]
+                    : null;
+
+                if (entregadorSorteado) {
+                    await novaEntrega.update(
+                        { 
+                            entregador_id: entregadorSorteado.id,
+                            status: 'AGUARDANDO_ACEITE' 
+                        },
+                        { transaction }
+                    );
+
+                    const tokenConvite = jwt.sign(
+                        {
+                            entrega_id: novaEntrega.id,
+                            entregador_id: entregadorSorteado.id
+                        },
+                        process.env.JWT_SECRET || 'segredo',
+                        { expiresIn: '5m' }
+                    );
+
+                    const urlConvite = `http://localhost:3000/entregas/convites/${tokenConvite}/aceitar`;
+
+                    console.log(`
+                        ===== NOVA SOLICITAÇÃO DE ENTREGA =====
+
+                        Olá, ${entregadorSorteado.nomeCompleto}!
+
+                        Você recebeu uma solicitação para retirar
+                        um livro na biblioteca e entregar ao usuário.
+
+                        Solicitação #${novaEntrega.id}
+
+                        Destino: ${novaEntrega.endereco_entrega}
+
+                        Prazo para aceitar: 5 minutos
+
+                        Aceitar solicitação:
+                        ${urlConvite}
+
+                        ======================================
+                    `);
+                } else {
+                    await novaEntrega.update(
+                        { status: 'SEM_ENTREGADOR' },
+                        { transaction }
+                    );
+                }
             }
 
             return novoEmprestimo;

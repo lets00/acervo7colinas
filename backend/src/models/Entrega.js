@@ -26,7 +26,7 @@ const Entrega = sequelize.define('Entrega', {
             'BUSCANDO_ENTREGADOR',
             'AGUARDANDO_ACEITE',
             'ENTREGADOR_ACEITOU',
-            'SAIU-DA_BIBLIOTECA',
+            'SAIU_DA_BIBLIOTECA',
             'ENTREGUE',
             'SEM_ENTREGADOR',
             'CANCELADO'

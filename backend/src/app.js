@@ -13,6 +13,7 @@ import progressoRoutes from './routes/progressoRoutes.js';
 import emprestimoRoutes from './routes/emprestimoRoutes.js';
 import favoritoRoutes from './routes/favoritoRoutes.js';
 import { listarGeneros } from './controllers/usuarioController.js';
+import entregaRoutes from './routes/entregaRoutes.js';
 
 const app = express();
 
@@ -26,11 +27,13 @@ app.use('/usuarios', usuarioRoutes);
 app.get('/usuario/generos', listarGeneros);
 app.use('/funcionarios', funcionarioRoutes);
 app.use('/entregadores', entregadorRoutes);
+app.use('/entregas', entregaRoutes);
 app.use('/login', loginRoutes);
 app.use('/exemplares', exemplarRoutes);
 app.use('/usuario', desejoRoutes);
 app.use('/usuarios/progresso', progressoRoutes);
 app.use('/usuario', emprestimoRoutes);
+app.use('/', emprestimoRoutes);
 app.use('/usuario', favoritoRoutes);
 
 export default app;
